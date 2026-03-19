@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spider-Man | Swing Into Action</title>
+  <!-- 3D Model Support -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
   <meta name="description" content="Enter the world of Spider-Man. Swing through the city, embrace the hero within." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -36,13 +38,23 @@
 
   <!-- ===== HERO SECTION ===== -->
   <section class="hero" id="hero">
-    <video class="hero-video" autoplay loop muted playsinline id="bg-video"
-      poster="https://images.unsplash.com/photo-1635863138275-d9b33299680b?w=1920">
+    <video class="hero-video" autoplay loop muted playsinline id="bg-video">
       <source src="videos/spiderman-bg.mp4" type="video/mp4">
     </video>
     <div class=" hero-overlay">
     </div>
 
+    <div class="3d-hero-container" style="position:relative; z-index:2; padding-top:12vh;">
+      <!-- 3D MODEL HERE -->
+      <model-viewer 
+        src="models/mask.glb"
+        alt="Spider-Man Mask"
+        auto-rotate
+        camera-controls
+        style="width: 350px; height: 350px; margin:auto; display:block;">
+      </model-viewer>
+      <h2 style="text-align:center; color:white; font-family:'Bebas Neue', sans-serif; letter-spacing:2px; font-size:2.5rem; text-shadow:0 0 10px rgba(220,30,48,0.8);">Spider-Man 3D Experience</h2>
+    </div>
     <!-- Web lines decorative SVG -->
     <svg class="web-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
       <g class="web-lines" stroke="rgba(220,30,48,0.25)" stroke-width="1" fill="none">
