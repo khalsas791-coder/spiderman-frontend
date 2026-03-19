@@ -16,6 +16,11 @@ onAuthStateChanged(auth, async (user) => {
   guard.classList.add("hidden");
   const name = user.displayName || user.email.split("@")[0];
   document.getElementById("userBadge").textContent = `👤 ${name}`;
+  
+  const adminBtn = document.getElementById("navAdminBtn");
+  if (adminBtn && ["admin@spiderman.com", "admin@spidey.com"].includes(user.email)) {
+    adminBtn.style.display = "inline-block";
+  }
   // Pre-fill email
   const emailEl = document.getElementById("email");
   if (emailEl && user.email) emailEl.value = user.email;

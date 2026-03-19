@@ -5,9 +5,57 @@
 // ─── NAVBAR SCROLL EFFECT ───────────────────
 import { auth } from "./firebase-config.js";
 import { API_URL } from "./config.js";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 console.log("JS CONNECTED 🔥");
+
+const ADMIN_EMAILS = ["admin@spiderman.com", "admin@spidey.com"];
+
+onAuthStateChanged(auth, (user) => {
+  const loginLink = document.getElementById("navAuthLink");
+  const shopLink = document.getElementById("navShopLink");
+  const adminItem = document.getElementById("navAdminItem");
+  
+  const heroAuthBtn = document.getElementById("heroAuthBtn");
+  const heroShopBtn = document.getElementById("startBtn");
+
+  if (user) {
+    if (loginLink) {
+      loginLink.textContent = "Logout";
+      loginLink.href = "#";
+      loginLink.onclick = () => signOut(auth).then(() => window.location.reload());
+    }
+    if (shopLink) shopLink.href = "product.html";
+    
+    if (heroAuthBtn) {
+      heroAuthBtn.innerHTML = "🚪 Logout";
+      heroAuthBtn.href = "#";
+      heroAuthBtn.onclick = () => signOut(auth).then(() => window.location.reload());
+    }
+    if (heroShopBtn) heroShopBtn.href = "product.html";
+
+    // Show Admin Panel if applicable
+    if (adminItem && ADMIN_EMAILS.includes(user.email)) {
+      adminItem.style.display = "inline-block";
+    }
+  } else {
+    // Not logged in
+    if (loginLink) {
+      loginLink.textContent = "Login";
+      loginLink.href = "auth.html";
+      loginLink.onclick = null;
+    }
+    if (shopLink) shopLink.href = "auth.html";
+    if (heroAuthBtn) {
+      heroAuthBtn.innerHTML = "🔐 Login";
+      heroAuthBtn.href = "auth.html";
+      heroAuthBtn.onclick = null;
+    }
+    if (heroShopBtn) heroShopBtn.href = "auth.html";
+    if (adminItem) adminItem.style.display = "none";
+  }
+});
+
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   if (window.scrollY > 60) {

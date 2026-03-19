@@ -25,8 +25,9 @@
       <li><a href="#hero">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a id="navShopLink" href="auth.html">Shop</a></li>
-      <li><a id="navCartLink" href="auth.html">Cart</a></li>
+      <li><a id="navCartLink" href="cart.html">Cart</a></li>
       <li><a id="navAuthLink" href="auth.html">Login</a></li>
+      <li id="navAdminItem" style="display:none;"><a style="color:#ff3347; font-weight:bold" href="admin.html">Admin Panel</a></li>
     </ul>
     <div class="nav-toggle" id="navToggle">
       <span></span><span></span><span></span>
@@ -63,16 +64,14 @@
     <div class="hero-content">
       <p class="hero-eyebrow">YOUR FRIENDLY NEIGHBORHOOD</p>
       <h1 class="hero-title">Swing Into<br /><span class="hero-accent">Action</span></h1>
-      <p class="hero-subtitle">With great power comes great responsibility.<br />Are you ready to become the hero the
-        city needs?</p>
+      <p class="hero-subtitle">With great power comes great responsibility.<br />Are you ready to become the hero the city needs?</p>
       <div class="hero-buttons">
-        <button class="btn btn-primary" id="startBtn"
-          onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+        <a class="btn btn-primary" id="startBtn" href="auth.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
           <span class="btn-glow"></span>
-          <span class="btn-text">🕸️ Start Your Journey</span>
-        </button>
-        <a class="btn btn-outline" id="heroShopBtn" href="auth.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
-          🛒 Enter the Shop
+          <span class="btn-text">🛒 Shop Now</span>
+        </a>
+        <a class="btn btn-outline" id="heroAuthBtn" href="auth.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+          🔐 Login
         </a>
       </div>
     </div>
