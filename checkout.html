@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spider-Man | Checkout 💳</title>
+  <meta name="description" content="Complete your Spider-Man order."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="checkout.css"/>
+</head>
+<body>
+
+  <!-- AUTH GUARD -->
+  <div class="auth-guard" id="authGuard">
+    <div class="guard-spinner">🕷️</div>
+    <p>Checking credentials…</p>
+  </div>
+
+  <!-- ORDER SUCCESS MODAL -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+      <div class="success-spider">🕷️</div>
+      <div class="success-web-anim" id="successWeb"></div>
+      <h2>Order Placed!</h2>
+      <p>Your Spider-Man gear is on its way, hero! 🚀</p>
+      <p class="order-id-display">Order ID: <strong id="successOrderId"></strong></p>
+      <div class="success-details" id="successDetails"></div>
+      <button class="btn-home" onclick="goHome()">🕸️ Continue Shopping</button>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="s-icon">🕷️</span>
+      <span>SPIDER-MAN</span>
+    </a>
+    <div class="nav-steps">
+      <span class="step done">🛒 Cart</span>
+      <span class="step-arrow">→</span>
+      <span class="step active">📝 Details</span>
+      <span class="step-arrow">→</span>
+      <span class="step">💳 Payment</span>
+    </div>
+    <div class="nav-right">
+      <span class="user-badge" id="userBadge">Hero</span>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="checkout-main">
+
+    <!-- PAGE HEADER -->
+    <div class="checkout-header">
+      <div class="header-glow"></div>
+      <p class="eyebrow">🕸️ Almost There</p>
+      <h1>Check<span class="accent">out</span></h1>
+    </div>
+
+    <!-- CHECKOUT GRID -->
+    <div class="checkout-grid" id="checkoutGrid">
+
+      <!-- LEFT: FORM PANEL -->
+      <div class="form-panel-wrap">
+
+        <!-- STEP 1: SHIPPING -->
+        <div class="form-card" id="stepShipping">
+          <div class="form-card-header">
+            <span class="step-num">1</span>
+            <h2>Shipping Details</h2>
+          </div>
+          <div class="form-fields">
+            <div class="field-row">
+              <div class="field-group">
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" placeholder="Peter" required/>
+              </div>
+              <div class="field-group">
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" placeholder="Parker" required/>
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" placeholder="peter@spidey.com" required/>
+            </div>
+            <div class="field-group">
+              <label for="phone">Phone Number *</label>
+              <input type="tel" id="phone" placeholder="+1 555 000 0000" required/>
+            </div>
+            <div class="field-group">
+              <label for="address">Street Address *</label>
+              <input type="text" id="address" placeholder="20 Ingram Street, Queens" required/>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" placeholder="New York" required/>
+              </div>
+              <div class="field-group">
+                <label for="state">State</label>
+                <input type="text" id="state" placeholder="NY"/>
+              </div>
+              <div class="field-group">
+                <label for="pincode">Pincode *</label>
+                <input type="text" id="pincode" placeholder="11375" required/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: PAYMENT -->
+        <div class="form-card" id="stepPayment">
+          <div class="form-card-header">
+            <span class="step-num">2</span>
+            <h2>Payment Method</h2>
+          </div>
+
+          <!-- Payment Method Selector -->
+          <div class="payment-methods">
+
+            <!-- Credit / Debit Card -->
+            <label class="method-card active" id="methodCard" for="payCard">
+              <input type="radio" name="payMethod" id="payCard" value="card" checked/>
+              <div class="method-icon">💳</div>
+              <div class="method-info">
+                <span class="method-name">Credit / Debit Card</span>
+                <span class="method-sub">Visa, Mastercard, Amex</span>
+              </div>
+              <div class="method-check">✓</div>
+            </label>
+
+            <!-- UPI -->
+            <label class="method-card" id="methodUpi" for="payUpi">
+              <input type="radio" name="payMethod" id="payUpi" value="upi"/>
+              <div class="method-icon">📱</div>
+              <div class="method-info">
+                <span class="method-name">UPI Payment</span>
+                <span class="method-sub">Google Pay, PhonePe, Paytm</span>
+              </div>
+              <div class="method-check">✓</div>
+            </label>
+
+            <!-- COD -->
+            <label class="method-card" id="methodCod" for="payCod">
+              <input type="radio" name="payMethod" id="payCod" value="cod"/>
+              <div class="method-icon">💵</div>
+              <div class="method-info">
+                <span class="method-name">Cash on Delivery</span>
+                <span class="method-sub">Pay when you receive</span>
+              </div>
+              <div class="method-check">✓</div>
+            </label>
+
+          </div>
+
+          <!-- Card Details (shown for card) -->
+          <div class="card-details" id="cardDetails">
+            <div class="field-group">
+              <label for="cardNumber">Card Number</label>
+              <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" maxlength="19"/>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="cardExpiry">Expiry</label>
+                <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5"/>
+              </div>
+              <div class="field-group">
+                <label for="cardCvv">CVV</label>
+                <input type="text" id="cardCvv" placeholder="•••" maxlength="4"/>
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="cardName">Name on Card</label>
+              <input type="text" id="cardName" placeholder="PETER PARKER"/>
+            </div>
+          </div>
+
+          <!-- UPI Details (shown for UPI) -->
+          <div class="upi-details" id="upiDetails" style="display:none">
+            <p class="upi-title">Choose your UPI App</p>
+            <div class="upi-apps">
+              <button class="upi-app-btn" id="btnGpay"   onclick="selectUpi(this,'gpay')" type="button">
+                <span>G</span> Google Pay
+              </button>
+              <button class="upi-app-btn" id="btnPhonepe" onclick="selectUpi(this,'phonepe')" type="button">
+                <span>P</span> PhonePe
+              </button>
+              <button class="upi-app-btn" id="btnPaytm"  onclick="selectUpi(this,'paytm')" type="button">
+                <span>₿</span> Paytm
+              </button>
+            </div>
+            <div class="field-group" style="margin-top:1rem">
+              <label for="upiId">UPI ID (optional)</label>
+              <input type="text" id="upiId" placeholder="peter@upi"/>
+            </div>
+          </div>
+
+          <!-- COD Info -->
+          <div class="cod-info" id="codInfo" style="display:none">
+            <div class="cod-banner">
+              <span>💵</span>
+              <div>
+                <strong>Cash on Delivery selected</strong>
+                <p>Pay safely in cash when your order arrives at your doorstep.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PLACE ORDER BUTTON -->
+        <button class="btn-place-order" id="placeOrderBtn" onclick="placeOrder()">
+          <span class="btn-content">
+            <span class="btn-icon">🕷️</span>
+            <span class="btn-label">Place Order</span>
+          </span>
+          <span class="btn-spinner hidden" id="orderSpinner">⏳ Processing…</span>
+        </button>
+
+      </div>
+
+      <!-- RIGHT: ORDER REVIEW -->
+      <aside class="order-review">
+        <div class="review-card">
+          <h3>Order Review</h3>
+          <div class="review-items" id="reviewItems">
+            <p class="review-empty">No items in cart</p>
+          </div>
+          <div class="review-divider"></div>
+          <div class="review-totals">
+            <div class="rtotal-line"><span>Subtotal</span><span id="rSubtotal">$0.00</span></div>
+            <div class="rtotal-line"><span>Shipping</span><span class="green">FREE</span></div>
+            <div class="rtotal-line"><span>Tax (8%)</span><span id="rTax">$0.00</span></div>
+            <div class="review-divider"></div>
+            <div class="rtotal-line grand"><span>Grand Total</span><span id="rTotal">$0.00</span></div>
+          </div>
+        </div>
+
+        <!-- Promo code -->
+        <div class="promo-card">
+          <h4>🕸️ Promo Code</h4>
+          <div class="promo-row">
+            <input type="text" id="promoInput" placeholder="Enter code (SPIDEY10)"/>
+            <button onclick="applyPromo()" type="button">Apply</button>
+          </div>
+          <p class="promo-msg" id="promoMsg"></p>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="checkout.js"></script>
+</body>
+</html>

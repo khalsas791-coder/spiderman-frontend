@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spider-Man Shop | All Products</title>
+  <meta name="description" content="Browse and buy Spider-Man collectibles. Limited edition masks, suits, and accessories."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <!-- Google model-viewer for 3D GLB support -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="product.css"/>
+</head>
+<body>
+
+  <!-- AUTH GUARD -->
+  <div class="auth-guard" id="authGuard">
+    <div class="guard-spinner">🕷️</div>
+    <p>Checking credentials…</p>
+  </div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="s-icon">🕷️</span>
+      <span>SPIDER-MAN</span>
+    </a>
+    <div class="nav-right">
+      <span class="user-badge" id="userBadge">Hero</span>
+      <a href="cart.html" class="cart-btn" id="cartToggle" aria-label="View cart">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO BANNER ═══ -->
+  <section class="shop-hero">
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="hero-glow-r"></div>
+    <div class="hero-glow-b"></div>
+    <div class="shop-hero-content">
+      <p class="eyebrow">🕸️ Marvel Collectibles</p>
+      <h1>The <span class="accent">Shop</span></h1>
+      <p class="sub">Own a piece of legend. Movie-accurate. Collector's quality.</p>
+    </div>
+  </section>
+
+  <!-- ═══ PRODUCTS SECTION ═══ -->
+  <section class="product-section" id="product">
+
+    <!-- Loading -->
+    <div class="products-loading" id="productsLoading">
+      <div class="loading-ring"></div>
+      <p>Loading products…</p>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- Empty state -->
+    <div class="products-empty" id="productsEmpty" style="display:none">
+      <span>📦</span>
+      <h3>No products available yet</h3>
+      <p>Check back soon — the Spider-Man store is stocking up!</p>
+    </div>
+
+  </section>
+
+  <!-- ═══ PRODUCT DETAIL MODAL ═══ -->
+  <div class="pdetail-overlay" id="pdetailOverlay">
+    <div class="pdetail-modal" id="pdetailModal">
+      <button class="pdetail-close" onclick="closeDetail()">✕</button>
+
+      <div class="pdetail-grid">
+        <!-- Visual side -->
+        <div class="pdetail-visual" id="pdetailVisual">
+          <div class="pdetail-img-wrap" id="pdetailImgWrap">
+            <img id="pdetailImg" src="" alt="Product"/>
+          </div>
+          <!-- 3D viewer (shown if modelUrl exists) -->
+          <div class="pdetail-model-wrap" id="pdetailModelWrap" style="display:none">
+            <model-viewer
+              id="pdetailModel"
+              auto-rotate camera-controls
+              shadow-intensity="1"
+              style="width:100%;height:360px;border-radius:16px;"
+            ></model-viewer>
+          </div>
+        </div>
+
+        <!-- Info side -->
+        <div class="pdetail-info">
+          <p class="pdetail-cat" id="pdetailCat">Marvel Collectibles</p>
+          <h2 class="pdetail-name" id="pdetailName">Product Name</h2>
+          <div class="pdetail-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-cnt">4.9 · 2,847 reviews</span>
+          </div>
+          <div class="pdetail-price-block">
+            <span class="pdetail-price" id="pdetailPrice">$50.00</span>
+            <span class="pdetail-old-price" id="pdetailOldPrice" style="display:none">$89.99</span>
+          </div>
+          <p class="pdetail-desc" id="pdetailDesc"></p>
+
+          <div class="qty-row">
+            <label>Quantity</label>
+            <div class="qty-ctrl">
+              <button onclick="changeQty(-1)" aria-label="Decrease">−</button>
+              <span id="qtyVal">1</span>
+              <button onclick="changeQty(1)" aria-label="Increase">+</button>
+            </div>
+          </div>
+
+          <div class="cta-group">
+            <button class="btn-cta btn-primary-cta" id="addToCartBtn" onclick="addToCartFromModal()">
+              🛒 Add to Cart
+            </button>
+            <button class="btn-cta btn-outline-cta" onclick="buyNowFromModal()">
+              ⚡ Buy Now
+            </button>
+          </div>
+
+          <p class="secure-note">🔒 Secure checkout · 256-bit SSL encrypted</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="product.js"></script>
+</body>
+</html>

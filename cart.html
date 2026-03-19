@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spider-Man | Your Cart 🛒</title>
+  <meta name="description" content="View your Spider-Man merchandise cart."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="cart.css"/>
+</head>
+<body>
+
+  <!-- AUTH GUARD -->
+  <div class="auth-guard" id="authGuard">
+    <div class="guard-spinner">🕷️</div>
+    <p>Checking credentials…</p>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="s-icon">🕷️</span>
+      <span>SPIDER-MAN</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="product.html">Shop</a>
+      <a href="cart.html" class="active">Cart</a>
+    </div>
+    <div class="nav-right">
+      <span class="user-badge" id="userBadge">Hero</span>
+      <a href="cart.html" class="cart-icon-btn">
+        🛒 <span class="cart-badge" id="cartBadge">0</span>
+      </a>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="cart-main">
+
+    <!-- PAGE HEADER -->
+    <div class="cart-header-section">
+      <div class="header-glow"></div>
+      <p class="eyebrow">🕸️ Shopping Bag</p>
+      <h1>Your <span class="accent">Cart</span></h1>
+      <p class="sub">Review your items before checkout</p>
+    </div>
+
+    <!-- CART LAYOUT -->
+    <div class="cart-layout" id="cartLayout">
+
+      <!-- CART ITEMS PANEL -->
+      <section class="cart-items-panel">
+        <div class="panel-header">
+          <h2>Order Items</h2>
+          <button class="clear-all-btn" id="clearAllBtn" onclick="clearCart()">🗑️ Clear All</button>
+        </div>
+
+        <!-- Empty state -->
+        <div class="cart-empty" id="cartEmpty">
+          <div class="empty-icon">🕷️</div>
+          <h3>Your cart is empty, hero!</h3>
+          <p>Looks like you haven't added any Spider-Man gear yet.</p>
+          <a href="product.html" class="btn-shop-now">🛒 Start Shopping</a>
+        </div>
+
+        <!-- Items list -->
+        <div class="cart-items-list" id="cartItemsList"></div>
+      </section>
+
+      <!-- ORDER SUMMARY PANEL -->
+      <aside class="order-summary" id="orderSummary">
+        <h2>Order Summary</h2>
+
+        <div class="summary-lines">
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span id="summarySubtotal">$0.00</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span class="green" id="summaryShipping">FREE</span>
+          </div>
+          <div class="summary-line">
+            <span>Tax (8%)</span>
+            <span id="summaryTax">$0.00</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-line total-line">
+            <span>Total</span>
+            <span id="summaryTotal">$0.00</span>
+          </div>
+        </div>
+
+        <a href="checkout.html" class="btn-checkout" id="checkoutBtn">
+          ⚡ Proceed to Checkout
+        </a>
+
+        <div class="secure-note">
+          <span>🔒</span>
+          <span>Secure 256-bit SSL checkout</span>
+        </div>
+
+        <div class="payment-icons">
+          <span>💳</span><span>🏦</span><span>📱</span><span>💵</span>
+        </div>
+
+        <a href="product.html" class="continue-shopping">
+          ← Continue Shopping
+        </a>
+      </aside>
+    </div>
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="cart.js"></script>
+</body>
+</html>

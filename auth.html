@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spider-Man | Login & Signup</title>
+  <meta name="description" content="Login or create your Spider-Man account." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+
+  <!-- Ambient spider web background -->
+  <div class="auth-bg">
+    <svg class="bg-web" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g stroke="rgba(220,30,48,0.12)" stroke-width="1" fill="none">
+        <line x1="500" y1="0" x2="0" y2="800"/>
+        <line x1="500" y1="0" x2="1000" y2="800"/>
+        <line x1="500" y1="0" x2="150" y2="800"/>
+        <line x1="500" y1="0" x2="850" y2="800"/>
+        <line x1="500" y1="0" x2="350" y2="800"/>
+        <line x1="500" y1="0" x2="650" y2="800"/>
+        <ellipse cx="500" cy="0" rx="120" ry="120"/>
+        <ellipse cx="500" cy="0" rx="240" ry="240"/>
+        <ellipse cx="500" cy="0" rx="360" ry="360"/>
+        <ellipse cx="500" cy="0" rx="480" ry="480"/>
+        <ellipse cx="500" cy="0" rx="600" ry="600"/>
+        <ellipse cx="500" cy="0" rx="720" ry="720"/>
+        <ellipse cx="500" cy="0" rx="840" ry="840"/>
+      </g>
+    </svg>
+    <div class="bg-glow bg-glow-red"></div>
+    <div class="bg-glow bg-glow-blue"></div>
+  </div>
+
+  <!-- MAIN CARD -->
+  <main class="auth-main">
+    <a href="index.html" class="back-link">← Back to Home</a>
+
+    <div class="auth-card">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <div class="mask-mini" aria-hidden="true">
+          <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="45" rx="45" ry="35" fill="#dc1e30"/>
+            <ellipse cx="50" cy="42" rx="43" ry="32" fill="url(#maskGrad)"/>
+            <!-- web lines -->
+            <line x1="50" y1="10" x2="5"  y2="60" stroke="#7a0010" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="10" x2="95" y2="60" stroke="#7a0010" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="10" x2="20" y2="70" stroke="#7a0010" stroke-width="0.8" opacity="0.6"/>
+            <line x1="50" y1="10" x2="80" y2="70" stroke="#7a0010" stroke-width="0.8" opacity="0.6"/>
+            <ellipse cx="50" cy="10" rx="15" ry="15" stroke="#7a0010" stroke-width="0.8" fill="none" opacity="0.6"/>
+            <ellipse cx="50" cy="10" rx="30" ry="30" stroke="#7a0010" stroke-width="0.8" fill="none" opacity="0.6"/>
+            <ellipse cx="50" cy="10" rx="45" ry="45" stroke="#7a0010" stroke-width="0.8" fill="none" opacity="0.6"/>
+            <!-- eyes -->
+            <path d="M20,38 Q32,28 44,38 Q32,44 20,38Z" fill="white" opacity="0.95"/>
+            <path d="M56,38 Q68,28 80,38 Q68,44 56,38Z" fill="white" opacity="0.95"/>
+            <path d="M22,38 Q32,30 42,38 Q32,43 22,38Z" fill="rgba(200,220,255,0.7)"/>
+            <path d="M58,38 Q68,30 78,38 Q68,43 58,38Z" fill="rgba(200,220,255,0.7)"/>
+            <defs>
+              <radialGradient id="maskGrad" cx="50%" cy="30%">
+                <stop offset="0%" stop-color="#ff3347"/>
+                <stop offset="100%" stop-color="#8b0000"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 class="auth-brand">SPIDER-MAN</h1>
+        <p class="auth-tagline">Your Friendly Neighborhood</p>
+      </div>
+
+      <!-- TABS -->
+      <div class="tab-group" role="tablist">
+        <button class="tab active" id="tabLogin"  role="tab" aria-selected="true"  onclick="showTab('login')">Login</button>
+        <button class="tab"        id="tabSignup" role="tab" aria-selected="false" onclick="showTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- ERROR / SUCCESS BANNER -->
+      <div class="alert alert-error"   id="alertError"   role="alert" aria-live="polite"></div>
+      <div class="alert alert-success" id="alertSuccess" role="alert" aria-live="polite"></div>
+
+      <!-- LOGIN FORM -->
+      <form class="form-panel active" id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            <input type="email" id="loginEmail" placeholder="peter@spidey.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="toggle-pwd" onclick="togglePwd('loginPassword', this)" aria-label="Toggle password visibility">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-auth" id="loginBtn">
+          <span class="btn-text">🕸️ Swing In</span>
+          <span class="btn-spinner" hidden>⏳</span>
+        </button>
+        <p class="switch-link">No account? <a onclick="showTab('signup')">Sign Up →</a></p>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form class="form-panel" id="signupForm" novalidate>
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+            <input type="text" id="signupName" placeholder="Peter Parker" autocomplete="name" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            <input type="email" id="signupEmail" placeholder="peter@spidey.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+            <input type="password" id="signupPassword" placeholder="Min 6 characters" autocomplete="new-password" required minlength="6" />
+            <button type="button" class="toggle-pwd" onclick="togglePwd('signupPassword', this)" aria-label="Toggle password visibility">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-auth" id="signupBtn">
+          <span class="btn-text">🕷️ Become the Hero</span>
+          <span class="btn-spinner" hidden>⏳</span>
+        </button>
+        <p class="switch-link">Already a hero? <a onclick="showTab('login')">Login →</a></p>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>

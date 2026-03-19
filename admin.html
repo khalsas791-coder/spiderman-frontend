@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spider-Man | Admin Panel 🕷️</title>
+  <meta name="description" content="Spider-Man store admin panel."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+
+  <!-- AUTH GUARD -->
+  <div class="auth-guard" id="authGuard">
+    <div class="guard-spinner">🕷️</div>
+    <p>Verifying admin access…</p>
+  </div>
+
+  <!-- ACCESS DENIED (shown if not admin) -->
+  <div class="access-denied" id="accessDenied" style="display:none">
+    <div class="denied-content">
+      <div class="denied-icon">🚫</div>
+      <h2>Access Denied</h2>
+      <p>Only admins can view this page.</p>
+      <a href="index.html" class="btn-back">← Return Home</a>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+      <div class="modal-icon">🗑️</div>
+      <h3>Delete Product?</h3>
+      <p>This action is permanent and cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-delete-confirm" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="admin-navbar" id="adminNavbar">
+    <div class="nav-brand">
+      <span class="s-icon">🕷️</span>
+      <span class="brand-text">ADMIN</span>
+      <span class="brand-sub">Spider-Man Store</span>
+    </div>
+    <div class="nav-right">
+      <div class="admin-badge">
+        <span class="badge-dot"></span>
+        <span id="adminEmail">admin</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="sideProducts" onclick="showSection('products')">
+          <span>📦</span> Products
+        </button>
+        <button class="nav-item" id="sideOrders" onclick="showSection('orders')">
+          <span>🛒</span> Orders
+        </button>
+        <button class="nav-item" id="sideStats" onclick="showSection('stats')">
+          <span>📊</span> Dashboard
+        </button>
+      </nav>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="admin-content">
+
+      <!-- ═══ PRODUCTS SECTION ═══ -->
+      <section id="sectionProducts">
+
+        <div class="section-top">
+          <div>
+            <h1>Products <span class="count-badge" id="productCount">0</span></h1>
+            <p class="section-desc">Manage your Spider-Man collectibles catalog</p>
+          </div>
+          <button class="btn-add" onclick="openProductModal()">+ Add Product</button>
+        </div>
+
+        <!-- PRODUCT FORM (add / edit) -->
+        <div class="product-form-card" id="productFormCard" style="display:none">
+          <div class="form-card-header">
+            <h2 id="formTitle">Add New Product</h2>
+            <button class="btn-close-form" onclick="closeProductModal()">✕</button>
+          </div>
+          <form id="productForm" onsubmit="submitProduct(event)">
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="pName">Product Name *</label>
+                <input type="text" id="pName" placeholder="Spider-Man Premium Mask" required/>
+              </div>
+              <div class="field-group">
+                <label for="pPrice">Price (USD) *</label>
+                <input type="number" id="pPrice" placeholder="50.00" step="0.01" min="0" required/>
+              </div>
+              <div class="field-group full-width">
+                <label for="pDesc">Description *</label>
+                <textarea id="pDesc" rows="3" placeholder="Describe the product…" required></textarea>
+              </div>
+              <div class="field-group full-width">
+                <label for="pImage">Image URL *</label>
+                <input type="url" id="pImage" placeholder="https://example.com/mask.jpg" required/>
+              </div>
+              <div class="field-group">
+                <label for="pCategory">Category</label>
+                <input type="text" id="pCategory" placeholder="Masks, Suits, Accessories…"/>
+              </div>
+              <div class="field-group">
+                <label for="pStock">Stock Qty</label>
+                <input type="number" id="pStock" placeholder="100" min="0"/>
+              </div>
+              <div class="field-group full-width">
+                <label for="pModelUrl">3D Model URL (.glb) — optional</label>
+                <input type="url" id="pModelUrl" placeholder="https://example.com/model.glb"/>
+              </div>
+            </div>
+            <input type="hidden" id="editingId"/>
+            <div class="form-actions">
+              <button type="button" class="btn-cancel-form" onclick="closeProductModal()">Cancel</button>
+              <button type="submit" class="btn-submit" id="formSubmitBtn">
+                <span id="formBtnText">💾 Save Product</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- LOADING -->
+        <div class="loading-spinner" id="productsLoading">
+          <div class="spinner-ring"></div>
+          <p>Loading products…</p>
+        </div>
+
+        <!-- GRID -->
+        <div class="products-grid" id="productsGrid"></div>
+
+        <!-- EMPTY -->
+        <div class="empty-state" id="productsEmpty" style="display:none">
+          <span>📦</span>
+          <h3>No products yet</h3>
+          <p>Add your first product to get started!</p>
+        </div>
+
+      </section>
+
+      <!-- ═══ ORDERS SECTION ═══ -->
+      <section id="sectionOrders" style="display:none">
+        <div class="section-top">
+          <div>
+            <h1>Orders <span class="count-badge" id="ordersCount">0</span></h1>
+            <p class="section-desc">View and manage customer orders</p>
+          </div>
+        </div>
+        <div class="loading-spinner" id="ordersLoading">
+          <div class="spinner-ring"></div><p>Loading orders…</p>
+        </div>
+        <div class="orders-list" id="ordersList"></div>
+        <div class="empty-state" id="ordersEmpty" style="display:none">
+          <span>🛒</span><h3>No orders yet</h3><p>Orders will appear here after customers place them.</p>
+        </div>
+      </section>
+
+      <!-- ═══ DASHBOARD SECTION ═══ -->
+      <section id="sectionStats" style="display:none">
+        <div class="section-top">
+          <div><h1>Dashboard</h1><p class="section-desc">Store overview at a glance</p></div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div>
+              <p class="stat-value" id="statProducts">0</p>
+              <p class="stat-label">Total Products</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div>
+              <p class="stat-value" id="statOrders">0</p>
+              <p class="stat-label">Total Orders</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div>
+              <p class="stat-value" id="statRevenue">$0</p>
+              <p class="stat-label">Total Revenue</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div>
+              <p class="stat-value" id="statCustomers">0</p>
+              <p class="stat-label">Customers</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
