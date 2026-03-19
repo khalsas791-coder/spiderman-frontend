@@ -125,6 +125,35 @@ function renderProducts(products) {
       </div>
     </div>
   `).join("");
+
+  // ── 3D TILT EFFECT ──────────────────────────────────────────────
+  const cards = document.querySelectorAll(".product-card");
+  cards.forEach(card => {
+    card.style.transition = "transform 0.1s ease-out, box-shadow 0.1s ease-out";
+    card.style.transformStyle = "preserve-3d";
+    
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const multiplier = 20;
+      const xRotation = multiplier * ((x - rect.width / 2) / rect.width);
+      const yRotation = -1 * multiplier * ((y - rect.height / 2) / rect.height);
+      
+      card.style.transform = `perspective(1000px) rotateX(${yRotation}deg) rotateY(${xRotation}deg) scale3d(1.05, 1.05, 1.05)`;
+      card.style.boxShadow = "0 20px 40px rgba(0,0,0,0.6), 0 0 15px rgba(255, 51, 71, 0.4)";
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transition = "transform 0.5s ease-out, box-shadow 0.5s ease-out";
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      card.style.boxShadow = "";
+      setTimeout(() => {
+        card.style.transition = "transform 0.1s ease-out, box-shadow 0.1s ease-out";
+      }, 500);
+    });
+  });
 }
 
 // ── QUICK ADD (from card) ────────────────────────────────────────

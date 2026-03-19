@@ -28,8 +28,7 @@ function resolveApiUrl() {
   //    ⚠️ REPLACE this with your actual Render URL before deploying!
   const hostname = window.location.hostname;
   if (hostname.endsWith(".vercel.app") || hostname === "your-custom-domain.com") {
-    // ⚠️ REPLACE with your actual Render URL when you deploy backend!
-    return "http://localhost:5000";
+    return "https://spiderman-backend-1.onrender.com";
   }
 
   // 3. Local development fallback
