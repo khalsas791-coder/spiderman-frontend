@@ -114,8 +114,15 @@
                 <input type="url" id="pImage" placeholder="https://example.com/mask.jpg" required/>
               </div>
               <div class="field-group">
-                <label for="pCategory">Category</label>
-                <input type="text" id="pCategory" placeholder="Masks, Suits, Accessories…"/>
+                <label for="pCategory">Category *</label>
+                <select id="pCategory" required>
+                  <option value="" disabled selected>Select category...</option>
+                  <option value="Toys">Toys / Action Figures</option>
+                  <option value="Masks">Masks & Headwear</option>
+                  <option value="Hoodies">Hoodies & Apparel</option>
+                  <option value="Accessories">Accessories</option>
+                  <option value="Premium Collectibles">Premium Collectibles</option>
+                </select>
               </div>
               <div class="field-group">
                 <label for="pStock">Stock Qty</label>

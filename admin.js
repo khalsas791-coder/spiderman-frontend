@@ -186,7 +186,15 @@ window.editProduct = function (id) {
   document.getElementById("pPrice").value    = p.price || "";
   document.getElementById("pDesc").value     = p.description || "";
   document.getElementById("pImage").value    = p.image || "";
-  document.getElementById("pCategory").value = p.category || "";
+  
+  // Set category dropdown gracefully
+  const catSelect = document.getElementById("pCategory");
+  if (p.category && Array.from(catSelect.options).some(opt => opt.value === p.category)) {
+    catSelect.value = p.category;
+  } else {
+    catSelect.value = ""; // Force them to pick a new valid category
+  }
+
   document.getElementById("pStock").value    = p.stock || "";
   document.getElementById("pModelUrl").value = p.modelUrl || "";
 
