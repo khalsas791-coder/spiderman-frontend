@@ -34,31 +34,17 @@
 
   <!-- ===== HERO SECTION ===== -->
   <section class="hero" id="hero">
-    <video class="hero-video" id="heroVideo" autoplay loop muted playsinline preload="auto" onerror="console.error('Background video failed to load.');">
-      <source src="./videos/spiderman-bg.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <div class="hero-overlay">
+    <div class="parallax-wrapper" id="parallaxWrapper">
+      <!-- Layer 1: Sky / Far Background -->
+      <div class="parallax-layer layer-bg" id="layerBg"></div>
+      <!-- Layer 2: Midground City Buildings -->
+      <div class="parallax-layer layer-mid" id="layerMid"></div>
+      <!-- Layer 3: Foreground Spider-Man supplied by user -->
+      <div class="parallax-layer layer-spidey" id="layerSpidey"></div>
     </div>
+    <div class="hero-overlay cinematic-overlay"></div>
 
 
-    <!-- Web lines decorative SVG -->
-    <svg class="web-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-      <g class="web-lines" stroke="rgba(220,30,48,0.25)" stroke-width="1" fill="none">
-        <line x1="400" y1="0" x2="0" y2="600" />
-        <line x1="400" y1="0" x2="800" y2="600" />
-        <line x1="400" y1="0" x2="200" y2="600" />
-        <line x1="400" y1="0" x2="600" y2="600" />
-        <line x1="400" y1="0" x2="100" y2="600" />
-        <line x1="400" y1="0" x2="700" y2="600" />
-        <ellipse cx="400" cy="0" rx="100" ry="100" />
-        <ellipse cx="400" cy="0" rx="200" ry="200" />
-        <ellipse cx="400" cy="0" rx="300" ry="300" />
-        <ellipse cx="400" cy="0" rx="400" ry="400" />
-        <ellipse cx="400" cy="0" rx="500" ry="500" />
-        <ellipse cx="400" cy="0" rx="600" ry="600" />
-      </g>
-    </svg>
 
     <div class="hero-content">
       <p class="hero-eyebrow">YOUR FRIENDLY NEIGHBORHOOD</p>
@@ -323,7 +309,6 @@
 
       if (user) {
         if (shopSection) shopSection.style.display = "block";
-        if (typeof window.initSpideyEffects === "function") window.initSpideyEffects();
         if (shopBtn)  { shopBtn.href = "#shop"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 View Products</span>"; }
         if (navShop)  { navShop.href = "product.html"; navShop.textContent = "Shop"; }
         if (navCart)  { navCart.href = "cart.html"; navCart.textContent = "Cart"; }
@@ -412,7 +397,10 @@
       }
     });
   </script>
-  <script src="spidey-effects.js"></script>
-</body>
 
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="gsap-animations.js"></script>
+</body>
 </html>

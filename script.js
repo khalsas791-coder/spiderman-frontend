@@ -247,17 +247,13 @@ hero.addEventListener('mousemove', (e) => {
   const dy = (clientY - cy) / cy;
 
   const content = document.querySelector('.hero-content');
-  const webSvg  = document.querySelector('.web-svg');
 
   if (content) content.style.transform = `translate(${dx * 10}px, ${dy * 10}px)`;
-  if (webSvg)  webSvg.style.transform  = `rotate(${dx * 8}deg) scale(${1 + Math.abs(dy) * 0.05})`;
 });
 
 hero.addEventListener('mouseleave', () => {
   const content = document.querySelector('.hero-content');
-  const webSvg  = document.querySelector('.web-svg');
   if (content) content.style.transform = 'translate(0, 0)';
-  if (webSvg)  webSvg.style.transform  = 'rotate(0deg) scale(1)';
 });
 
 // ─── SMOOTH ACTIVE NAV HIGHLIGHT ────────────
