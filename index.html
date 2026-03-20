@@ -138,7 +138,7 @@
   </section>
 
   <!-- ===== SHOP SECTION ===== -->
-  <section class="shop" id="shop" style="padding: 100px 5%; background: var(--dark-2); position: relative;">
+  <section class="shop" id="shop" style="padding: 100px 5%; background: var(--dark-2); position: relative; display: none;">
     <div class="section-header" style="text-align: center; margin-bottom: 50px;">
       <span class="section-tag" style="color: #ff3347; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">The Shop</span>
       <h2 class="section-title" style="color: white; font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; letter-spacing: 2px;">Featured <span style="color:#dc1e30;">Products</span></h2>
@@ -319,9 +319,11 @@
       const navAuth    = document.getElementById("navAuthLink");
       const navShop    = document.getElementById("navShopLink");
       const navCart    = document.getElementById("navCartLink");
+      const shopSection = document.getElementById("shop");
 
       if (user) {
-        if (shopBtn)  { shopBtn.href = "product.html"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 Go to Shop</span>"; }
+        if (shopSection) shopSection.style.display = "block";
+        if (shopBtn)  { shopBtn.href = "#shop"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 View Products</span>"; }
         if (navShop)  { navShop.href = "product.html"; navShop.textContent = "Shop"; }
         if (navCart)  { navCart.href = "cart.html"; navCart.textContent = "Cart"; }
         if (navAuth)  {
@@ -330,7 +332,8 @@
           navAuth.onclick = async (e) => { e.preventDefault(); await signOut(auth); location.reload(); };
         }
       } else {
-        if (shopBtn)  { shopBtn.href = "product.html"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 Shop Now</span>"; }
+        if (shopSection) shopSection.style.display = "none";
+        if (shopBtn)  { shopBtn.href = "auth.html"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 Shop Now</span>"; }
         if (navShop)  { navShop.href = "auth.html"; }
         if (navCart)  { navCart.href = "auth.html"; }
         if (navAuth)  { navAuth.href = "auth.html"; navAuth.textContent = "Login"; }
@@ -363,6 +366,7 @@
         <div class="hp-product-card">
           <div class="hp-image" style="background: transparent; height: 250px; position:relative;">
             <model-viewer 
+              id="spiderman3DModel"
               src="./models/mask.glb"
               alt="Spider-Man Mask"
               auto-rotate
@@ -397,6 +401,15 @@
       `).join("");
     }
     loadHomeProducts();
+
+    // Scroll effect for 3D model
+    window.addEventListener("scroll", () => {
+      const model = document.getElementById("spiderman3DModel");
+      if(model) {
+         let scrollY = window.scrollY;
+         model.setAttribute('camera-orbit', `calc(0deg + ${scrollY * 0.1}deg) 75deg 105%`);
+      }
+    });
   </script>
 </body>
 
