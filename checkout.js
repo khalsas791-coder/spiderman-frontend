@@ -280,7 +280,7 @@ async function processUpiPayment(amount, name) {
     const data = await res.json();
     
     if (!data.success) {
-      showToast("❌ Failed to initiate UPI payment.", 4000);
+      showToast(`❌ Failed to initiate UPI: ${data.error || "Unknown error"}`, 5000);
       return false;
     }
 
