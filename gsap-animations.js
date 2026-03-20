@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Register GSAP Plugin
   gsap.registerPlugin(ScrollTrigger);
 
-  const heroSection = document.getElementById("hero");
+  // Try grabbing #cinematicHero (product.html) or fallback to #hero
+  const heroSection = document.getElementById("cinematicHero") || document.getElementById("hero");
+  if (!heroSection) return; // Exit if no hero section is found
+
   const layerBg = document.getElementById("layerBg");
   const layerMid = document.getElementById("layerMid");
   const layerSpidey = document.getElementById("layerSpidey");
@@ -93,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Also animate product cards (dynamically injected ones)
   const animProducts = () => {
-    const cards = gsap.utils.toArray('.hp-product-card:not(.gsap-animated)');
+    const cards = gsap.utils.toArray('.hp-product-card:not(.gsap-animated), .product-card:not(.gsap-animated)');
     if (cards.length > 0) {
       cards.forEach(card => card.classList.add('gsap-animated'));
       gsap.fromTo(cards, 
