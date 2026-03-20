@@ -151,77 +151,7 @@
     .hp-btn:hover { box-shadow: 0 5px 15px rgba(220,30,48,0.4); transform: scale(1.02); }
   </style>
 
-  <!-- ===== AUTH SECTION ===== -->
-  <section class="auth-section" id="auth">
-    <div class="auth-bg-glow"></div>
-    <div class="auth-container">
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</button>
-        <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</button>
-      </div>
-
-      <!-- Login Form -->
-      <form class="auth-form active" id="loginForm" onsubmit="handleAuth(event,'login')">
-        <div class="form-header">
-          <span class="form-spider">🕷️</span>
-          <h2>Welcome Back, Hero</h2>
-          <p>Login to your Spider-Man account</p>
-        </div>
-        <div class="form-group">
-          <label for="loginEmail">Email Address</label>
-          <div class="input-wrap">
-            <span class="input-icon">✉️</span>
-            <input type="email" id="loginEmail" placeholder="peter@spidey.com" required />
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="loginPass">Password</label>
-          <div class="input-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="loginPass" placeholder="••••••••" required />
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-full">
-          <span class="btn-text">🕸️ Swing In</span>
-        </button>
-        <p class="auth-switch">Don't have an account? <a onclick="switchTab('signup')">Sign Up</a></p>
-      </form>
-
-      <!-- Signup Form -->
-      <form class="auth-form" id="signupForm" onsubmit="handleAuth(event,'signup')">
-        <div class="form-header">
-          <span class="form-spider">🕸️</span>
-          <h2>Join the Spider-Verse</h2>
-          <p>Create your hero account today</p>
-        </div>
-        <div class="form-group">
-          <label for="signupName">Full Name</label>
-          <div class="input-wrap">
-            <span class="input-icon">👤</span>
-            <input type="text" id="signupName" placeholder="Peter Parker" required />
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="signupEmail">Email Address</label>
-          <div class="input-wrap">
-            <span class="input-icon">✉️</span>
-            <input type="email" id="signupEmail" placeholder="peter@spidey.com" required />
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="signupPass">Password</label>
-          <div class="input-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="signupPass" placeholder="••••••••" required />
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-full">
-          <span class="btn-text">🕷️ Become the Hero</span>
-        </button>
-        <p class="auth-switch">Already a hero? <a onclick="switchTab('login')">Login</a></p>
-      </form>
-    </div>
-  </section>
+  <!-- Auth moved to auth.html -->
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
