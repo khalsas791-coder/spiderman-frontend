@@ -14,14 +14,34 @@
 <body>
 
   <!-- ===== NAVBAR ===== -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-logo">
-      <span class="spider-icon">🕷️</span>
-      <span>SPIDER-MAN</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="about.html">About</a></li>
+ <nav class="navbar">
+  <a href="index.html" class="logo">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 50" width="250" height="50">
+      <defs>
+        <linearGradient id="spideyRed" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FF2A2A"/>
+          <stop offset="100%" stop-color="#B30000"/>
+        </linearGradient>
+      </defs>
+      
+      <g transform="translate(0, 5)">
+        <path d="M5 30 C 15 10, 30 5, 45 5 C 35 25, 25 35, 5 30 Z" fill="#111111" />
+        <path d="M8 28 C 17 12, 29 8, 42 8 C 33 24, 25 32, 8 28 Z" fill="#FFFFFF" />
+        
+        <path d="M85 30 C 75 10, 60 5, 45 5 C 55 25, 65 35, 85 30 Z" fill="#111111" />
+        <path d="M82 28 C 73 12, 61 8, 48 8 C 57 24, 65 32, 82 28 Z" fill="#FFFFFF" />
+      </g>
+
+      <text x="100" y="34" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="900" fill="#111111" letter-spacing="2">SPIDER<tspan fill="url(#spideyRed)">-MAN</tspan></text>
+    </svg>
+    </a>
+  
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    </ul>
+</nav>
       <li><a id="navShopLink" href="product.html">Shop</a></li>
       <li><a id="navCartLink" href="cart.html">Cart</a></li>
       <li><a id="navAuthLink" href="auth.html">Login</a></li>
