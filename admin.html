@@ -114,14 +114,19 @@
                 <input type="url" id="pImage" placeholder="https://example.com/mask.jpg" required/>
               </div>
               <div class="field-group">
+                <label for="pSection">Shop Section *</label>
+                <select id="pSection" required>
+                  <option value="Special" selected>Special (Normal)</option>
+                  <option value="Limited">Limited Edition (Premium)</option>
+                </select>
+              </div>
+              <div class="field-group">
                 <label for="pCategory">Category *</label>
                 <select id="pCategory" required>
-                  <option value="" disabled selected>Select category...</option>
-                  <option value="Toys">Toys / Action Figures</option>
-                  <option value="Masks">Masks & Headwear</option>
-                  <option value="Hoodies">Hoodies & Apparel</option>
-                  <option value="Accessories">Accessories</option>
-                  <option value="Premium Collectibles">Premium Collectibles</option>
+                  <option value="" disabled>Select category...</option>
+                  <option value="Masks" selected>Masks</option>
+                  <option value="Toys">Toys</option>
+                  <option value="Hoodies">Hoodies</option>
                 </select>
               </div>
               <div class="field-group">

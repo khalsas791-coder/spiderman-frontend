@@ -104,20 +104,39 @@ async function loadProducts() {
 }
 
 function renderProducts(products) {
-  const grid = document.getElementById("productsGrid");
-  grid.innerHTML = products.map((p, i) => `
-    <div class="product-card" style="animation-delay:${i * 0.08}s" onclick="openDetail('${p.id}')">
+  const limitedGrid = document.getElementById("limitedGrid");
+  const specialGrid = document.getElementById("specialGrid");
+  
+  if (limitedGrid) limitedGrid.innerHTML = "";
+  if (specialGrid) specialGrid.innerHTML = "";
+
+  products.forEach((p, i) => {
+    const isLimited = p.section === "Limited";
+    const grid = isLimited ? limitedGrid : specialGrid;
+    if (!grid) return;
+
+    const catEmoji = { "Hoodies": "👕", "Toys": "🧸", "Masks": "🎭" }[p.category] || "🕸️";
+
+    const card = document.createElement("div");
+    card.className = `product-card ${isLimited ? 'premium-card' : ''}`;
+    card.style.animationDelay = `${i * 0.08}s`;
+    card.onclick = () => openDetail(p.id);
+
+    card.innerHTML = `
       <div class="pc-image-wrap">
         <div class="pc-image">
           ${p.image
             ? `<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.innerHTML='🕷️'"/>`
             : `<span class="pc-emoji">🕷️</span>`}
         </div>
-        ${p.limited ? `<span class="pc-badge-limited">🔥 Limited</span>` : ""}
-        ${p.modelUrl ? `<span class="pc-badge-3d">🎭 3D</span>` : ""}
+        ${isLimited ? `<span class="pc-badge-limited">💎 Limited Edition</span>` : ""}
+        ${p.modelUrl ? `<span class="pc-badge-3d">🥽 3D View</span>` : ""}
       </div>
       <div class="pc-body">
-        <p class="pc-cat">${p.category || "Marvel Collectibles"}</p>
+        <div class="pc-cat-row">
+          <span class="pc-cat-emoji">${catEmoji}</span>
+          <p class="pc-cat">${p.category || "Marvel Collectibles"}</p>
+        </div>
         <h3 class="pc-name">${p.name}</h3>
         <p class="pc-desc">${(p.description || "").slice(0, 80)}…</p>
         <div class="pc-footer">
@@ -128,8 +147,9 @@ function renderProducts(products) {
           🛒 Add to Cart
         </button>
       </div>
-    </div>
-  `).join("");
+    `;
+    grid.appendChild(card);
+  });
 
   // ── 3D TILT EFFECT ──────────────────────────────────────────────
   const cards = document.querySelectorAll(".product-card");

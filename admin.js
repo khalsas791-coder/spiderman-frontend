@@ -102,7 +102,7 @@ function productCardHTML(p, delay = 0) {
           : "🕷️"}
       </div>
       <div class="pc-body">
-        <p class="pc-category">${p.category || "Marvel Collectibles"}</p>
+        <p class="pc-category">${p.category || "Marvel Collectibles"} <span class="pc-section-badge ${p.section === 'Limited' ? 'badge-limited' : 'badge-special'}">${p.section || 'Special'}</span></p>
         <h3 class="pc-name">${p.name}</h3>
         <p class="pc-desc">${p.description || ""}</p>
         <div class="pc-footer">
@@ -147,7 +147,8 @@ window.submitProduct = async function (e) {
     price:       parseFloat(document.getElementById("pPrice").value),
     description: document.getElementById("pDesc").value.trim(),
     image:       document.getElementById("pImage").value.trim(),
-    category:    document.getElementById("pCategory").value.trim() || "Marvel Collectibles",
+    category:    document.getElementById("pCategory").value.trim() || "Masks",
+    section:     document.getElementById("pSection").value || "Special",
     stock:       parseInt(document.getElementById("pStock").value) || 0,
     modelUrl:    document.getElementById("pModelUrl").value.trim() || null,
     updatedAt:   serverTimestamp()
@@ -197,6 +198,12 @@ window.editProduct = function (id) {
 
   document.getElementById("pStock").value    = p.stock || "";
   document.getElementById("pModelUrl").value = p.modelUrl || "";
+  
+  if (p.section) {
+    document.getElementById("pSection").value = p.section;
+  } else {
+    document.getElementById("pSection").value = "Special";
+  }
 
   document.getElementById("productFormCard").scrollIntoView({ behavior: "smooth", block: "start" });
 };

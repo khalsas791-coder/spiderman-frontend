@@ -114,9 +114,12 @@ textarea{resize:vertical;font-family:var(--font-body)}
 .pc-img{width:100%;height:180px;object-fit:cover;background:rgba(220,30,48,.06);display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden}
 .pc-img img{width:100%;height:100%;object-fit:cover}
 .pc-body{padding:1.25rem}
-.pc-category{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(220,30,48,.7);margin-bottom:.4rem}
+.pc-category{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(220,30,48,.7);margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between}
+.pc-section-badge{font-size:.6rem;padding:.15rem .5rem;border-radius:4px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.badge-limited{background:rgba(0,170,255,.15);color:var(--blue-neon);border:1px solid rgba(0,170,255,.3)}
+.badge-special{background:rgba(255,255,255,.05);color:rgba(240,240,240,.4);border:1px solid rgba(255,255,255,.1)}
 .pc-name{font-size:1rem;font-weight:700;margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pc-desc{font-size:.78rem;color:rgba(240,240,240,.45);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:.75rem;line-height:1.5}
+.pc-desc{font-size:.78rem;color:rgba(240,240,240,.45);display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:.75rem;line-height:1.5}
 .pc-footer{display:flex;align-items:center;justify-content:space-between}
 .pc-price{font-size:1.1rem;font-weight:800;color:var(--red-light)}
 .pc-stock{font-size:.72rem;color:rgba(0,230,118,.7);background:rgba(0,230,118,.08);padding:.2rem .7rem;border-radius:50px;border:1px solid rgba(0,230,118,.2)}
