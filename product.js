@@ -116,8 +116,11 @@ function renderProducts(products) {
   const categories = ["Hoodies", "Toys", "Masks"];
 
   sections.forEach(sec => {
-    // 1. Filter products for this section
-    const secProducts = products.filter(p => p.section === sec.id);
+    // 1. Filter products for this section (Default to Special if missing)
+    const secProducts = products.filter(p => {
+      const pSection = p.section || "Special";
+      return pSection === sec.id;
+    });
     if (!secProducts.length) return;
 
     // 2. Create Section Header
@@ -132,7 +135,10 @@ function renderProducts(products) {
 
     // 3. Create Categories within Section
     categories.forEach(cat => {
-      const catProducts = secProducts.filter(p => p.category === cat);
+      const catProducts = secProducts.filter(p => {
+        const pCat = p.category || "Masks";
+        return pCat === cat;
+      });
       if (!catProducts.length) return;
 
       const catTitle = document.createElement("h3");
