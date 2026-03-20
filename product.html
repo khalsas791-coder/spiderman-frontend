@@ -262,9 +262,13 @@
       const mutObserver = new MutationObserver(() => checkNewCards());
       const pGrid = document.getElementById("productsGrid");
       if(pGrid) mutObserver.observe(pGrid, { childList: true });
+      
+      // Initialize Spidey Effects since this is a protected post-login page
+      if(typeof window.initSpideyEffects === "function") window.initSpideyEffects();
     });
   </script>
 
+  <script src="spidey-effects.js"></script>
   <script type="module" src="product.js"></script>
 </body>
 </html>

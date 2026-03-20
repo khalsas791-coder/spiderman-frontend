@@ -323,6 +323,7 @@
 
       if (user) {
         if (shopSection) shopSection.style.display = "block";
+        if (typeof window.initSpideyEffects === "function") window.initSpideyEffects();
         if (shopBtn)  { shopBtn.href = "#shop"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 View Products</span>"; }
         if (navShop)  { navShop.href = "product.html"; navShop.textContent = "Shop"; }
         if (navCart)  { navCart.href = "cart.html"; navCart.textContent = "Cart"; }
@@ -411,6 +412,7 @@
       }
     });
   </script>
+  <script src="spidey-effects.js"></script>
 </body>
 
 </html>
