@@ -96,9 +96,23 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 /* ── PRODUCT SECTION ─────────────────────── */
 .product-section{padding:4rem 2.5rem 6rem;max-width:1300px;margin:0 auto;}
 
-.shop-section-header { margin-bottom: 2.5rem; text-align: left; }
+.shop-section-header { margin-bottom: 2rem; text-align: left; }
 .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; line-height: 1; margin-bottom: 0.25rem; }
 .section-subtitle { font-size: 0.88rem; color: rgba(240,240,240,0.4); letter-spacing: 0.5px; }
+
+.category-group-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 1.5px;
+  color: rgba(240,240,240,0.7);
+  margin: 2.5rem 0 1.25rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--red);
+  text-transform: uppercase;
+}
+.premium-grid + .category-group-title {
+  border-left-color: var(--blue-n);
+}
 
 /* LOADING */
 .products-loading{display:flex;flex-direction:column;align-items:center;padding:5rem 1rem;gap:1rem;color:rgba(240,240,240,.4);}
@@ -111,12 +125,17 @@ body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--white);m
 .product-card:hover{border-color:rgba(220,30,48,.6);transform:translateY(-8px);box-shadow:0 12px 40px rgba(220,30,48,.3), inset 0 0 20px rgba(220,30,48,0.1);}
 
 /* Premium Card (Limited Edition) */
-.premium-card { background: rgba(220,30,48,0.03); border: 1px solid rgba(0,170,255,0.25); }
-.premium-card:hover { border-color: var(--blue-n); box-shadow: 0 15px 50px rgba(0,170,255,0.3), inset 0 0 30px rgba(0,170,255,0.1); }
-.premium-card .pc-image { background: rgba(0,170,255,0.06); }
-.premium-card .pc-price { color: var(--blue-n); }
-.premium-card .pc-add-btn { background: linear-gradient(135deg, var(--blue-n), var(--blue)); box-shadow: 0 4px 20px rgba(0,170,255,0.3); }
-.premium-card .pc-add-btn:hover { box-shadow: 0 6px 30px rgba(0,170,255,0.5); }
+.premium-card { background: rgba(0,170,255,0.02); border: 1px solid rgba(0,170,255,0.2); box-shadow: 0 0 15px rgba(0,170,255,0.05); }
+.premium-card:hover { 
+  border-color: var(--blue-n); 
+  box-shadow: 0 0 30px rgba(0,170,255,0.4), inset 0 0 20px rgba(0,170,255,0.1); 
+  background: rgba(0,170,255,0.05);
+}
+.premium-card .pc-image { background: rgba(0,170,255,0.04); }
+.premium-card .pc-price { color: var(--blue-n); text-shadow: 0 0 10px rgba(0,170,255,0.3); }
+.premium-card .pc-add-btn { background: linear-gradient(135deg, var(--blue-n), var(--blue)); box-shadow: 0 4px 15px rgba(0,170,255,0.4); }
+.premium-card .pc-add-btn:hover { box-shadow: 0 6px 25px rgba(0,170,255,0.6); }
+.premium-card .pc-badge-limited { background: rgba(0,170,255,0.85); box-shadow: 0 0 10px rgba(0,170,255,0.5); }
 
 .reveal-item{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(0.2,0.8,0.2,1);}
 .reveal-item.visible{opacity:1;transform:translateY(0);}

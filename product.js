@@ -104,51 +104,77 @@ async function loadProducts() {
 }
 
 function renderProducts(products) {
-  const limitedGrid = document.getElementById("limitedGrid");
-  const specialGrid = document.getElementById("specialGrid");
-  
-  if (limitedGrid) limitedGrid.innerHTML = "";
-  if (specialGrid) specialGrid.innerHTML = "";
+  const container = document.getElementById("shopContainer");
+  if (!container) return;
+  container.innerHTML = "";
 
-  products.forEach((p, i) => {
-    const isLimited = p.section === "Limited";
-    const grid = isLimited ? limitedGrid : specialGrid;
-    if (!grid) return;
+  const sections = [
+    { id: "Limited", title: "Limited Edition", subtitle: "Exclusives. Rarities. Legends.", premium: true },
+    { id: "Special", title: "Special Collections", subtitle: "Premium quality for every fan.", premium: false }
+  ];
 
-    const catEmoji = { "Hoodies": "👕", "Toys": "🧸", "Masks": "🎭" }[p.category] || "🕸️";
+  const categories = ["Hoodies", "Toys", "Masks"];
 
-    const card = document.createElement("div");
-    card.className = `product-card ${isLimited ? 'premium-card' : ''}`;
-    card.style.animationDelay = `${i * 0.08}s`;
-    card.onclick = () => openDetail(p.id);
+  sections.forEach(sec => {
+    // 1. Filter products for this section
+    const secProducts = products.filter(p => p.section === sec.id);
+    if (!secProducts.length) return;
 
-    card.innerHTML = `
-      <div class="pc-image-wrap">
-        <div class="pc-image">
-          ${p.image
-            ? `<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.innerHTML='🕷️'"/>`
-            : `<span class="pc-emoji">🕷️</span>`}
-        </div>
-        ${isLimited ? `<span class="pc-badge-limited">💎 Limited Edition</span>` : ""}
-        ${p.modelUrl ? `<span class="pc-badge-3d">🥽 3D View</span>` : ""}
-      </div>
-      <div class="pc-body">
-        <div class="pc-cat-row">
-          <span class="pc-cat-emoji">${catEmoji}</span>
-          <p class="pc-cat">${p.category || "Marvel Collectibles"}</p>
-        </div>
-        <h3 class="pc-name">${p.name}</h3>
-        <p class="pc-desc">${(p.description || "").slice(0, 80)}…</p>
-        <div class="pc-footer">
-          <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
-          ${p.oldPrice ? `<span class="pc-old-price">$${p.oldPrice}</span>` : ""}
-        </div>
-        <button class="pc-add-btn" onclick="event.stopPropagation(); quickAdd('${p.id}')">
-          🛒 Add to Cart
-        </button>
-      </div>
+    // 2. Create Section Header
+    const secHeader = document.createElement("div");
+    secHeader.className = "shop-section-header";
+    if (!sec.premium) secHeader.style.marginTop = "4rem";
+    secHeader.innerHTML = `
+      <h2 class="section-title">${sec.title.split(' ')[0]} <span class="accent">${sec.title.split(' ').slice(1).join(' ')}</span></h2>
+      <p class="section-subtitle">${sec.subtitle}</p>
     `;
-    grid.appendChild(card);
+    container.appendChild(secHeader);
+
+    // 3. Create Categories within Section
+    categories.forEach(cat => {
+      const catProducts = secProducts.filter(p => p.category === cat);
+      if (!catProducts.length) return;
+
+      const catTitle = document.createElement("h3");
+      catTitle.className = "category-group-title";
+      catTitle.textContent = cat;
+      container.appendChild(catTitle);
+
+      const grid = document.createElement("div");
+      grid.className = `products-grid ${sec.premium ? 'premium-grid' : ''}`;
+      
+      catProducts.forEach((p, idx) => {
+        const catEmoji = { "Hoodies": "👕", "Toys": "🧸", "Masks": "🎭" }[p.category] || "🕸️";
+        const card = document.createElement("div");
+        card.className = `product-card ${sec.premium ? 'premium-card' : ''}`;
+        card.style.animationDelay = `${idx * 0.08}s`;
+        card.onclick = () => openDetail(p.id);
+        card.innerHTML = `
+          <div class="pc-image-wrap">
+            <div class="pc-image">
+              ${p.image
+                ? `<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.innerHTML='🕷️'"/>`
+                : `<span class="pc-emoji">🕷️</span>`}
+            </div>
+            ${sec.premium ? `<span class="pc-badge-limited">💎 Limited</span>` : ""}
+            ${p.modelUrl ? `<span class="pc-badge-3d">🥽 3D View</span>` : ""}
+          </div>
+          <div class="pc-body">
+            <h3 class="pc-name">${p.name}</h3>
+            <p class="pc-desc">${(p.description || "").slice(0, 80)}…</p>
+            <div class="pc-footer">
+              <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
+              ${p.oldPrice ? `<span class="pc-old-price">$${p.oldPrice}</span>` : ""}
+            </div>
+            <button class="pc-add-btn" onclick="event.stopPropagation(); quickAdd('${p.id}')">
+              🛒 Add to Cart
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      container.appendChild(grid);
+    });
   });
 
   // ── 3D TILT EFFECT ──────────────────────────────────────────────
