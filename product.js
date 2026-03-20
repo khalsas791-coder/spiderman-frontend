@@ -117,10 +117,7 @@ function renderProducts(products) {
 
   sections.forEach(sec => {
     // 1. Filter products for this section (Default to Special if missing)
-    const secProducts = products.filter(p => {
-      const pSection = p.section || "Special";
-      return pSection === sec.id;
-    });
+    const secProducts = products.filter(p => (p.section || "Special") === sec.id);
     if (!secProducts.length) return;
 
     // 2. Create Section Header
@@ -135,10 +132,7 @@ function renderProducts(products) {
 
     // 3. Create Categories within Section
     categories.forEach(cat => {
-      const catProducts = secProducts.filter(p => {
-        const pCat = p.category || "Masks";
-        return pCat === cat;
-      });
+      const catProducts = secProducts.filter(p => (p.category || "Masks") === cat);
       if (!catProducts.length) return;
 
       const catTitle = document.createElement("h3");
@@ -150,7 +144,6 @@ function renderProducts(products) {
       grid.className = `products-grid ${sec.premium ? 'premium-grid' : ''}`;
       
       catProducts.forEach((p, idx) => {
-        const catEmoji = { "Hoodies": "👕", "Toys": "🧸", "Masks": "🎭" }[p.category] || "🕸️";
         const card = document.createElement("div");
         card.className = `product-card ${sec.premium ? 'premium-card' : ''}`;
         card.style.animationDelay = `${idx * 0.08}s`;
@@ -186,29 +179,23 @@ function renderProducts(products) {
   // ── 3D TILT EFFECT ──────────────────────────────────────────────
   const cards = document.querySelectorAll(".product-card");
   cards.forEach(card => {
-    card.style.transition = "transform 0.1s ease-out, box-shadow 0.1s ease-out";
-    card.style.transformStyle = "preserve-3d";
-    
     card.addEventListener("mousemove", (e) => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
-      const multiplier = 20;
-      const xRotation = multiplier * ((x - rect.width / 2) / rect.width);
-      const yRotation = -1 * multiplier * ((y - rect.height / 2) / rect.height);
-      
-      card.style.transform = `perspective(1000px) rotateX(${yRotation}deg) rotateY(${xRotation}deg) scale3d(1.05, 1.05, 1.05)`;
-      card.style.boxShadow = "0 20px 40px rgba(0,0,0,0.6), 0 0 15px rgba(255, 51, 71, 0.4)";
+      const xRot = 20 * ((x - rect.width / 2) / rect.width);
+      const yRot = -20 * ((y - rect.height / 2) / rect.height);
+      card.style.transform = `perspective(1000px) rotateX(${yRot}deg) rotateY(${xRot}deg) scale3d(1.05, 1.05, 1.05)`;
+      if(card.classList.contains('premium-card')) {
+        card.style.boxShadow = "0 30px 60px rgba(0, 170, 255, 0.4), 0 0 20px rgba(0, 170, 255, 0.2)";
+      } else {
+        card.style.boxShadow = "0 20px 40px rgba(0,0,0,0.6), 0 0 15px rgba(220, 30, 48, 0.4)";
+      }
     });
 
     card.addEventListener("mouseleave", () => {
-      card.style.transition = "transform 0.5s ease-out, box-shadow 0.5s ease-out";
       card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
       card.style.boxShadow = "";
-      setTimeout(() => {
-        card.style.transition = "transform 0.1s ease-out, box-shadow 0.1s ease-out";
-      }, 500);
     });
   });
 }
