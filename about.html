@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spider-Man | About the Hero</title>
+  <meta name="description" content="Learn about the legend of Spider-Man." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .about-hero {
+      padding: 120px 5% 60px;
+      min-height: 80vh;
+      background: radial-gradient(circle at top right, rgba(220, 30, 48, 0.05), transparent 40%);
+    }
+    .about-content {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .about-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      letter-spacing: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .about-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(240, 240, 240, 0.7);
+      margin-bottom: 3rem;
+    }
+    .hero-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 2rem;
+      transition: transform 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--red);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo" style="text-decoration:none;">
+      <span class="spider-icon">🕷️</span>
+      <span>SPIDER-MAN</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="product.html">Shop</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="auth.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <section class="about-hero">
+    <div class="about-content">
+      <h1 class="about-title">THE <span class="text-red">LEGEND</span> OF SPIDEY</h1>
+      <p class="about-text">
+        Bitten by a radioactive spider, Peter Parker gained the powers of a spider—strength, agility, and a "spider-sense." 
+        Inspired by the words of his Uncle Ben, he vowed to protect New York City with the ultimate lesson: 
+        <strong>"With great power comes great responsibility."</strong>
+      </p>
+
+      <div class="hero-features">
+        <div class="feature-card">
+          <span class="feature-icon">🧬</span>
+          <h3>Genetic Origin</h3>
+          <p>The radioactive bite that changed everything, merging human potential with arachnid survival.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🏙️</span>
+          <h3>Urban Swing</h3>
+          <p>Mastering the New York skyline, swinging at 80mph between the peaks of Manhattan.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚖️</span>
+          <h3>Justice</h3>
+          <p>Fighting the iconic Sinister Six to keep the neighborhood safe for every citizen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 Spider-Man Fan Site. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
