@@ -23,34 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
         authBox.classList.add('visible');
         spawnRandomParticles();
         startBackgroundMovements();
+        // Entry zoom
+        gsap.from('.layer', { scale: 1.3, duration: 2.5, ease: 'power2.out' });
     }, 300);
 
     // ══ INPUT FOCUS EFFECTS ══
     const inputs = document.querySelectorAll('.input-wrapper input');
-    const eyeLeft = document.getElementById('eyeLeft');
-    const eyeRight = document.getElementById('eyeRight');
-
-    inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            eyeLeft.classList.add('glowing');
-            eyeRight.classList.add('glowing');
-        });
-        input.addEventListener('blur', () => {
-            if(!input.value) {
-                eyeLeft.classList.remove('glowing');
-                eyeRight.classList.remove('glowing');
-            }
-        });
-        // Typing password glow
-        if(input.type === 'password') {
-            input.addEventListener('input', () => {
-                if(input.value.length > 0) {
-                    eyeLeft.style.transform = `scale(${1 + input.value.length * 0.02})`;
-                    eyeRight.style.transform = `scale(${1 + input.value.length * 0.02})`;
-                }
-            });
-        }
-    });
+    // Hover/Focus glow handled by CSS
 
     // ══ LOGIN LOGIC ══
     const loginForm = document.getElementById('loginForm');
@@ -101,12 +80,14 @@ async function handleAuthAction(type, email, password, name = "") {
         // 2. Successful Landing Sequence
         webLoader.style.display = 'none';
         triggerImpactEffect();
-        
-        // Show Hero Pose
-        document.getElementById('heroLanding').style.display = 'flex';
+        triggerSilhouetteSwing();
         
         showAlert(type === 'login' ? 'Welcome back, Hero!' : 'The Fight for the City Begins!', 'success');
         
+        // Zoom screen in
+        gsap.to('.layer', { scale: 1.6, duration: 2.5, ease: 'power2.inOut' });
+        gsap.to('#authBox', { opacity: 0, scale: 0.9, duration: 1, ease: 'power2.inOut' });
+
         setTimeout(() => {
             window.location.href = "product.html";
         }, 1800);
@@ -131,27 +112,37 @@ window.showTab = function(tab) {
 // ══ CINEMATIC HELPERS ══
 function triggerImpactEffect() {
     const flash = document.getElementById('flashOverlay');
-    const swinger = document.getElementById('spideySwinger');
     
     // 1. Flash
     flash.style.opacity = '1';
     setTimeout(() => flash.style.opacity = '0', 200);
 
-    // 2. Swinger
-    gsap.to(swinger, {
-        duration: 1,
-        left: '120vw',
-        top: '20vh',
-        ease: 'power2.inOut',
-        onStart: () => {
-            document.body.classList.add('shaking');
-            setTimeout(() => document.body.classList.remove('shaking'), 400);
-        }
-    });
+    // 2. Red Energy Wave
+    const wave = document.createElement('div');
+    wave.style.cssText = `
+        position: fixed; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px; height: 10px;
+        background: radial-gradient(circle, var(--red-l), transparent);
+        border-radius: 50%; pointer-events: none; z-index: 105;
+    `;
+    document.body.appendChild(wave);
+    gsap.to(wave, { width: '400vw', height: '400vw', opacity: 0, duration: 1.2, ease: 'power2.out', onComplete: () => wave.remove() });
 
     // 3. Shake impact
     const authBox = document.getElementById('authBox');
     gsap.to(authBox, { duration: 0.1, x: 10, repeat: 5, yoyo: true });
+}
+
+function triggerSilhouetteSwing() {
+    const silhouette = document.getElementById('swingSilhouette');
+    gsap.to(silhouette, {
+        duration: 1.8,
+        left: '120vw',
+        opacity: 0.4,
+        ease: 'power1.inOut',
+        onStart: () => { silhouette.style.opacity = '0.6'; }
+    });
 }
 
 function triggerErrorEffect() {

@@ -65,17 +65,17 @@ body.cinematic-auth {
   opacity: 0.7;
 }
 .layer-city-near {
-  background-image: url('https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=2000&auto=format&fit=crop');
-  filter: brightness(0.7);
+  background-image: url('https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=2000&auto=format&fit=crop');
+  filter: brightness(0.6) blur(2px);
   z-index: 4;
-  opacity: 0.3;
 }
 
 .vignette {
   position: fixed;
   inset: 0;
   z-index: 5;
-  background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%);
+  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.85) 100%),
+              linear-gradient(180deg, rgba(6,8,16,0.3) 0%, rgba(6,8,16,0.95) 100%);
   pointer-events: none;
 }
 
@@ -159,63 +159,37 @@ body.cinematic-auth {
 .auth-header {
   margin-bottom: 2.5rem;
 }
-.brand-mask {
-  width: 100px;
-  height: 80px;
-  margin: 0 auto 1rem;
-  background: var(--red-d);
-  border-radius: 50% 50% 40% 40%;
-  position: relative;
-  border: 2px solid #5a0000;
-  box-shadow: 0 0 30px rgba(220, 30, 48, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.brand-mask::before {
-  content: '🕸️';
-  position: absolute;
-  font-size: 5rem;
-  opacity: 0.1;
-  top: -10px;
-}
-.mask-eyes {
-  width: 80%;
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  z-index: 2;
-}
-.eye {
-  width: 32px;
-  height: 18px;
-  background: #fff;
-  border-radius: 80% 20% 80% 20%;
-  box-shadow: 0 0 10px #fff;
-  transition: all 0.3s;
-}
-.eye-right { border-radius: 20% 80% 20% 80%; }
-.eye.glowing {
-  box-shadow: 0 0 25px var(--white), 0 0 45px var(--blue-l);
-  background: var(--white);
-  transform: scale(1.1);
-}
-
 .brand-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.5rem;
-  letter-spacing: 6px;
+  font-size: 3.2rem;
+  letter-spacing: 10px;
   background: linear-gradient(135deg, var(--red), var(--blue-l));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.25rem;
+  text-shadow: 0 0 20px rgba(220, 30, 48, 0.3);
 }
 .brand-sub {
   font-size: 0.75rem;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  color: rgba(240, 240, 240, 0.4);
+  color: rgba(240, 240, 240, 0.5);
+}
+
+/* ══ SILHOUETTE SWING ══ */
+.swing-silhouette {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: url('https://images.unsplash.com/photo-1542610103-67c824c9693e?q=80&w=400&auto=format&fit=crop'); /* Transparent Spidey Silhouette vibe */
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: brightness(0) invert(1) opacity(0);
+  pointer-events: none;
+  z-index: 100;
+  top: 50%;
+  left: -200px;
 }
 
 /* ══ TABS ══ */
