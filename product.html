@@ -37,15 +37,22 @@
     </div>
   </nav>
 
-  <!-- ═══ HERO BANNER ═══ -->
-  <section class="shop-hero">
-    <div class="hero-particles" id="heroParticles"></div>
-    <div class="hero-glow-r"></div>
-    <div class="hero-glow-b"></div>
-    <div class="shop-hero-content">
-      <p class="eyebrow">🕸️ Marvel Collectibles</p>
-      <h1>The <span class="accent">Shop</span></h1>
-      <p class="sub">Own a piece of legend. Movie-accurate. Collector's quality.</p>
+  <!-- ═══ CINEMATIC HERO BANNER ═══ -->
+  <section class="shop-hero cinematic" id="cinematicHero">
+    <div class="cinematic-bg" id="cinematicBg"></div>
+    <div class="cinematic-overlay"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
+    
+    <div class="shop-hero-content cinematic-content" id="cinematicContent">
+      <p class="eyebrow" style="text-shadow: 0 0 10px rgba(220,30,48,0.8);">🕸️ Marvel Collectibles</p>
+      <h1 style="text-shadow: 0 0 40px rgba(0,0,0,0.8);">The <span class="accent">Shop</span></h1>
+      <p class="sub" style="color:#fff; text-shadow: 0 0 15px rgba(0,0,0,1);">Own a piece of legend. Movie-accurate. Collector's quality.</p>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div class="scroll-indicator">
+      <div class="scroll-dot"></div>
+      <span>Scroll To Explore</span>
     </div>
   </section>
 
@@ -177,6 +184,86 @@
 
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
+
+  <!-- Cinematic JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cinematicBg = document.getElementById("cinematicBg");
+      const cinematicContent = document.getElementById("cinematicContent");
+      const mouseGlow = document.getElementById("mouseGlow");
+      const cinematicHero = document.getElementById("cinematicHero");
+
+      // 1. Mouse glowing light
+      if(cinematicHero && mouseGlow) {
+        cinematicHero.addEventListener("mousemove", (e) => {
+          const rect = cinematicHero.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          mouseGlow.style.transform = `translate(${x}px, ${y}px)`;
+        });
+      }
+
+      // 2. Scroll Animation
+      let lastScrollY = window.scrollY;
+      
+      function updateCinematic() {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const deltaY = scrollY - lastScrollY;
+          lastScrollY = scrollY;
+          
+          if(!cinematicBg) return;
+
+          // Parallax & 3D Swinging
+          const wh = window.innerHeight;
+          if (scrollY < wh * 1.5) {
+             const progress = scrollY / wh;
+             const scale = 1 + progress * 0.35; // Zoom in
+             const ty = scrollY * 0.45; // Parallax
+             const swingX = Math.sin(scrollY * 0.004) * 40; // Horizontal swing
+             const rotX = progress * 12; // 3D depth tilt
+             
+             // Speed motion blur during fast scroll combined with depth blur
+             const blurFactor = Math.abs(deltaY) > 20 ? Math.min(Math.abs(deltaY) * 0.15, 8) : 0;
+             const totalBlur = (progress * 4) + blurFactor;
+
+             cinematicBg.style.transform = `scale(${scale}) translate3d(${swingX}px, ${ty}px, -50px) rotateX(${rotX}deg)`;
+             cinematicBg.style.filter = `blur(${totalBlur}px)`;
+
+             if(cinematicContent) {
+               cinematicContent.style.opacity = Math.max(1 - (progress * 1.8), 0);
+               cinematicContent.style.transform = `translate3d(0, ${scrollY * 0.3}px, 0)`;
+             }
+          }
+        });
+      }
+
+      window.addEventListener("scroll", updateCinematic, {passive: true});
+
+      // 3. Smooth product reveal
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -50px 0px', threshold: 0.1 });
+
+      const checkNewCards = () => {
+        document.querySelectorAll('.product-card:not(.reveal-item)').forEach(card => {
+          card.classList.add('reveal-item');
+          observer.observe(card);
+        });
+      };
+      
+      // Initial + observing DOM changes for dynamic products
+      checkNewCards();
+      const mutObserver = new MutationObserver(() => checkNewCards());
+      const pGrid = document.getElementById("productsGrid");
+      if(pGrid) mutObserver.observe(pGrid, { childList: true });
+    });
+  </script>
 
   <script type="module" src="product.js"></script>
 </body>
