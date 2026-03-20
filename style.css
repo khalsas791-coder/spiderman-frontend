@@ -230,17 +230,27 @@ body {
 }
 
 .hero-content {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 3;
   text-align: center;
-  padding: 2rem;
-  max-width: 800px;
+  width: 90%;
+  max-width: 1000px;
+  padding: 4rem 2rem;
+  background: rgba(4, 6, 12, 0.75);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8), inset 0 0 60px rgba(220,30,48,0.15);
   animation: heroEntrance 1.2s cubic-bezier(0.4,0,0.2,1) both;
 }
 
 @keyframes heroEntrance {
-  from { opacity: 0; transform: translateY(50px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 60px)); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 .hero-eyebrow {
@@ -254,20 +264,26 @@ body {
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 12vw, 9rem);
-  line-height: 0.92;
+  font-size: clamp(3rem, 10vw, 7.5rem);
+  line-height: 1.05;
   letter-spacing: 2px;
   text-shadow: 0 0 40px rgba(220,30,48,0.4);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   animation: fadeInUp 1s 0.4s both;
+  color: var(--white);
 }
 
-.hero-accent {
-  background: linear-gradient(135deg, var(--red), var(--blue-neon));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(220,30,48,0.5));
+.subtitle-glow {
+  display: block;
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  font-family: var(--font-display);
+  color: var(--white);
+  -webkit-text-fill-color: var(--white);
+  background: none;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.4));
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 1rem;
 }
 
 .hero-subtitle {
