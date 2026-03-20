@@ -30,6 +30,27 @@
     </div>
   </div>
 
+  <!-- UPI PAYMENT MODAL -->
+  <div class="success-overlay" id="upiOverlay">
+    <div class="success-modal" style="max-width: 450px;">
+      <div class="success-spider">📱</div>
+      <h2>Scan & Pay</h2>
+      <p>Scan the QR code with any UPI app to complete your payment.</p>
+      
+      <div class="qr-container" style="background: white; padding: 1rem; border-radius: 12px; margin: 1.5rem auto; width: max-content; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
+        <img id="upiQrImg" src="" alt="UPI QR Code" style="width: 200px; height: 200px; display: block; filter: none;" />
+      </div>
+      
+      <p>Amount: <strong id="upiAmount" style="color: #00e676; font-size: 1.2rem;">₹0.00</strong></p>
+      
+      <!-- Mobile Deep Link Button -->
+      <a href="#" id="upiDeepLink" style="display: block; margin-top: 1.5rem; text-decoration: none; padding: 0.9rem; border-radius: 50px; background: linear-gradient(135deg, #1a3fcc, #00aaff); color: white; font-weight: bold; box-shadow: 0 5px 20px rgba(0,170,255,0.4);">🚀 Pay directly via UPI App</a>
+      
+      <p style="font-size: 0.85rem; margin-top: 1.5rem; color: rgba(240,240,240,0.6);" id="upiStatusText">⏳ Waiting for payment confirmation...</p>
+      <button onclick="document.getElementById('upiOverlay').classList.remove('show')" style="margin-top:2rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer;">Cancel Payment</button>
+    </div>
+  </div>
+
   <!-- NAVBAR -->
   <nav class="navbar" id="navbar">
     <a href="index.html" class="nav-logo">

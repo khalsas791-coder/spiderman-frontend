@@ -203,8 +203,20 @@ window.placeOrder = async function () {
     createdAt:     new Date().toISOString()
   };
 
-  // Simulate payment delay
-  await new Promise(r => setTimeout(r, 1800));
+  if (payMethod === "upi") {
+    const isPaid = await processUpiPayment(total, orderData.shipping.firstName);
+    if (!isPaid) {
+      // User cancelled or it failed
+      content.classList.remove("hidden");
+      spinner.classList.add("hidden");
+      btn.disabled = false;
+      return; 
+    }
+    // If paid, continue to place the order
+  } else {
+    // Simulate non-upi payment delay (e.g., Credit Card/COD processing)
+    await new Promise(r => setTimeout(r, 1800));
+  }
 
   let orderId = "SPD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
@@ -256,6 +268,83 @@ function payLabel(m) {
 window.goHome = function () {
   window.location.href = "product.html";
 };
+
+// ── UPI PAYMENT PROCESSING ─────────────────────────────────────────
+async function processUpiPayment(amount, name) {
+  try {
+    const res = await fetch(`${API_URL}/api/payment/initiate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+      body: JSON.stringify({ amount, name })
+    });
+    const data = await res.json();
+    
+    if (!data.success) {
+      showToast("❌ Failed to initiate UPI payment.", 4000);
+      return false;
+    }
+
+    // Display the overlay
+    document.getElementById("upiQrImg").src = data.qrBase64;
+    document.getElementById("upiAmount").textContent = `₹${data.amount}`;
+    document.getElementById("upiDeepLink").href = data.upiUri;
+    
+    const overlay = document.getElementById("upiOverlay");
+    overlay.classList.add("show");
+    
+    const statusText = document.getElementById("upiStatusText");
+    statusText.textContent = "⏳ Waiting for payment confirmation...";
+    
+    // Poll for status
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const interval = setInterval(async () => {
+        // If the user closed the modal (cancelled)
+        if (!overlay.classList.contains("show")) {
+          clearInterval(interval);
+          resolve(false);
+          return;
+        }
+        
+        try {
+          const stRes = await fetch(`${API_URL}/api/payment/status/${data.transactionId}`);
+          const stData = await stRes.json();
+          
+          if (stData.success) {
+            if (stData.status === "SUCCESS") {
+              clearInterval(interval);
+              statusText.textContent = "✅ Payment Successful! Placing order...";
+              statusText.style.color = "#00e676";
+              setTimeout(() => {
+                overlay.classList.remove("show");
+                resolve(true);
+              }, 1200);
+            } else if (stData.status === "FAILED") {
+              clearInterval(interval);
+              statusText.textContent = "❌ Payment Failed.";
+              statusText.style.color = "#ff3347";
+              setTimeout(() => resolve(false), 2000);
+            }
+          }
+        } catch (e) {
+          console.warn("Polling error:", e);
+        }
+        
+        attempts++;
+        if (attempts > 120) { // Timeout after 120 checks (6 minutes)
+          clearInterval(interval);
+          statusText.textContent = "❌ Payment Timeout.";
+          setTimeout(() => resolve(false), 2000);
+        }
+      }, 3000);
+    });
+
+  } catch (err) {
+    console.error("UPI error:", err);
+    showToast("❌ Connection error while initiating UPI.");
+    return false;
+  }
+}
 
 // ── TOAST ────────────────────────────────────────────────────────
 function showToast(msg, dur = 3200) {
