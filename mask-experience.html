@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spider-Man | Premium Mask Experience</title>
+    <link rel="stylesheet" href="mask-experience.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="experience-bg"></div>
+    <div class="experience-overlay"></div>
+    <div class="particles-container" id="particles"></div>
+
+    <header class="header-nav">
+        <div class="logo">SPIDER-MAN</div>
+        <div class="nav-right">
+            <div class="cart-icon-wrap" id="cart-icon">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="left-panel">
+            <div id="mask-container">
+                <canvas id="mask-canvas"></canvas>
+            </div>
+        </section>
+
+        <section class="right-panel">
+            <span class="eyebrow">Limited Edition</span>
+            <h1 class="product-title">ADVANCED SUIT<br>BLACK MASK</h1>
+            
+            <div class="product-price">
+                $199.99 <span>$299.99</span>
+            </div>
+
+            <p class="product-description">
+                Experience the peak of Stark Industries technology. This high-fidelity, movie-accurate collectible features real-time 3D interaction, reactive eye-lens tech, and premium carbon-fiber weave texture.
+            </p>
+
+            <ul class="features-list">
+                <li class="feature-item">
+                    <i class="fa-solid fa-microchip feature-icon"></i>
+                    <span>Reactive AI Eye Lenses</span>
+                </li>
+                <li class="feature-item">
+                    <i class="fa-solid fa-shield-halved feature-icon"></i>
+                    <span>Carbon Fiber Weave Armor</span>
+                </li>
+                <li class="feature-item">
+                    <i class="fa-solid fa-wifi feature-icon"></i>
+                    <span>Neural Link Integration</span>
+                </li>
+            </ul>
+
+            <button class="add-btn" id="add-to-cart">
+                <i class="fa-solid fa-plus" style="margin-right: 10px;"></i>
+                ADD TO ARSENAL
+            </button>
+        </section>
+    </main>
+
+    <section class="related-section">
+        <h2 class="section-title">RELATED GEAR</h2>
+        <div class="related-grid">
+            <div class="related-card">
+                <img src="images/web_shooter.png" alt="Web Shooter" class="related-img">
+                <div class="related-info">
+                    <h3>Mk. IV Web Shooter</h3>
+                    <p class="price">$89.99</p>
+                </div>
+            </div>
+            <div class="related-card">
+                <img src="images/suit.png" alt="Suit Fabric" class="related-img">
+                <div class="related-info">
+                    <h3>Integrated Suit Fabric</h3>
+                    <p class="price">$149.99</p>
+                </div>
+            </div>
+            <div class="related-card">
+                <img src="images/mask_related.png" alt="Related Mask" class="related-img">
+                <div class="related-info">
+                    <h3>Stealth Suite Mask</h3>
+                    <p class="price">$179.99</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Three.js Library -->
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+          }
+        }
+    </script>
+    <script type="module" src="mask-experience.js"></script>
+</body>
+</html>
