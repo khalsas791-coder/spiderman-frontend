@@ -5,13 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spider-Man | Swing Into Action</title>
-  <!-- 3D Model Support -->
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-  <meta name="description" content="Enter the world of Spider-Man. Swing through the city, embrace the hero within." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap"
-    rel="stylesheet" />
+    <!-- MODEL VIEWER SCRIPT -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -38,23 +34,14 @@
 
   <!-- ===== HERO SECTION ===== -->
   <section class="hero" id="hero">
-    <video class="hero-video" autoplay loop muted playsinline>
-      <source src="videos/spiderman-bg.mp4" type="video/mp4">
+    <video class="hero-video" id="heroVideo" autoplay loop muted playsinline preload="auto" onerror="console.error('Background video failed to load.');">
+      <source src="./videos/spiderman-bg.mp4" type="video/mp4">
+      Your browser does not support the video tag.
     </video>
-    <div class=" hero-overlay">
+    <div class="hero-overlay">
     </div>
 
-    <div class="3d-hero-container" style="position:relative; z-index:2; padding-top:12vh;">
-      <!-- 3D MODEL HERE -->
-      <model-viewer 
-        src="models/mask.glb"
-        alt="Spider-Man Mask"
-        auto-rotate
-        camera-controls
-        style="width: 350px; height: 350px; margin:auto; display:block;">
-      </model-viewer>
-      <h2 style="text-align:center; color:white; font-family:'Bebas Neue', sans-serif; letter-spacing:2px; font-size:2.5rem; text-shadow:0 0 10px rgba(220,30,48,0.8);">Spider-Man 3D Experience</h2>
-    </div>
+
     <!-- Web lines decorative SVG -->
     <svg class="web-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
       <g class="web-lines" stroke="rgba(220,30,48,0.25)" stroke-width="1" fill="none">
@@ -75,15 +62,15 @@
 
     <div class="hero-content">
       <p class="hero-eyebrow">YOUR FRIENDLY NEIGHBORHOOD</p>
-      <h1 class="hero-title">Swing Into<br /><span class="hero-accent">Action</span></h1>
+      <h1 class="hero-title">The Spider-Man<br /><span class="hero-accent">Fan's</span></h1>
       <p class="hero-subtitle">With great power comes great responsibility.<br />Are you ready to become the hero the city needs?</p>
       <div class="hero-buttons">
-        <a class="btn btn-primary" id="startBtn" href="auth.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+        <a class="btn btn-outline" id="heroAuthBtn" href="auth.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;margin-right:1rem;">
+          🔐 Login
+        </a>
+        <a class="btn btn-primary" id="startBtn" href="product.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
           <span class="btn-glow"></span>
           <span class="btn-text">🛒 Shop Now</span>
-        </a>
-        <a class="btn btn-outline" id="heroAuthBtn" href="auth.html" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
-          🔐 Login
         </a>
       </div>
     </div>
@@ -149,6 +136,37 @@
       </div>
     </div>
   </section>
+
+  <!-- ===== SHOP SECTION ===== -->
+  <section class="shop" id="shop" style="padding: 100px 5%; background: var(--dark-2); position: relative;">
+    <div class="section-header" style="text-align: center; margin-bottom: 50px;">
+      <span class="section-tag" style="color: #ff3347; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">The Shop</span>
+      <h2 class="section-title" style="color: white; font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; letter-spacing: 2px;">Featured <span style="color:#dc1e30;">Products</span></h2>
+      <p style="color: rgba(240,240,240,0.6); max-width: 600px; margin: 10px auto;">Browse our top collectibles and suits. Click below to view the full shop.</p>
+    </div>
+    
+    <div id="homeProductsLoading" style="text-align:center; color:white; padding: 2rem;">Loading products...</div>
+    <div id="homeProductsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;"></div>
+    
+    <div style="text-align: center; margin-top: 50px;">
+      <a href="product.html" class="btn btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;padding:12px 30px;">
+        <span class="btn-text">View All Products</span>
+      </a>
+    </div>
+  </section>
+  
+  <style>
+    /* basic product card styling for home page */
+    .hp-product-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; color: white; transition: 0.3s; cursor: pointer; display:flex; flex-direction:column;}
+    .hp-product-card:hover { transform: translateY(-5px); border-color: rgba(220,30,48,0.5); box-shadow: 0 10px 30px rgba(220,30,48,0.2); }
+    .hp-image { height: 200px; background: rgba(220,30,48,0.05); display: flex; align-items: center; justify-content: center; overflow:hidden;}
+    .hp-image img { width: 100%; height: 100%; object-fit: cover; }
+    .hp-body { padding: 20px; display:flex; flex-direction:column; flex:1; }
+    .hp-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; }
+    .hp-price { font-size: 1.5rem; color: #ff3347; font-weight: bold; margin-bottom: 15px; }
+    .hp-btn { margin-top: auto; padding: 10px; background: linear-gradient(135deg, #dc1e30, #8b0000); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-align:center; transition: 0.3s;}
+    .hp-btn:hover { box-shadow: 0 5px 15px rgba(220,30,48,0.4); transform: scale(1.02); }
+  </style>
 
   <!-- ===== AUTH SECTION ===== -->
   <section class="auth-section" id="auth">
@@ -268,6 +286,23 @@
 
   <!-- Toast notification -->
   <div class="toast" id="toast"></div>
+
+  <!-- Floating Share Option -->
+  <div class="floating-share" style="position:fixed;top:50%;left:0;transform:translateY(-50%);display:flex;flex-direction:column;gap:15px;background:rgba(10,10,20,0.8);padding:15px 10px;border-top-right-radius:12px;border-bottom-right-radius:12px;border:1px solid rgba(220,30,48,0.3);border-left:none;z-index:9999;backdrop-filter:blur(10px);">
+    <a href="https://api.whatsapp.com/send?text=Check out this amazing Spider-Man 3D Experience! https://spiderman-frontend-ecru.vercel.app/" target="_blank" title="Share on WhatsApp" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;background:#25D366;text-decoration:none;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1) translateX(5px)'" onmouseout="this.style.transform='scale(1) translateX(0)'">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;"><path d="M12.01 2.008c-5.488 0-9.944 4.456-9.944 9.944 0 1.745.454 3.444 1.317 4.94L2 22l5.253-1.38c1.455.795 3.1 1.215 4.757 1.215 5.485 0 9.94-4.456 9.94-9.944S17.496 2.008 12.01 2.008zM17.062 16.3c-.217.618-1.256 1.157-1.815 1.246-.5.08-1.153.13-3.084-.668-2.956-1.22-4.836-4.22-4.996-4.433-.16-.214-1.192-1.587-1.192-3.023 0-1.436.75-2.146 1.018-2.428.267-.282.585-.353.778-.353.193 0 .385.006.554.013.178.01.417-.066.652.5.247.595.632 1.545.688 1.663.056.118.093.256.013.415-.08.16-.12.257-.238.396-.118.138-.248.307-.353.406-.118.105-.24.218-.106.446.134.228.596.98 1.28 1.59 0.88.784 1.614 1.026 1.838 1.13.224.105.354.09.484-.055.13-.146.564-.652.714-.875.15-.224.3-.186.505-.108.204.078 1.285.606 1.503.714.218.108.364.16.417.25.053.09.053.518-.164 1.136z"/></svg>
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://spiderman-frontend-ecru.vercel.app/" target="_blank" title="Share on Facebook" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;background:#1877F2;text-decoration:none;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1) translateX(5px)'" onmouseout="this.style.transform='scale(1) translateX(0)'">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
+    </a>
+    <a href="https://twitter.com/intent/tweet?text=Check out this amazing Spider-Man 3D Experience!&url=https://spiderman-frontend-ecru.vercel.app/" target="_blank" title="Share on Twitter/X" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;background:#1DA1F2;text-decoration:none;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1) translateX(5px)'" onmouseout="this.style.transform='scale(1) translateX(0)'">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a href="https://github.com/login" target="_blank" title="View on GitHub" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;background:#333;text-decoration:none;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1) translateX(5px)'" onmouseout="this.style.transform='scale(1) translateX(0)'">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57z"/></svg>
+    </a>
+  </div>
+
   <script type="module" src="script.js"></script>
 
   <!-- Firebase auth-aware nav + hero button -->
@@ -275,14 +310,18 @@
     import { auth } from "./firebase-config.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+    import { db } from "./firebase-config.js";
+    import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { API_URL } from "./config.js";
+
     onAuthStateChanged(auth, (user) => {
-      const shopBtn    = document.getElementById("heroShopBtn");
+      const shopBtn    = document.getElementById("startBtn");
       const navAuth    = document.getElementById("navAuthLink");
       const navShop    = document.getElementById("navShopLink");
       const navCart    = document.getElementById("navCartLink");
 
       if (user) {
-        if (shopBtn)  { shopBtn.href = "product.html"; shopBtn.textContent = "🛒 Go to Shop"; }
+        if (shopBtn)  { shopBtn.href = "product.html"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 Go to Shop</span>"; }
         if (navShop)  { navShop.href = "product.html"; navShop.textContent = "Shop"; }
         if (navCart)  { navCart.href = "cart.html"; navCart.textContent = "Cart"; }
         if (navAuth)  {
@@ -291,12 +330,73 @@
           navAuth.onclick = async (e) => { e.preventDefault(); await signOut(auth); location.reload(); };
         }
       } else {
-        if (shopBtn)  { shopBtn.href = "auth.html"; shopBtn.textContent = "🛒 Enter the Shop"; }
+        if (shopBtn)  { shopBtn.href = "product.html"; shopBtn.innerHTML = "<span class='btn-glow'></span><span class='btn-text'>🛒 Shop Now</span>"; }
         if (navShop)  { navShop.href = "auth.html"; }
         if (navCart)  { navCart.href = "auth.html"; }
         if (navAuth)  { navAuth.href = "auth.html"; navAuth.textContent = "Login"; }
       }
     });
+
+    async function loadHomeProducts() {
+      const grid = document.getElementById("homeProductsGrid");
+      const loading = document.getElementById("homeProductsLoading");
+      if(!grid) return;
+      
+      let products = [];
+      try {
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(4));
+        const snap = await getDocs(q);
+        products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if(products.length === 0) {
+          const resp = await fetch(`${API_URL}/api/products`);
+          if(resp.ok) {
+            const data = await resp.json();
+            if(data.success && data.products) products = data.products.slice(0, 4);
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+
+      if(loading) loading.style.display = "none";
+      const staticMaskCard = `
+        <div class="hp-product-card">
+          <div class="hp-image" style="background: transparent; height: 250px; position:relative;">
+            <model-viewer 
+              src="./models/mask.glb"
+              alt="Spider-Man Mask"
+              auto-rotate
+              camera-controls
+              style="width: 100%; height: 100%; display:block; outline: none; --poster-color: transparent;">
+            </model-viewer>
+          </div>
+          <div class="hp-body">
+            <div class="hp-title">Spider-Man Black Mask</div>
+            <div class="hp-price">$199.99</div>
+            <button class="hp-btn" onclick="window.location.href='cart.html'; event.stopPropagation();">Add to Cart</button>
+          </div>
+        </div>
+      `;
+
+      if(products.length === 0) {
+        grid.innerHTML = staticMaskCard + "<p style='color:white; text-align:center; grid-column:1/-1; margin-top:20px;'>No other products yet.</p>";
+        return;
+      }
+      
+      grid.innerHTML = staticMaskCard + products.map((p) => `
+        <div class="hp-product-card" onclick="window.location.href='product.html'">
+          <div class="hp-image">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span style="font-size:4rem;">🕷️</span>`}
+          </div>
+          <div class="hp-body">
+            <div class="hp-title">${p.name}</div>
+            <div class="hp-price">$${parseFloat(p.price).toFixed(2)}</div>
+            <button class="hp-btn">View Details</button>
+          </div>
+        </div>
+      `).join("");
+    }
+    loadHomeProducts();
   </script>
 </body>
 
