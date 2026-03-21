@@ -1,4 +1,4 @@
-// product.js — Premium Shop Logic
+// product.js — Premium Shop Logic [Sync: 2026-03-21T22:07:00]
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
