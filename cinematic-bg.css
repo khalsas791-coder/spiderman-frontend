@@ -41,9 +41,9 @@
 
 .layer-city-far {
   background-image: url('./images/city-blur.png');
-  filter: blur(2px) brightness(0.35) contrast(0.85); /* Strong depth of field + minimal */
+  filter: blur(2px) brightness(0.7) contrast(1.1); /* Increased brightness for visibility */
   z-index: 2;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 /* Add Soft Light Bloom / Gradient Overlay */
@@ -51,8 +51,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, transparent 30%, rgba(2, 2, 5, 0.95) 100%),
-              linear-gradient(180deg, rgba(10, 10, 26, 0.4) 0%, rgba(2, 2, 5, 0.9) 100%);
+  background: radial-gradient(circle at center, transparent 50%, rgba(2, 2, 5, 0.6) 100%),
+              linear-gradient(180deg, rgba(10, 10, 26, 0.2) 0%, rgba(2, 2, 5, 0.5) 100%);
   z-index: 10;
   pointer-events: none;
 }
@@ -60,10 +60,9 @@
 .vignette-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.95) 100%);
+  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6) 100%);
   z-index: 11;
   pointer-events: none;
-  mix-blend-mode: multiply;
 }
 
 /* Subtle Bloom Effect */
@@ -125,11 +124,13 @@
   pointer-events: none;
 }
 
-/* VIGNETTE */
-.vignette-overlay {
+/* LENS FLARE / BLOOM */
+.bloom-layer {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.7) 100%);
-  z-index: 5;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 170, 255, 0.1) 0%, transparent 50%);
+  filter: blur(40px);
+  z-index: 3;
   pointer-events: none;
+  animation: bloom-pulse 10s infinite alternate ease-in-out;
 }
