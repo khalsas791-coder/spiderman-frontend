@@ -25,31 +25,69 @@ class MaskExperience {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.2;
+        this.renderer.toneMappingExposure = 1.5;
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         this.camera.position.set(0, 0, 5);
 
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        // ── PREMIUM LIGHTING ─────────────────────────────────────────
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
         this.scene.add(ambientLight);
 
-        const mainLight = new THREE.DirectionalLight(0xff3347, 2);
+        // Key Light (Red)
+        const mainLight = new THREE.DirectionalLight(0xff3347, 3);
         mainLight.position.set(5, 5, 5);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
         this.scene.add(mainLight);
 
-        const blueFillLight = new THREE.DirectionalLight(0x0036a1, 1.5);
+        // Fill Light (Blue)
+        const blueFillLight = new THREE.PointLight(0x0036a1, 2, 10);
         blueFillLight.position.set(-5, -2, 2);
         this.scene.add(blueFillLight);
 
-        const rimLight = new THREE.SpotLight(0xffffff, 1);
-        rimLight.position.set(0, 5, -5);
+        // Rim Light (Top White)
+        const rimLight = new THREE.SpotLight(0xffffff, 2);
+        rimLight.position.set(0, 8, -5);
+        rimLight.angle = 0.5;
         this.scene.add(rimLight);
 
-        // Loader
+        // Neon Glow (Point Light inside/near mask)
+        this.glowLight = new THREE.PointLight(0xff3347, 2, 5);
+        this.scene.add(this.glowLight);
+
+        // ── GROUND PLANE FOR SHADOWS ─────────────────────────────────
+        const planeGeometry = new THREE.PlaneGeometry(20, 20);
+        const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
+        const ground = new THREE.Mesh(planeGeometry, planeMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -2;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+
+        // ── LOADER ──────────────────────────────────────────────────
         const loader = new GLTFLoader();
         loader.load('./models/mask.glb', (gltf) => {
             this.mask = gltf.scene;
             
+            this.mask.traverse((node) => {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+                    
+                    // Add subtle emissive glow to red parts if possible
+                    if (node.material) {
+                        node.material.envMapIntensity = 1.5;
+                        if (node.material.name.toLowerCase().includes('red') || node.material.color.r > 0.5) {
+                            node.material.emissive = new THREE.Color(0x330000);
+                            node.material.emissiveIntensity = 0.5;
+                        }
+                    }
+                }
+            });
+
             // Center and scale
             const box = new THREE.Box3().setFromObject(this.mask);
             const center = box.getCenter(new THREE.Vector3());
@@ -58,24 +96,21 @@ class MaskExperience {
             const maxDim = Math.max(size.x, size.y, size.z);
             const fov = this.camera.fov * (Math.PI / 180);
             let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-            cameraZ *= 1.5; 
+            cameraZ *= 1.6; 
             
             this.camera.position.z = cameraZ;
             this.mask.position.sub(center);
             
             this.scene.add(this.mask);
-
-            // Floating animation
             this.animate();
         }, undefined, (error) => {
             console.error('Error loading model:', error);
-            // Fallback would go here
         });
 
         // Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
-        this.controls.enableZoom = true;
+        this.controls.enableZoom = false; // Disable zoom for card-like feel
         this.controls.autoRotate = false;
         this.controls.maxPolarAngle = Math.PI / 1.5;
         this.controls.minPolarAngle = Math.PI / 3;
@@ -87,12 +122,13 @@ class MaskExperience {
     }
 
     onMouseMove(event) {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
         if (this.mask) {
-            this.targetRotation.y = this.mouse.x * 0.2;
-            this.targetRotation.x = -this.mouse.y * 0.2;
+            this.targetRotation.y = this.mouse.x * 0.4; // More responsive tilt
+            this.targetRotation.x = -this.mouse.y * 0.3;
         }
     }
 
@@ -106,27 +142,37 @@ class MaskExperience {
         const addBtn = document.getElementById('add-to-cart');
         const countBadge = document.getElementById('cart-count');
         
-        let count = parseInt(localStorage.getItem('spidey_arsenal_count') || '0');
-        countBadge.textContent = count;
+        // Sync with spideyCart
+        const updateCount = () => {
+            const cart = JSON.parse(localStorage.getItem('spideyCart') || '[]');
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            if (countBadge) countBadge.textContent = count;
+        };
+        updateCount();
 
         addBtn.addEventListener('click', () => {
-            count++;
-            localStorage.setItem('spidey_arsenal_count', count);
-            countBadge.textContent = count;
+            // Web shooting logic will be called here from another script or injected
+            // For now, trigger existing logic
+            let cart = JSON.parse(localStorage.getItem('spideyCart') || '[]');
+            const product = { id: "mask-3d", name: "Spider-Man Premium Mask", price: 49.99, image: "" };
+            const existing = cart.find(i => i.id === product.id);
+            if(existing) {
+                existing.qty = Math.min(20, existing.qty + 1);
+                existing.lineTotal = existing.qty * existing.price;
+            } else {
+                cart.push({ ...product, qty: 1, lineTotal: 49.99 });
+            }
+            localStorage.setItem('spideyCart', JSON.stringify(cart));
+            updateCount();
             
-            // Pulse animation
-            addBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => addBtn.style.transform = 'scale(1.02)', 100);
+            // Premium Feedback
+            addBtn.classList.add('premium-pulse');
+            setTimeout(() => addBtn.classList.remove('premium-pulse'), 600);
             
-            countBadge.style.transform = 'scale(1.5)';
-            countBadge.style.background = '#fff';
-            countBadge.style.color = '#dc1e30';
-            
-            setTimeout(() => {
-                countBadge.style.transform = 'scale(1)';
-                countBadge.style.background = '#dc1e30';
-                countBadge.style.color = '#fff';
-            }, 500);
+            if (countBadge) {
+                countBadge.classList.add('bounce-in');
+                setTimeout(() => countBadge.classList.remove('bounce-in'), 500);
+            }
         });
     }
 
@@ -134,12 +180,19 @@ class MaskExperience {
         requestAnimationFrame(() => this.animate());
 
         if (this.mask) {
-            // Subtle floating
-            this.mask.position.y = Math.sin(Date.now() * 0.001) * 0.1;
+            // Realistic floating
+            const time = Date.now() * 0.001;
+            this.mask.position.y = Math.sin(time) * 0.15;
+            this.mask.position.x = Math.cos(time * 0.5) * 0.05;
             
-            // Mouse following
-            this.mask.rotation.y += (this.targetRotation.y - this.mask.rotation.y) * 0.05;
-            this.mask.rotation.x += (this.targetRotation.x - this.mask.rotation.x) * 0.05;
+            // Mouse following (tilt)
+            this.mask.rotation.y += (this.targetRotation.y - this.mask.rotation.y) * 0.1;
+            this.mask.rotation.x += (this.targetRotation.x - this.mask.rotation.x) * 0.1;
+
+            // Reflect live lighting
+            if (this.glowLight) {
+                this.glowLight.intensity = 2 + Math.sin(time * 3) * 0.5; // Pulsing glow
+            }
         }
 
         this.controls.update();

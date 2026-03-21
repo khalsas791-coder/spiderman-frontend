@@ -31,16 +31,57 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 
 // ── CART HELPERS (localStorage) ─────────────────────────────────
 function getCart()       { try { return JSON.parse(localStorage.getItem("spideyCart")) || []; } catch { return []; } }
-function saveCart(cart)  { localStorage.setItem("spideyCart", JSON.stringify(cart)); updateCartBadge(); }
+function saveCart(cart)  {
+  localStorage.setItem("spideyCart", JSON.stringify(cart));
+  updateCartBadge();
+  updateMiniCart();
+}
 
 function updateCartBadge() {
   const cart  = getCart();
   const count = cart.reduce((s, i) => s + i.qty, 0);
   const badge = document.getElementById("cartCount");
-  if (badge) badge.textContent = count;
+  if (badge) {
+    badge.textContent = count;
+    badge.classList.add("bounce-in");
+    setTimeout(() => badge.classList.remove("bounce-in"), 500);
+  }
 }
 
-function addToCart(product, qty = 1) {
+// ── MINI CART LOGIC ─────────────────────────────────────────────
+window.showMiniCart = function() {
+  const mc = document.getElementById("miniCart");
+  if(mc) mc.classList.add("show");
+  updateMiniCart();
+};
+window.hideMiniCart = function() {
+  const mc = document.getElementById("miniCart");
+  if(mc) mc.classList.remove("show");
+};
+
+function updateMiniCart() {
+  const cart = getCart();
+  const container = document.getElementById("miniCartItems");
+  if(!container) return;
+
+  if(!cart.length) {
+    container.innerHTML = `<p style="text-align:center; font-size:0.8rem; color:rgba(255,255,255,0.4); padding:1rem;">Your arsenal is empty.</p>`;
+    return;
+  }
+
+  container.innerHTML = cart.slice(-3).reverse().map(i => `
+    <div class="mini-cart-item">
+      <img src="${i.image || 'https://via.placeholder.com/40'}" onerror="this.src='https://via.placeholder.com/40'" alt="${i.name}">
+      <div class="mci-info">
+        <p class="mci-name">${i.name}</p>
+        <p class="mci-price">${i.qty} × $${i.price.toFixed(2)}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+function addToCart(product, qty = 1, event = null) {
   const cart     = getCart();
   const existing = cart.find(i => i.id === product.id);
   if (existing) {
@@ -50,7 +91,13 @@ function addToCart(product, qty = 1) {
     cart.push({ ...product, qty, lineTotal: qty * product.price });
   }
   saveCart(cart);
+
+  // Trigger web shooting animation if event is provided
+  if (event && window.webShooter) {
+    window.webShooter.shoot(event.clientX, event.clientY);
+  }
 }
+
 
 // ── LOAD PRODUCTS FROM FIRESTORE ────────────────────────────────
 let allProducts = [];
@@ -83,8 +130,10 @@ async function loadProducts() {
     }
 
     renderProducts(allProducts);
+    renderRelatedGear(allProducts);
 
   } catch (err) {
+
     console.warn("Firestore load failed, trying backend:", err.message);
     try {
       const resp = await fetch(`${API_URL}/api/products`);
@@ -165,9 +214,9 @@ function renderProducts(products) {
               <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
               ${p.oldPrice ? `<span class="pc-old-price">$${p.oldPrice}</span>` : ""}
             </div>
-            <button class="pc-add-btn" onclick="event.stopPropagation(); quickAdd('${p.id}')">
-              🛒 Add to Cart
-            </button>
+            <button class="pc-add-btn" onclick="event.stopPropagation(); quickAdd('${p.id}', event)">
+               🛒 Add to Cart
+             </button>
           </div>
         `;
         grid.appendChild(card);
@@ -201,12 +250,13 @@ function renderProducts(products) {
 }
 
 // ── QUICK ADD (from card) ────────────────────────────────────────
-window.quickAdd = function (id) {
+window.quickAdd = function (id, event) {
   const p = allProducts.find(x => x.id === id);
   if (!p) return;
-  addToCart(p, 1);
+  addToCart(p, 1, event);
   showToast(`🕸️ ${p.name} added to cart!`);
 };
+
 
 // ── DETAIL MODAL ─────────────────────────────────────────────────
 let modalProduct = null;
@@ -321,5 +371,30 @@ function showToast(msg, dur = 3000) {
   setTimeout(() => t.classList.remove("show"), dur);
 }
 
+// ── RENDER RELATED GEAR ─────────────────────────────────────────
+function renderRelatedGear(products) {
+  const grid = document.getElementById("relatedGearGrid");
+  if (!grid) return;
+
+  // Filter to show a few items
+  const related = products.slice(0, 4);
+  grid.innerHTML = related.map(p => `
+    <div class="product-card" onclick="openDetail('${p.id}')">
+      <div class="pc-image-wrap">
+        <div class="pc-image">
+          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span class="pc-emoji">🕷️</span>`}
+        </div>
+      </div>
+      <div class="pc-body">
+        <h3 class="pc-name">${p.name}</h3>
+        <p class="pc-price">$${parseFloat(p.price).toFixed(2)}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ── INIT ─────────────────────────────────────────────────────────
 updateCartBadge();
+updateMiniCart();
+// Note: loadProducts calls renderRelatedGear after fetching
+
