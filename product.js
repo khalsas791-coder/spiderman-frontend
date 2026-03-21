@@ -155,7 +155,7 @@ function renderGrid(products) {
       const stars = "★".repeat(Math.floor(p.rating)) + "☆".repeat(5 - Math.floor(p.rating));
       
       card.innerHTML = `
-        ${secName === "Limited Edition" ? '<span class="badge-premium">LIMITED</span>' : ''}
+        ${secName === "Limited Edition" ? '<span class="badge-premium">🔥 LIMITED</span>' : ''}
         <div class="pc-image-area">
           <img src="${p.image}" alt="${p.name}" onerror="this.src='./images/bg.png'">
           <div class="quick-view-overlay">
@@ -250,7 +250,7 @@ function updateCartPanel() {
     if(!container) return;
     
     if(cart.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:3rem; opacity:0.4;">Arsenal is empty</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:3rem; opacity:0.4; font-family:'Outfit', sans-serif;">Arsenal is empty</div>`;
         if(totalEl) totalEl.textContent = "$0.00";
         return;
     }
@@ -259,19 +259,47 @@ function updateCartPanel() {
     container.innerHTML = cart.map(item => {
         total += item.price * item.qty;
         return `
-            <div class="cart-panel-item" style="display:flex; gap:1rem; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:1rem;">
-                <img src="${item.image}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+            <div class="cart-panel-item" style="display:flex; gap:1rem; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding:1rem 0;">
+                <img src="${item.image}" style="width:60px; height:60px; object-fit:cover; border-radius:12px; border:1px solid var(--glass-b);">
                 <div style="flex:1">
-                    <h4 style="font-size:0.9rem; margin-bottom:0.2rem;">${item.name}</h4>
-                    <p style="font-size:0.8rem; color:rgba(255,255,255,0.5)">$${item.price} × ${item.qty}</p>
+                    <h4 style="font-size:0.9rem; margin-bottom:0.2rem; font-weight:700;">${item.name}</h4>
+                    <p style="font-size:0.8rem; color:rgba(255,255,255,0.5)">$${item.price.toFixed(2)} × ${item.qty}</p>
                 </div>
-                <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button>
+                <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:1.1rem;">✕</button>
             </div>
         `;
     }).join("");
     
     if(totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
 }
+
+// ── BACKGROUND PARTICLES ──
+function spawnParticles() {
+  const container = document.querySelector(".shop-page");
+  if (!container) return;
+  
+  const colors = ["#dc1e30", "#00aaff"];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement("div");
+    const size = Math.random() * 4 + 2;
+    p.style.cssText = `
+      position:fixed; border-radius:50%;
+      width:${size}px; height:${size}px;
+      background:${colors[i % 2]}; left:${Math.random() * 100}%;
+      top:${Math.random() * 100}%;
+      box-shadow: 0 0 ${size * 3}px ${colors[i % 2]};
+      opacity: 0.15; z-index: -1;
+      pointer-events: none;
+      animation: float-bg ${Math.random() * 15 + 10}s linear infinite;
+    `;
+    container.appendChild(p);
+  }
+}
+
+const pStyle = document.createElement("style");
+pStyle.textContent = `@keyframes float-bg { 0% { opacity:0; transform: translateY(0) scale(1); } 50% { opacity:0.3; } 100% { opacity:0; transform: translateY(-300px) scale(1.5); } }`;
+document.head.appendChild(pStyle);
+spawnParticles();
 
 window.removeFromCart = (id) => {
     let cart = getCart();
