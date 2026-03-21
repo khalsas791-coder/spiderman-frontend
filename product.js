@@ -104,7 +104,6 @@ let allProducts = [];
 
 async function loadProducts() {
   const loading = document.getElementById("productsLoading");
-  const grid    = document.getElementById("productsGrid");
   const empty   = document.getElementById("productsEmpty");
 
   try {
@@ -133,121 +132,125 @@ async function loadProducts() {
     renderRelatedGear(allProducts);
 
   } catch (err) {
-
-    console.warn("Firestore load failed, trying backend:", err.message);
-    try {
-      const resp = await fetch(`${API_URL}/api/products`);
-      const data = await resp.json();
-      if (data.success && data.products?.length) {
-        allProducts = data.products;
-        if (loading) loading.style.display = "none";
-        renderProducts(allProducts);
-      } else {
-        throw new Error("No products");
-      }
-    } catch {
-      if (loading) loading.style.display = "none";
-      if (empty) empty.style.display = "flex";
-    }
+    console.error("Load products failed:", err);
+    if (loading) loading.style.display = "none";
+    if (empty) empty.style.display = "flex";
   }
 }
 
+// ── FILTERING LOGIC ─────────────────────────────────────────────
+let currentCategory = "All";
+
+window.filterCategory = (cat) => {
+  currentCategory = cat;
+  document.querySelectorAll(".cat-nav-btn").forEach(b => {
+    b.classList.toggle("active", b.textContent.includes(cat) || (cat === "All" && b.textContent === "All"));
+  });
+  applyFilters();
+};
+
+window.updatePriceLabel = (val) => {
+  const pVal = document.getElementById("priceVal");
+  if (pVal) pVal.textContent = val;
+  applyFilters();
+};
+
+window.applyFilters = () => {
+  const sortSelect = document.getElementById("sortSelect");
+  const priceRange = document.getElementById("priceRange");
+  if (!sortSelect || !priceRange) return;
+
+  const sort = sortSelect.value;
+  const maxPrice = parseFloat(priceRange.value);
+  
+  let filtered = [...allProducts];
+  if (currentCategory !== "All") {
+    filtered = filtered.filter(p => p.category === currentCategory);
+  }
+  filtered = filtered.filter(p => p.price <= maxPrice);
+
+  if (sort === "price-low") filtered.sort((a,b) => a.price - b.price);
+  else if (sort === "price-high") filtered.sort((a,b) => b.price - a.price);
+  else if (sort === "rating") filtered.sort((a,b) => (b.rating || 0) - (a.rating || 0));
+  
+  renderProducts(filtered);
+};
+
+// ── CATEGORY RENDERER ───────────────────────────────────────────
 function renderProducts(products) {
   const container = document.getElementById("shopContainer");
   if (!container) return;
   container.innerHTML = "";
 
-  const sections = [
-    { id: "Limited", title: "Limited Edition", subtitle: "Exclusives. Rarities. Legends.", premium: true },
-    { id: "Special", title: "Special Collections", subtitle: "Premium quality for every fan.", premium: false }
-  ];
+  const cats = currentCategory === "All" ? ["Masks", "Hoodies", "Toys"] : [currentCategory];
 
-  const categories = ["Hoodies", "Toys", "Masks"];
+  cats.forEach(cat => {
+    const catProducts = products.filter(p => p.category === cat);
+    if (!catProducts.length) return;
 
-  sections.forEach(sec => {
-    // 1. Filter products for this section (Default to Special if missing)
-    const secProducts = products.filter(p => (p.section || "Special") === sec.id);
-    if (!secProducts.length) return;
-
-    // 2. Create Section Header
-    const secHeader = document.createElement("div");
-    secHeader.className = "shop-section-header";
-    if (!sec.premium) secHeader.style.marginTop = "4rem";
-    secHeader.innerHTML = `
-      <h2 class="section-title">${sec.title.split(' ')[0]} <span class="accent">${sec.title.split(' ').slice(1).join(' ')}</span></h2>
-      <p class="section-subtitle">${sec.subtitle}</p>
+    const section = document.createElement("section");
+    section.className = "category-section fade-in-up";
+    section.innerHTML = `
+      <div class="shop-section-header">
+        <h2 class="section-title">${cat} <span class="accent">Collection</span></h2>
+      </div>
+      <div class="products-grid ${cat === 'Toys' ? 'toys-grid' : ''}" id="grid-${cat}"></div>
     `;
-    container.appendChild(secHeader);
+    container.appendChild(section);
 
-    // 3. Create Categories within Section
-    categories.forEach(cat => {
-      const catProducts = secProducts.filter(p => (p.category || "Masks") === cat);
-      if (!catProducts.length) return;
-
-      const catTitle = document.createElement("h3");
-      catTitle.className = "category-group-title";
-      catTitle.textContent = cat;
-      container.appendChild(catTitle);
-
-      const grid = document.createElement("div");
-      grid.className = `products-grid ${sec.premium ? 'premium-grid' : ''}`;
+    const grid = section.querySelector(".products-grid");
+    catProducts.forEach((p, idx) => {
+      const card = document.createElement("div");
+      card.className = `product-card category-${cat.toLowerCase()}`;
+      card.style.animationDelay = `${idx * 0.1}s`;
       
-      catProducts.forEach((p, idx) => {
-        const card = document.createElement("div");
-        card.className = `product-card ${sec.premium ? 'premium-card' : ''}`;
-        card.style.animationDelay = `${idx * 0.08}s`;
-        card.onclick = () => openDetail(p.id);
-        card.innerHTML = `
-          <div class="pc-image-wrap">
-            <div class="pc-image">
-              ${p.image
-                ? `<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.innerHTML='🕷️'"/>`
-                : `<span class="pc-emoji">🕷️</span>`}
-            </div>
-            ${sec.premium ? `<span class="pc-badge-limited">💎 Limited</span>` : ""}
-            ${p.modelUrl ? `<span class="pc-badge-3d">🥽 3D View</span>` : ""}
-          </div>
-          <div class="pc-body">
-            <h3 class="pc-name">${p.name}</h3>
-            <p class="pc-desc">${(p.description || "").slice(0, 80)}…</p>
-            <div class="pc-footer">
-              <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
-              ${p.oldPrice ? `<span class="pc-old-price">$${p.oldPrice}</span>` : ""}
-            </div>
-            <button class="pc-add-btn" onclick="event.stopPropagation(); quickAdd('${p.id}', event)">
-               🛒 Add to Cart
-             </button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-      container.appendChild(grid);
-    });
-  });
-
-  // ── 3D TILT EFFECT ──────────────────────────────────────────────
-  const cards = document.querySelectorAll(".product-card");
-  cards.forEach(card => {
-    card.addEventListener("mousemove", (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const xRot = 20 * ((x - rect.width / 2) / rect.width);
-      const yRot = -20 * ((y - rect.height / 2) / rect.height);
-      card.style.transform = `perspective(1000px) rotateX(${yRot}deg) rotateY(${xRot}deg) scale3d(1.05, 1.05, 1.05)`;
-      if(card.classList.contains('premium-card')) {
-        card.style.boxShadow = "0 30px 60px rgba(0, 170, 255, 0.4), 0 0 20px rgba(0, 170, 255, 0.2)";
-      } else {
-        card.style.boxShadow = "0 20px 40px rgba(0,0,0,0.6), 0 0 15px rgba(220, 30, 48, 0.4)";
+      let specializedUI = "";
+      if (cat === "Masks" && p.modelUrl) {
+        specializedUI = `<div class="pc-badge-3d">🎭 3D View</div>`;
+      } else if (cat === "Hoodies" && p.sizes) {
+        specializedUI = `<div class="pc-sizes">${p.sizes.map(s => `<span>${s}</span>`).join('')}</div>`;
+      } else if (p.discount) {
+        specializedUI = `<div class="pc-badge-discount">${p.discount}</div>`;
       }
-    });
 
-    card.addEventListener("mouseleave", () => {
-      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-      card.style.boxShadow = "";
+      card.innerHTML = `
+        <div class="pc-image-wrap" onclick="openDetail('${p.id}')">
+          <div class="pc-image">
+             ${(cat === "Masks" && p.modelUrl) 
+                ? `<model-viewer src="${p.modelUrl}" auto-rotate camera-controls shadow-intensity="1" class="card-mv"></model-viewer>`
+                : `<img src="${p.image}" alt="${p.name}" loading="lazy">`}
+          </div>
+          ${specializedUI}
+        </div>
+        <div class="pc-body">
+          <h3 class="pc-name">${p.name}</h3>
+          <div class="pc-meta">
+            <span class="pc-rating">⭐ ${p.rating || '4.5'}</span>
+            <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
+          </div>
+          <button class="pc-add-btn" onclick="quickAdd('${p.id}', event)">
+            ${cat === "Masks" ? "🕸️ Add to Arsenal" : "🛒 Add to Cart"}
+          </button>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      // Add 3D Tilt Effect
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const xRot = 15 * ((x - rect.width / 2) / rect.width);
+        const yRot = -15 * ((y - rect.height / 2) / rect.height);
+        card.style.transform = `perspective(1000px) rotateX(${yRot}deg) rotateY(${xRot}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
     });
   });
 }
+
 
 // ── QUICK ADD (from card) ────────────────────────────────────────
 window.quickAdd = function (id, event) {
