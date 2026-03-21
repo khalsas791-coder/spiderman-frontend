@@ -5,6 +5,7 @@ import {
   collection, addDoc, getDocs, doc,
   updateDoc, deleteDoc, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { sampleProducts } from "./sample-products.js";
 
 // ── ADMIN CONFIG ────────────────────────────────────────────────
 const ADMIN_EMAILS = ["admin@spiderman.com", "admin@spidey.com"];
@@ -59,6 +60,42 @@ function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 // ════════════════════════════════════════════════
 //  PRODUCTS CRUD
 // ════════════════════════════════════════════════
+
+// ── SYNC CATALOG ────────────────────────────────────────────────
+document.getElementById("btnSyncCatalog")?.addEventListener("click", async () => {
+    const btn = document.getElementById("btnSyncCatalog");
+    if(!confirm("Are you sure you want to upload all premium sample products to your live Firebase database?")) return;
+    
+    btn.disabled = true;
+    btn.textContent = "Syncing to Firebase...";
+    
+    try {
+        let added = 0;
+        for (const p of sampleProducts) {
+             const data = {
+                name: p.name,
+                price: parseFloat(p.price),
+                description: p.description,
+                image: p.image,
+                category: p.category,
+                section: p.section,
+                stock: 100,
+                rating: p.rating || 5.0,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+             };
+             await addDoc(collection(db, "products"), data);
+             added++;
+        }
+        showToast(`✅ Successfully synced ${added} products!`);
+        await loadProducts();
+    } catch (err) {
+        showToast("❌ Sync failed: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "↺ Sync Catalog to Firebase";
+    }
+});
 
 let allProducts = [];
 
