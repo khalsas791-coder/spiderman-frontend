@@ -27,6 +27,11 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "index.html";
 });
 
+// Cart Trigger on Cart Page (Keep it active for consistency)
+document.getElementById("cartTrigger")?.addEventListener("click", () => {
+    window.location.href = "cart.html";
+});
+
 // ── CART DATA ───────────────────────────────────────────────────
 function getCart() {
   try { return JSON.parse(localStorage.getItem("spideyCart")) || []; }
@@ -40,7 +45,7 @@ function saveCart(cart) {
 
 function updateBadge(cart) {
   const count = cart.reduce((s, i) => s + i.qty, 0);
-  const badge = document.getElementById("cartBadge");
+  const badge = document.getElementById("cartCount");
   if (badge) badge.textContent = count;
 }
 

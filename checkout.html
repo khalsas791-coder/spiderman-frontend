@@ -9,6 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="checkout.css"/>
+  <link rel="stylesheet" href="product.css?v=2.0"/>
+  <link rel="stylesheet" href="cinematic-bg.css?v=2.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -51,24 +54,38 @@
     </div>
   </div>
 
-  <!-- NAVBAR -->
-  <nav class="navbar" id="navbar">
-    <a href="index.html" class="nav-logo">
-      <span class="s-icon">🕷️</span>
-      <span>SPIDER-MAN</span>
-    </a>
-    <div class="nav-steps">
-      <span class="step done">🛒 Cart</span>
-      <span class="step-arrow">→</span>
-      <span class="step active">📝 Details</span>
-      <span class="step-arrow">→</span>
-      <span class="step">💳 Payment</span>
-    </div>
-    <div class="nav-right">
-      <span class="user-badge" id="userBadge">Hero</span>
-      <a href="admin.html" id="navAdminBtn" style="display:none; color:#ff3347; font-weight:bold; text-decoration:none; margin-right:15px; font-size:0.9rem;">Admin</a>
+  <!-- ═══ PREMIUM NAVBAR ═══ -->
+  <nav class="spidey-nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Spiderman_mask.png" alt="Spider-Man Logo">
+        <span>SPIDER-MAN</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="product.html">Arsenal</a>
+        <a href="mask-experience.html">3D Experience</a>
+      </div>
+
+      <div class="nav-actions">
+        <div class="user-badge" id="userBadge">Hero</div>
+        <a href="admin.html" id="navAdminBtn" style="display:none;" class="admin-link">Admin</a>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </div>
     </div>
   </nav>
+
+  <!-- ═══ CINEMATIC BACKGROUND (FIXED) ═══ -->
+  <div class="cinematic-bg-container fixed-bg">
+    <div class="bloom-layer"></div>
+    <div class="parallax-layers cinematic-zoom">
+      <div class="layer-sky"></div>
+      <div class="layer-city-far"></div>
+      <div class="layer-fg"></div>
+    </div>
+    <div class="vignette-overlay"></div>
+  </div>
 
   <!-- MAIN -->
   <main class="checkout-main">
@@ -276,6 +293,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <script type="module" src="checkout.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="cinematic-bg.js"></script>
+  <script type="module" src="checkout.js?v=2.0"></script>
 </body>
 </html>
