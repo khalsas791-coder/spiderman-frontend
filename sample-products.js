@@ -1,5 +1,36 @@
 // sample-products.js — Premium Catalog
 export const sampleProducts = [
+  // 🔥 EXCLUSIVE LIMITED EDITION NEW ARRIVALS
+  {
+    id: "le-toy-rare",
+    name: "Spider-Man Rare Collector Figure",
+    price: 299.00,
+    category: "Toys",
+    section: "Limited Edition",
+    image: "https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?q=80&w=1000&auto=format&fit=crop",
+    description: "Ultra rare Spider-Man collectible action figure with high-detail design and dynamic pose. Premium finish for collectors.",
+    rating: 5.0
+  },
+  {
+    id: "le-hoodie-elite",
+    name: "Spider-Man Elite Hoodie",
+    price: 199.00,
+    category: "Hoodies",
+    section: "Limited Edition",
+    image: "https://images.unsplash.com/photo-1618354691321-e851c56960d1?q=80&w=1000&auto=format&fit=crop",
+    description: "High-quality Spider-Man themed hoodie with premium fabric, modern streetwear design, and iconic logo print.",
+    rating: 4.9
+  },
+  {
+    id: "le-mask-luxury",
+    name: "Spider-Man Luxury Mask",
+    price: 149.00,
+    category: "Masks",
+    section: "Limited Edition",
+    image: "https://images.unsplash.com/photo-1608889175155-0e3f3b5d8a7a?q=80&w=1000&auto=format&fit=crop",
+    description: "Premium Spider-Man mask with glossy finish, realistic texture, and collectible-grade design.",
+    rating: 5.0
+  },
   // 🔥 LIMITED EDITION - MASKS
   {
     id: "le-mask-1",
