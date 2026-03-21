@@ -90,12 +90,94 @@ body {
     border-left: 1px solid var(--glass-border);
 }
 
+/* Loading & Overlays */
+.loading-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--dark-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top: 3px solid var(--primary-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 20px rgba(220, 30, 48, 0.4);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    font-family: var(--bebas);
+    letter-spacing: 2px;
+    color: var(--primary-red);
+    text-shadow: 0 0 10px rgba(220, 30, 48, 0.5);
+}
+
+#mask-container {
+    position: relative;
+    width: 100%;
+}
+
+.badge-3d {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background: rgba(0, 136, 255, 0.2);
+    border: 1px solid #0088ff;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #0088ff;
+    text-shadow: 0 0 10px #0088ff;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.try-premium-btn {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.try-premium-btn:hover {
+    background: var(--primary-red);
+    border-color: var(--accent-glow);
+    box-shadow: 0 0 20px rgba(220, 30, 48, 0.5);
+    transform: translateY(-3px);
+}
+
 /* 3D Canvas */
 #mask-canvas {
     width: 100%;
-    height: 80vh;
+    height: 85vh;
     outline: none;
 }
+
 
 /* UI Elements */
 .header-nav {

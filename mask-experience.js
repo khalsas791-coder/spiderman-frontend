@@ -29,6 +29,17 @@ class MaskExperience {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+        // Loading Manager
+        this.loadingManager = new THREE.LoadingManager();
+        this.loadingManager.onLoad = () => {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
+            this.onModelLoaded();
+        };
+
         this.camera.position.set(0, 0, 5);
 
         // ── PREMIUM LIGHTING ─────────────────────────────────────────
@@ -55,8 +66,15 @@ class MaskExperience {
         this.scene.add(rimLight);
 
         // Neon Glow (Point Light inside/near mask)
-        this.glowLight = new THREE.PointLight(0xff3347, 2, 5);
+        this.glowLight = new THREE.PointLight(0xff3347, 3, 5);
+        this.glowLight.position.set(0, 0.5, 1);
         this.scene.add(this.glowLight);
+
+        // RectAreaLight for studio highlights (Top-Front)
+        const rectLight = new THREE.RectAreaLight(0xffffff, 5, 4, 4);
+        rectLight.position.set(0, 5, 5);
+        rectLight.lookAt(0, 0, 0);
+        this.scene.add(rectLight);
 
         // ── GROUND PLANE FOR SHADOWS ─────────────────────────────────
         const planeGeometry = new THREE.PlaneGeometry(20, 20);
@@ -68,7 +86,7 @@ class MaskExperience {
         this.scene.add(ground);
 
         // ── LOADER ──────────────────────────────────────────────────
-        const loader = new GLTFLoader();
+        const loader = new GLTFLoader(this.loadingManager);
         loader.load('./models/mask.glb', (gltf) => {
             this.mask = gltf.scene;
             
@@ -110,10 +128,12 @@ class MaskExperience {
         // Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
-        this.controls.enableZoom = false; // Disable zoom for card-like feel
-        this.controls.autoRotate = false;
+        this.controls.enableZoom = true; 
+        this.controls.autoRotate = true;
+        this.controls.autoRotateSpeed = 0.5;
         this.controls.maxPolarAngle = Math.PI / 1.5;
         this.controls.minPolarAngle = Math.PI / 3;
+        this.controls.enablePan = false;
 
         window.addEventListener('resize', () => this.onResize());
         window.addEventListener('mousemove', (e) => this.onMouseMove(e));
@@ -127,9 +147,43 @@ class MaskExperience {
         this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
         if (this.mask) {
-            this.targetRotation.y = this.mouse.x * 0.4; // More responsive tilt
+            this.targetRotation.y = this.mouse.x * 0.4;
             this.targetRotation.x = -this.mouse.y * 0.3;
+            
+            // Hover zoom
+            const distance = Math.sqrt(this.mouse.x**2 + this.mouse.y**2);
+            if (distance < 0.5) {
+                this.camera.zoom = 1.1;
+                this.camera.updateProjectionMatrix();
+            } else {
+                this.camera.zoom = 1.0;
+                this.camera.updateProjectionMatrix();
+            }
         }
+    }
+
+    onModelLoaded() {
+        if (!this.mask) return;
+        this.mask.scale.set(0, 0, 0);
+        new THREE.Object3D().add(this.mask); // ensure it's in a parent
+        
+        // Simple scale-up animation
+        const startTime = Date.now();
+        const duration = 1000;
+        const animateScale = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const val = this.easeOutExpo(progress);
+            if (this.mask) {
+                this.mask.scale.set(val, val, val);
+            }
+            if (progress < 1) requestAnimationFrame(animateScale);
+        };
+        animateScale();
+    }
+
+    easeOutExpo(x) {
+        return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
     }
 
     onResize() {
