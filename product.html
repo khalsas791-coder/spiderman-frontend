@@ -11,6 +11,7 @@
   <!-- Google model-viewer for 3D GLB support -->
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
   <link rel="stylesheet" href="product.css"/>
+  <link rel="stylesheet" href="cinematic-bg.css"/>
 </head>
 <body>
 
@@ -48,13 +49,16 @@
 
   <!-- ═══ CINEMATIC HERO BANNER ═══ -->
   <section class="shop-hero cinematic" id="cinematicHero">
-    <div class="parallax-wrapper" id="parallaxWrapper">
-      <!-- Layer 1: Sky / Far Background -->
-      <div class="parallax-layer layer-bg" id="layerBg"></div>
-      <!-- Layer 2: Midground City Buildings -->
-      <div class="parallax-layer layer-mid" id="layerMid"></div>
-      <!-- Layer 3: Foreground Spider-Man supplied by user -->
-      <div class="parallax-layer layer-spidey" id="layerSpidey"></div>
+    <div class="cinematic-bg-container">
+      <div class="parallax-layers cinematic-zoom">
+        <div class="layer layer-bg"></div>
+        <div class="layer layer-mid"></div>
+        <div class="layer layer-fg"></div>
+      </div>
+      <div class="vignette-overlay"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <!-- Category Navigation -->
     <!-- Category Navigation -->
     <div class="category-nav" id="categoryNav">
       <button class="cat-nav-btn active" onclick="filterCategory('All')">All</button>
@@ -270,6 +274,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="gsap-animations.js"></script>
+  <script src="cinematic-bg.js"></script>
   <script src="web-shooter.js"></script>
 
   <script type="module" src="product.js"></script>

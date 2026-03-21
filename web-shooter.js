@@ -1,7 +1,6 @@
 /**
- * web-shooter.js — Premium Spider-Man Web Shooting Effect
+ * web-shooter.js — Premium Marvel-Style Web Interaction
  * ─────────────────────────────────────────────────────────
- * Shoots a dynamic SVG/Canvas web from the cursor to the cart icon.
  */
 
 class WebShooter {
@@ -9,88 +8,152 @@ class WebShooter {
         this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.svg.setAttribute("style", "position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999;");
         document.body.appendChild(this.svg);
-        this.activeWebs = [];
+        this.isShooting = false;
+        
+        // Add global click listener for free-shooting
+        document.addEventListener('mousedown', (e) => {
+            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
+            this.shoot(e.clientX, e.clientY);
+        });
     }
 
-    shoot(startX, startY, targetSelector = "#cartToggle") {
-        const target = document.querySelector(targetSelector);
-        if (!target) return;
+    shoot(targetX, targetY) {
+        if (this.isShooting) return;
+        this.isShooting = true;
 
-        const targetRect = target.getBoundingClientRect();
-        const endX = targetRect.left + targetRect.width / 2;
-        const endY = targetRect.top + targetRect.height / 2;
+        // Origin point: bottom right (like Spidey swinging in/shooting from side)
+        const startX = window.innerWidth * 1.1; 
+        const startY = window.innerHeight * 0.9;
 
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("fill", "none");
-        path.setAttribute("stroke", "#ffffff");
-        path.setAttribute("stroke-width", "3");
+        path.setAttribute("stroke", "white");
+        path.setAttribute("stroke-width", "4");
         path.setAttribute("stroke-linecap", "round");
-        path.setAttribute("style", "filter: drop-shadow(0 0 5px rgba(255,255,255,0.8)); opacity: 0.9;");
+        path.setAttribute("style", "filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)); opacity: 1;");
 
-        // Create a slightly curved path
-        const cpX = (startX + endX) / 2 + (Math.random() * 100 - 50);
-        const cpY = (startY + endY) / 2 - 100;
-
-        const d = `M ${startX} ${startY} Q ${cpX} ${cpY} ${endX} ${endY}`;
+        // Organic Bezier Curve
+        const cp1X = (startX + targetX) / 2 + (Math.random() - 0.5) * 200;
+        const cp1Y = (startY + targetY) / 2 - 300; // Curve upwards
+        
+        const d = `M ${startX} ${startY} Q ${cp1X} ${cp1Y} ${targetX} ${targetY}`;
         path.setAttribute("d", d);
 
-        // Animation using dasharray
-        const length = 1000; // Large arbitrary length
+        // Animation preparation
+        const length = 2000;
         path.setAttribute("stroke-dasharray", length);
         path.setAttribute("stroke-dashoffset", length);
 
         this.svg.appendChild(path);
 
-        // GSAP Animation
+        // Shoot Animation
         gsap.to(path, {
             strokeDashoffset: 0,
-            duration: 0.4,
+            duration: 0.25,
             ease: "power2.out",
             onComplete: () => {
-                // Flash the target
-                gsap.to(target, { scale: 1.3, duration: 0.1, yoyo: true, repeat: 1 });
+                this.createImpact(targetX, targetY);
+                this.performScreenShake();
                 
-                // Fade out web
+                // Fade out and remove
                 gsap.to(path, {
                     opacity: 0,
+                    strokeWidth: 0,
                     duration: 0.3,
                     delay: 0.1,
-                    onComplete: () => path.remove()
+                    onComplete: () => {
+                        path.remove();
+                        this.isShooting = false;
+                    }
                 });
             }
         });
 
-        // Add impact particles at end
-        this.createImpact(endX, endY);
+        // Add recoil feeling
+        gsap.fromTo(document.body, { y: 0 }, { y: 2, duration: 0.05, yoyo: true, repeat: 1 });
     }
 
     createImpact(x, y) {
-        for (let i = 0; i < 8; i++) {
-            const dot = document.createElement("div");
-            dot.style.cssText = `
-                position: fixed;
-                left: ${x}px;
-                top: ${y}px;
-                width: 4px;
-                height: 4px;
+        // Impact Burst Container
+        const burst = document.createElement('div');
+        burst.style.cssText = `
+            position: fixed;
+            left: ${x}px;
+            top: ${y}px;
+            width: 0;
+            height: 0;
+            z-index: 10000;
+            pointer-events: none;
+        `;
+        document.body.appendChild(burst);
+
+        // Particles
+        for (let i = 0; i < 15; i++) {
+            const p = document.createElement('div');
+            const size = Math.random() * 4 + 2;
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 50 + Math.random() * 100;
+            
+            p.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
                 background: white;
                 border-radius: 50%;
-                pointer-events: none;
-                z-index: 10000;
                 box-shadow: 0 0 10px white;
+                opacity: 0.8;
             `;
-            document.body.appendChild(dot);
+            burst.appendChild(p);
 
-            gsap.to(dot, {
-                x: (Math.random() - 0.5) * 60,
-                y: (Math.random() - 0.5) * 60,
+            gsap.to(p, {
+                x: Math.cos(angle) * dist,
+                y: Math.sin(angle) * dist,
                 opacity: 0,
                 scale: 0,
-                duration: 0.5,
-                onComplete: () => dot.remove()
+                duration: 0.4 + Math.random() * 0.4,
+                ease: "power3.out",
+                onComplete: () => p.remove()
             });
         }
+
+        // Ripple Effect
+        const ripple = document.createElement('div');
+        ripple.style.cssText = `
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        `;
+        burst.appendChild(ripple);
+        gsap.to(ripple, {
+            width: 150,
+            height: 150,
+            opacity: 0,
+            duration: 0.5,
+            onComplete: () => ripple.remove()
+        });
+
+        setTimeout(() => burst.remove(), 1000);
+    }
+
+    performScreenShake() {
+        const tl = gsap.timeline();
+        tl.to(document.body, { x: -2, duration: 0.05 })
+          .to(document.body, { x: 2, duration: 0.05 })
+          .to(document.body, { x: -1, duration: 0.05 })
+          .to(document.body, { x: 0, duration: 0.05 });
     }
 }
 
-window.webShooter = new WebShooter();
+// Ensure GSAP is loaded before initializing
+const initWebShooter = () => {
+    if (window.gsap) {
+        window.webShooter = new WebShooter();
+    } else {
+        setTimeout(initWebShooter, 100);
+    }
+};
+
+initWebShooter();
