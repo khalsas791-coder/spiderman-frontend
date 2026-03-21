@@ -1,4 +1,109 @@
-/* product.css — Spider-Man Shop Page (full grid + detail modal) */
+/* ── SHOP SECTION HIERARCHY ──────────────── */
+.shop-section-container {
+    margin-bottom: 5rem;
+    padding: 2rem;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.shop-section-container.limited-edition {
+    background: radial-gradient(circle at top right, rgba(220, 30, 48, 0.05), transparent 60%);
+    border: 1px solid rgba(220, 30, 48, 0.15);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.shop-section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    letter-spacing: 4px;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.limited-edition .shop-section-title {
+    color: var(--white);
+    text-shadow: 0 0 20px rgba(220, 30, 48, 0.5);
+}
+
+.limited-edition .shop-section-title::after {
+    content: 'PREMIUM ARSENAL';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 6px;
+    color: var(--red-l);
+    opacity: 0.8;
+}
+
+.special .shop-section-title {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── PREMIUM CARD (LIMITED EDITION) ───────── */
+.premium-card {
+    border: 1px solid rgba(220, 30, 48, 0.3);
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.9), rgba(40, 10, 15, 0.4));
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.premium-card:hover {
+    border-color: var(--red-l);
+    box-shadow: 0 0 40px rgba(220, 30, 48, 0.3);
+}
+
+.premium-card .pc-image-wrap {
+    background: radial-gradient(circle, rgba(220, 30, 48, 0.15) 0%, transparent 70%);
+}
+
+.premium-card .pc-name {
+    color: var(--red-l);
+    font-size: 1.15rem;
+}
+
+.premium-card .pc-price {
+    font-size: 1.4rem;
+    text-shadow: 0 0 10px rgba(220, 30, 48, 0.4);
+}
+
+/* ── SPECIAL CARD (NORMAL LOOK) ────────────── */
+.special-card {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 15, 25, 0.6);
+}
+
+.special-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Category Grid Labels */
+.category-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin: 2.5rem 0 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid var(--red);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.category-label span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    background: var(--glass);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
 :root{
   --red:#dc1e30;--red-l:#ff3347;--red-d:#8b0000;
   --blue:#1a3fcc;--blue-n:#00aaff;--green:#00e676;--white:#f0f0f0;

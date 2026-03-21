@@ -3,6 +3,7 @@ import { auth, db } from "./firebase-config.js";
 import { API_URL } from "./config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { sampleProducts } from "./sample-products.js";
 
 // ── AUTH GUARD ──────────────────────────────────────────────────
 let currentUser = null;
@@ -110,31 +111,21 @@ async function loadProducts() {
     // Try Firestore first
     const q    = query(collection(db, "products"), orderBy("createdAt", "desc"));
     const snap = await getDocs(q);
-    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const firestoreProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    // If Firestore empty, try backend API
-    if (!allProducts.length) {
-      const resp = await fetch(`${API_URL}/api/products`);
-      if (resp.ok) {
-        const data = await resp.json();
-        if (data.success) allProducts = data.products;
-      }
-    }
+    // Combine with samples
+    allProducts = firestoreProducts.length > 0 ? [...firestoreProducts, ...sampleProducts] : sampleProducts;
 
     if (loading) loading.style.display = "none";
-
-    if (!allProducts.length) {
-      if (empty) empty.style.display = "flex";
-      return;
-    }
 
     renderProducts(allProducts);
     renderRelatedGear(allProducts);
 
   } catch (err) {
-    console.error("Load products failed:", err);
+    console.warn("Load products failed, using samples:", err);
+    allProducts = sampleProducts;
     if (loading) loading.style.display = "none";
-    if (empty) empty.style.display = "flex";
+    renderProducts(allProducts);
   }
 }
 
@@ -182,72 +173,63 @@ function renderProducts(products) {
   if (!container) return;
   container.innerHTML = "";
 
+  const sections = ["Limited Edition", "Special"];
   const cats = currentCategory === "All" ? ["Masks", "Hoodies", "Toys"] : [currentCategory];
 
-  cats.forEach(cat => {
-    const catProducts = products.filter(p => p.category === cat);
-    if (!catProducts.length) return;
+  sections.forEach(secName => {
+    const secProducts = products.filter(p => p.section === secName);
+    if (!secProducts.length) return;
 
-    const section = document.createElement("section");
-    section.className = "category-section fade-in-up";
-    section.innerHTML = `
-      <div class="shop-section-header">
-        <h2 class="section-title">${cat} <span class="accent">Collection</span></h2>
-      </div>
-      <div class="products-grid ${cat === 'Toys' ? 'toys-grid' : ''}" id="grid-${cat}"></div>
-    `;
-    container.appendChild(section);
+    const sectionDiv = document.createElement("div");
+    sectionDiv.className = `shop-section-container ${secName.toLowerCase().replace(' ', '-')}`;
+    sectionDiv.innerHTML = `<h2 class="shop-section-title">${secName}</h2>`;
+    
+    cats.forEach(cat => {
+      const catProducts = secProducts.filter(p => p.category === cat);
+      if (!catProducts.length) return;
 
-    const grid = section.querySelector(".products-grid");
-    catProducts.forEach((p, idx) => {
-      const card = document.createElement("div");
-      card.className = `product-card category-${cat.toLowerCase()}`;
-      card.style.animationDelay = `${idx * 0.1}s`;
+      const catLabel = document.createElement("div");
+      catLabel.className = "category-label";
+      catLabel.innerHTML = `${cat} <span>${catProducts.length} Items</span>`;
+      sectionDiv.appendChild(catLabel);
+
+      const grid = document.createElement("div");
+      grid.className = "products-grid";
       
-      let specializedUI = "";
-      if (cat === "Masks" && p.modelUrl) {
-        specializedUI = `<div class="pc-badge-3d">🎭 3D View</div>`;
-      } else if (cat === "Hoodies" && p.sizes) {
-        specializedUI = `<div class="pc-sizes">${p.sizes.map(s => `<span>${s}</span>`).join('')}</div>`;
-      } else if (p.discount) {
-        specializedUI = `<div class="pc-badge-discount">${p.discount}</div>`;
-      }
-
-      card.innerHTML = `
-        <div class="pc-image-wrap" onclick="openDetail('${p.id}')">
-          <div class="pc-image">
-             ${(cat === "Masks" && p.modelUrl) 
-                ? `<model-viewer src="${p.modelUrl}" auto-rotate camera-controls shadow-intensity="1" class="card-mv"></model-viewer>`
-                : `<img src="${p.image}" alt="${p.name}" loading="lazy">`}
+      catProducts.forEach((p, idx) => {
+        const card = document.createElement("div");
+        card.className = `product-card ${secName === 'Limited Edition' ? 'premium-card' : 'special-card'} reveal-item`;
+        card.style.animationDelay = `${idx * 0.1}s`;
+        
+        card.innerHTML = `
+          <div class="pc-image-wrap" onclick="openDetail('${p.id}')">
+            <div class="pc-image">
+               ${p.modelUrl 
+                  ? `<model-viewer src="${p.modelUrl}" auto-rotate camera-controls shadow-intensity="1" class="card-mv"></model-viewer>`
+                  : `<img src="${p.image}" alt="${p.name}" onerror="this.src='./images/bg.png'">`}
+            </div>
+            <div class="pc-badge-limited">${secName}</div>
+            ${p.modelUrl ? `<div class="pc-badge-3d">3D</div>` : ""}
           </div>
-          ${specializedUI}
-        </div>
-        <div class="pc-body">
-          <h3 class="pc-name">${p.name}</h3>
-          <div class="pc-meta">
-            <span class="pc-rating">⭐ ${p.rating || '4.5'}</span>
-            <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
+          <div class="pc-body">
+            <div class="pc-cat-row">
+              <span class="pc-cat">${p.category}</span>
+            </div>
+            <h3 class="pc-name">${p.name}</h3>
+            <p class="pc-desc">${p.description || "Premium Spider-Man gear."}</p>
+            <div class="pc-footer">
+              <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
+            </div>
+            <button class="pc-add-btn" onclick="quickAdd('${p.id}', event)">
+              🛒 Add to Cart
+            </button>
           </div>
-          <button class="pc-add-btn" onclick="quickAdd('${p.id}', event)">
-            ${cat === "Masks" ? "🕸️ Add to Arsenal" : "🛒 Add to Cart"}
-          </button>
-        </div>
-      `;
-      grid.appendChild(card);
-
-      // Add 3D Tilt Effect
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const xRot = 15 * ((x - rect.width / 2) / rect.width);
-        const yRot = -15 * ((y - rect.height / 2) / rect.height);
-        card.style.transform = `perspective(1000px) rotateX(${yRot}deg) rotateY(${xRot}deg) scale3d(1.02, 1.02, 1.02)`;
+        `;
+        grid.appendChild(card);
       });
-      card.addEventListener("mouseleave", () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-      });
+      sectionDiv.appendChild(grid);
     });
+    container.appendChild(sectionDiv);
   });
 }
 

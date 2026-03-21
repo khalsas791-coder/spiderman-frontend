@@ -20,6 +20,12 @@ onAuthStateChanged(auth, (user) => {
   const heroShopBtn = document.getElementById("startBtn");
 
   if (user) {
+    // Show cinematic background, hide video
+    const video = document.getElementById("heroVideo");
+    const cinematic = document.getElementById("cinematicBg");
+    if (video) video.style.display = "none";
+    if (cinematic) cinematic.style.display = "block";
+
     if (loginLink) {
       loginLink.textContent = "Logout";
       loginLink.href = "#";
@@ -39,7 +45,12 @@ onAuthStateChanged(auth, (user) => {
       adminItem.style.display = "inline-block";
     }
   } else {
-    // Not logged in
+    // Not logged in - Show video, hide cinematic
+    const video = document.getElementById("heroVideo");
+    const cinematic = document.getElementById("cinematicBg");
+    if (video) video.style.display = "block";
+    if (cinematic) cinematic.style.display = "none";
+
     if (loginLink) {
       loginLink.textContent = "Login";
       loginLink.href = "auth.html";

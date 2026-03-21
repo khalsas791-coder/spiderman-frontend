@@ -9,6 +9,7 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="cinematic-bg.css" />
 </head>
 
 <body>
@@ -38,6 +39,15 @@
       <source src="./videos/spiderman-bg.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
+    <!-- Cinematic Background (shown only after login) -->
+    <div class="cinematic-bg-container" id="cinematicBg" style="display: none;">
+      <div class="parallax-layers cinematic-zoom">
+        <div class="layer layer-bg"></div>
+        <div class="layer layer-mid"></div>
+        <div class="layer layer-fg"></div>
+      </div>
+      <div class="vignette-overlay"></div>
+    </div>
     <div class="hero-overlay">
     </div>
 
@@ -218,6 +228,7 @@
 
   <!-- SCRIPTS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="cinematic-bg.js"></script>
   <script src="web-shooter.js"></script>
   <script type="module" src="script.js"></script>
 

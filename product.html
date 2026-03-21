@@ -95,52 +95,7 @@
       <p>Loading products…</p>
     </div>
 
-    <!-- 3D Mask Static Product -->
-    <div class="products-grid" style="margin-bottom: 2rem;">
-      <div class="product-card" style="cursor: default;">
-        <div class="pc-image-wrap" style="height: 250px; background: rgba(220,30,48,0.06);">
-          <model-viewer src="models/mask.glb" alt="Spider-Man Mask" auto-rotate camera-controls style="width: 100%; height: 100%;"></model-viewer>
-          <span class="pc-badge-3d" style="top: 0.75rem; right: 0.75rem; position: absolute;">🎭 3D Interactive</span>
-        </div>
-        <div class="pc-body">
-          <p class="pc-cat">Exclusive Item</p>
-          <h3 class="pc-name">Spider-Man Black Mask</h3>
-          <p class="pc-desc">High-quality 3D render of the iconic mask. Fully interactive collectible directly on this card.</p>
-          <div class="pc-footer" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.85rem;">
-            <span class="pc-price" style="font-size:1.2rem; font-weight:800; color:var(--red-l);">$49.99</span>
-          </div>
-          <button class="pc-add-btn" style="width:100%; padding:0.65rem; border-radius:50px; background:linear-gradient(135deg, var(--red), var(--red-d)); border:none; color:#fff; font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:700; cursor:pointer;" onclick="addMaskToCart()">
-            🛒 Add to Cart
-          </button>
-          <button class="pc-add-btn" style="width:100%; margin-top:10px; padding:0.65rem; border-radius:50px; background:linear-gradient(135deg, #000, #333); border:1px solid #ff3347; color:#fff; font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:700; cursor:pointer;" onclick="window.location.href='mask-experience.html'">
-            ✨ Try Premium 3D
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Script for Static Product Cart -->
-    <script>
-      function addMaskToCart() {
-        let cart = [];
-        try { cart = JSON.parse(localStorage.getItem("spideyCart")) || []; } catch(e){}
-        const product = { id: "mask-3d", name: "Spider-Man Black Mask", price: 49.99, image: "" };
-        const existing = cart.find(i => i.id === product.id);
-        if(existing) {
-          existing.qty = Math.min(20, existing.qty + 1);
-          existing.lineTotal = existing.qty * existing.price;
-        } else {
-          cart.push({ ...product, qty: 1, lineTotal: 49.99 });
-        }
-        localStorage.setItem("spideyCart", JSON.stringify(cart));
-        const badge = document.getElementById("cartCount");
-        if(badge) badge.textContent = cart.reduce((s, i) => s + i.qty, 0);
-        const t = document.getElementById("toast");
-        t.textContent = "🕷️ Spider-Man Black Mask added to cart!";
-        t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 3000);
-      }
-    </script>
+    <!-- ══ MAIN SHOP CONTAINER ══ -->
 
 
     <!-- ══ MAIN SHOP CONTAINER ══ -->
