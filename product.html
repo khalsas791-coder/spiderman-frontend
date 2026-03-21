@@ -12,8 +12,10 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
   <link rel="stylesheet" href="product.css"/>
   <link rel="stylesheet" href="cinematic-bg.css"/>
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="shop-page">
 
   <!-- AUTH GUARD -->
   <div class="auth-guard" id="authGuard">
@@ -21,157 +23,164 @@
     <p>Checking credentials…</p>
   </div>
 
-  <!-- ═══ NAVBAR ═══ -->
-  <nav class="navbar" id="navbar">
-    <a href="index.html" class="nav-logo">
-      <span class="s-icon">🕷️</span>
-      <span>SPIDER-MAN</span>
-    </a>
-    <div class="nav-right">
-      <span class="user-badge" id="userBadge">Hero</span>
-      <a href="admin.html" id="navAdminBtn" style="display:none; color:#ff3347; font-weight:bold; text-decoration:none; margin-right:15px; font-size:0.9rem;">Admin</a>
-      <a href="cart.html" class="cart-btn" id="cartToggle" aria-label="View cart" onmouseenter="showMiniCart()" onmouseleave="hideMiniCart()">
-        🛒
-        <span class="cart-count" id="cartCount">0</span>
-        <!-- MINI CART DROPDOWN -->
-        <div class="mini-cart" id="miniCart">
-          <div class="mini-cart-header">Recently Added</div>
-          <div class="mini-cart-items" id="miniCartItems"></div>
-          <div class="mini-cart-footer">
-            <a href="cart.html" class="btn-view-cart">View Full Cart</a>
-          </div>
-        </div>
+  <!-- ═══ PREMIUM NAVBAR ═══ -->
+  <nav class="spidey-nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Spiderman_mask.png" alt="Spider-Man Logo">
+        <span>SPIDER-MAN</span>
       </a>
+      
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="product.html" class="active">Arsenal</a>
+        <a href="mask-experience.html">3D Experience</a>
+      </div>
 
-      <button class="logout-btn" id="logoutBtn">Logout</button>
+      <div class="nav-actions">
+        <div class="user-badge" id="userBadge">Hero</div>
+        <a href="admin.html" id="navAdminBtn" style="display:none;" class="admin-link">Admin</a>
+        
+        <!-- Floating Cart Trigger -->
+        <div class="cart-trigger" id="cartTrigger">
+           <i class="fas fa-shopping-cart"></i>
+           <span class="cart-count" id="cartCount">0</span>
+        </div>
+        
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </div>
     </div>
   </nav>
 
-  <!-- ═══ CINEMATIC HERO BANNER ═══ -->
-  <section class="shop-hero cinematic" id="cinematicHero">
-    <div class="cinematic-bg-container">
-      <div class="bloom-layer"></div>
-      <div class="parallax-layers cinematic-zoom">
-        <div class="layer-sky"></div>
-        <div class="layer-city-far"></div>
-        <div class="layer-fg"></div>
-      </div>
-      <div class="vignette-overlay"></div>
+  <!-- ═══ CINEMATIC BACKGROUND (FIXED) ═══ -->
+  <div class="cinematic-bg-container fixed-bg">
+    <div class="bloom-layer"></div>
+    <div class="parallax-layers cinematic-zoom">
+      <div class="layer-sky"></div>
+      <div class="layer-city-far"></div>
+      <div class="layer-fg"></div>
     </div>
-    <div class="hero-overlay"></div>
-    <!-- Category Navigation -->
-    <!-- Category Navigation -->
-    <div class="category-nav" id="categoryNav">
-      <button class="cat-nav-btn active" onclick="filterCategory('All')">All</button>
-      <button class="cat-nav-btn" onclick="filterCategory('Masks')">Masks</button>
-      <button class="cat-nav-btn" onclick="filterCategory('Hoodies')">Hoodies</button>
-      <button class="cat-nav-btn" onclick="filterCategory('Toys')">Toys & Gear</button>
-    </div>
+    <div class="vignette-overlay"></div>
+  </div>
 
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <div class="filter-group">
-        <label>Sort By</label>
-        <select id="sortSelect" onchange="applyFilters()">
-          <option value="newest">Newest</option>
+  <!-- ═══ MAIN SHOP LAYOUT ═══ -->
+  <div class="shop-wrapper">
+    
+    <!-- LEFT SIDEBAR FILTERS -->
+    <aside class="shop-sidebar">
+      <div class="sidebar-header">
+        <h3>Gear Filters</h3>
+        <button class="btn-reset" onclick="resetFilters()">Reset All</button>
+      </div>
+
+      <div class="filter-section">
+        <h4 class="filter-title">Categories</h4>
+        <div class="category-list">
+          <label class="radio-container">All Gear
+            <input type="radio" name="category" value="All" checked onclick="filterCategory('All')">
+            <span class="radio-mark"></span>
+          </label>
+          <label class="radio-container">Masks
+            <input type="radio" name="category" value="Masks" onclick="filterCategory('Masks')">
+            <span class="radio-mark"></span>
+          </label>
+          <label class="radio-container">Hoodies
+            <input type="radio" name="category" value="Hoodies" onclick="filterCategory('Hoodies')">
+            <span class="radio-mark"></span>
+          </label>
+          <label class="radio-container">Toys & Figures
+            <input type="radio" name="category" value="Toys" onclick="filterCategory('Toys')">
+            <span class="radio-mark"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h4 class="filter-title">Price Range</h4>
+        <div class="price-filter">
+          <input type="range" id="priceRange" min="0" max="1000" value="1000" oninput="updatePriceLabel(this.value)">
+          <div class="price-labels">
+            <span>$0</span>
+            <span>$<span id="priceVal">1000</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h4 class="filter-title">Sort By</h4>
+        <select id="sortSelect" class="sidebar-select" onchange="applyFilters()">
+          <option value="newest">Featured / Newest</option>
           <option value="price-low">Price: Low to High</option>
           <option value="price-high">Price: High to Low</option>
           <option value="rating">Top Rated</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label>Max Price: $<span id="priceVal">500</span></label>
-        <input type="range" id="priceRange" min="0" max="500" value="500" oninput="updatePriceLabel(this.value)">
+    </aside>
+
+    <!-- MAIN PRODUCT CONTENT -->
+    <main class="shop-content">
+      <header class="shop-header">
+        <h1>Stark Tech <span class="accent">Arsenal</span></h1>
+        <p>Premium multiversal collectibles for the ultimate hero identity.</p>
+      </header>
+
+      <!-- Loading State -->
+      <div class="products-loading" id="productsLoading">
+        <div class="loading-spinner">🕷️</div>
+        <p>Syncing databases...</p>
       </div>
+
+      <div class="product-grid-container" id="shopContainer">
+        <!-- Dynamically rendered sections and cards -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">🕸️</div>
+        <h3>No Gadgets Found</h3>
+        <p>Try adjusting your filters or search terms.</p>
+        <button class="btn-reset-main" onclick="resetFilters()">Clear Filters</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ══ SLIDE-IN MINI CART PANEL ══ -->
+  <div class="cart-panel-overlay" id="cartOverlay"></div>
+  <aside class="cart-panel" id="cartPanel">
+    <div class="cart-panel-header">
+      <h3>Your Arsenal</h3>
+      <button class="btn-close-panel" id="closeCart">✕</button>
     </div>
-  </section>
-
-
-  <!-- ═══ PRODUCTS SECTION ═══ -->
-  <section class="product-section" id="product">
-
-    <!-- Loading -->
-    <div class="products-loading" id="productsLoading">
-      <div class="loading-ring"></div>
-      <p>Loading products…</p>
+    <div class="cart-panel-items" id="panelItems">
+      <!-- Items dynamically added here -->
     </div>
-
-    <!-- ══ MAIN SHOP CONTAINER ══ -->
-
-
-    <!-- ══ MAIN SHOP CONTAINER ══ -->
-    <div id="shopContainer"></div>
-
-    <!-- Related Gear Section -->
-    <div class="related-gear-section" id="relatedGearSection">
-      <h2 class="section-title">Related <span class="accent">Gear</span></h2>
-      <div class="products-grid" id="relatedGearGrid" style="margin-top: 2rem;"></div>
+    <div class="cart-panel-footer">
+      <div class="total-row">
+        <span>Total Estimated</span>
+        <span id="panelTotal">$0.00</span>
+      </div>
+      <button class="btn-checkout-panel" onclick="window.location.href='cart.html'">Proceed to Checkout</button>
     </div>
+  </aside>
 
-    <!-- Empty state (shown if no products) -->
-    <div class="products-empty" id="productsEmpty" style="display:none">
-      <span>📦</span>
-      <h3>No products available yet</h3>
-      <p>Check back soon — the Spider-Man store is stocking up!</p>
-    </div>
-
-  </section>
-
-  <!-- ═══ PRODUCT DETAIL MODAL ═══ -->
-  <div class="pdetail-overlay" id="pdetailOverlay">
-    <div class="pdetail-modal" id="pdetailModal">
-      <button class="pdetail-close" onclick="closeDetail()">✕</button>
-
-      <div class="pdetail-grid">
-        <!-- Visual side -->
-        <div class="pdetail-visual" id="pdetailVisual">
-          <div class="pdetail-img-wrap" id="pdetailImgWrap">
-            <img id="pdetailImg" src="" alt="Product"/>
-          </div>
-          <!-- 3D viewer (shown if modelUrl exists) -->
-          <div class="pdetail-model-wrap" id="pdetailModelWrap" style="display:none">
-            <model-viewer
-              id="pdetailModel"
-              auto-rotate camera-controls
-              shadow-intensity="1"
-              style="width:100%;height:360px;border-radius:16px;"
-            ></model-viewer>
-          </div>
+  <!-- ══ QUICK VIEW MODAL ══ -->
+  <div class="quick-view-modal" id="quickView">
+    <div class="modal-content-glass">
+      <button class="btn-close-modal" id="closeQuickView">✕</button>
+      <div class="modal-body-split">
+        <div class="modal-img-container">
+          <img id="qvImage" src="" alt="Product Image">
         </div>
-
-        <!-- Info side -->
-        <div class="pdetail-info">
-          <p class="pdetail-cat" id="pdetailCat">Marvel Collectibles</p>
-          <h2 class="pdetail-name" id="pdetailName">Product Name</h2>
-          <div class="pdetail-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-cnt">4.9 · 2,847 reviews</span>
+        <div class="modal-details">
+          <span class="qv-badge" id="qvBadge">Limited</span>
+          <h2 id="qvName">Product Name</h2>
+          <div class="qv-rating" id="qvRating"></div>
+          <p class="qv-price" id="qvPrice">$0.00</p>
+          <p class="qv-desc" id="qvDesc">Detailed description of the multiversal gear...</p>
+          
+          <div class="qv-actions">
+            <button class="btn-add-main" id="qvAddBtn">EQUIP NOW</button>
           </div>
-          <div class="pdetail-price-block">
-            <span class="pdetail-price" id="pdetailPrice">$50.00</span>
-            <span class="pdetail-old-price" id="pdetailOldPrice" style="display:none">$89.99</span>
-          </div>
-          <p class="pdetail-desc" id="pdetailDesc"></p>
-
-          <div class="qty-row">
-            <label>Quantity</label>
-            <div class="qty-ctrl">
-              <button onclick="changeQty(-1)" aria-label="Decrease">−</button>
-              <span id="qtyVal">1</span>
-              <button onclick="changeQty(1)" aria-label="Increase">+</button>
-            </div>
-          </div>
-
-          <div class="cta-group">
-            <button class="btn-cta btn-primary-cta" id="addToCartBtn" onclick="addToCartFromModal()">
-              🛒 Add to Cart
-            </button>
-            <button class="btn-cta btn-outline-cta" onclick="buyNowFromModal()">
-              ⚡ Buy Now
-            </button>
-          </div>
-
-          <p class="secure-note">🔒 Secure checkout · 256-bit SSL encrypted</p>
         </div>
       </div>
     </div>
@@ -180,60 +189,12 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
-  <!-- Cinematic JS -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const cinematicBg = document.getElementById("cinematicBg");
-      const cinematicContent = document.getElementById("cinematicContent");
-      const mouseGlow = document.getElementById("mouseGlow");
-      const cinematicHero = document.getElementById("cinematicHero");
-
-      // 1. Mouse glowing light
-      if(cinematicHero && mouseGlow) {
-        cinematicHero.addEventListener("mousemove", (e) => {
-          const rect = cinematicHero.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          mouseGlow.style.transform = `translate(${x}px, ${y}px)`;
-        });
-      }
-
-
-
-      // 3. Smooth product reveal
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { rootMargin: '0px 0px -50px 0px', threshold: 0.1 });
-
-      const checkNewCards = () => {
-        document.querySelectorAll('.product-card:not(.reveal-item)').forEach(card => {
-          card.classList.add('reveal-item');
-          observer.observe(card);
-        });
-      };
-      
-      // Initial + observing DOM changes for dynamic products
-      checkNewCards();
-      const mutObserver = new MutationObserver(() => checkNewCards());
-      const pGrid = document.getElementById("productsGrid");
-      if(pGrid) mutObserver.observe(pGrid, { childList: true });
-      
-    });
-  </script>
-
-   <!-- GSAP & ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="gsap-animations.js"></script>
   <script src="cinematic-bg.js"></script>
   <script src="web-shooter.js"></script>
-
+  <script src="sample-products.js"></script>
   <script type="module" src="product.js"></script>
-
 </body>
 </html>

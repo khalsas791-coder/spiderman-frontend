@@ -1,142 +1,69 @@
-// product.js — Shop page: auth guard + Firestore products + localStorage cart + modal
+// product.js — Premium Shop Logic
 import { auth, db } from "./firebase-config.js";
-import { API_URL } from "./config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { sampleProducts } from "./sample-products.js";
 
-// ── AUTH GUARD ──────────────────────────────────────────────────
+// ── STATE ──
+let allProducts = [];
+let currentCategory = "All";
 let currentUser = null;
 
+// ── AUTH GUARD ──
 onAuthStateChanged(auth, async (user) => {
   const guard = document.getElementById("authGuard");
   if (!user) { window.location.href = "auth.html"; return; }
   currentUser = user;
-  guard.classList.add("hidden");
+  if(guard) guard.classList.add("hidden");
+  
   const name = user.displayName || user.email.split("@")[0];
-  document.getElementById("userBadge").textContent = `👤 ${name}`;
+  const badge = document.getElementById("userBadge");
+  if(badge) badge.textContent = `Hero: ${name}`;
   
   const adminBtn = document.getElementById("navAdminBtn");
   if (adminBtn && ["admin@spiderman.com", "admin@spidey.com"].includes(user.email)) {
     adminBtn.style.display = "inline-block";
   }
+  
   updateCartBadge();
   await loadProducts();
 });
 
-// ── LOGOUT ──────────────────────────────────────────────────────
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+document.getElementById("logoutBtn")?.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "index.html";
 });
 
-// ── CART HELPERS (localStorage) ─────────────────────────────────
-function getCart()       { try { return JSON.parse(localStorage.getItem("spideyCart")) || []; } catch { return []; } }
-function saveCart(cart)  {
-  localStorage.setItem("spideyCart", JSON.stringify(cart));
-  updateCartBadge();
-  updateMiniCart();
-}
-
-function updateCartBadge() {
-  const cart  = getCart();
-  const count = cart.reduce((s, i) => s + i.qty, 0);
-  const badge = document.getElementById("cartCount");
-  if (badge) {
-    badge.textContent = count;
-    badge.classList.add("bounce-in");
-    setTimeout(() => badge.classList.remove("bounce-in"), 500);
-  }
-}
-
-// ── MINI CART LOGIC ─────────────────────────────────────────────
-window.showMiniCart = function() {
-  const mc = document.getElementById("miniCart");
-  if(mc) mc.classList.add("show");
-  updateMiniCart();
-};
-window.hideMiniCart = function() {
-  const mc = document.getElementById("miniCart");
-  if(mc) mc.classList.remove("show");
-};
-
-function updateMiniCart() {
-  const cart = getCart();
-  const container = document.getElementById("miniCartItems");
-  if(!container) return;
-
-  if(!cart.length) {
-    container.innerHTML = `<p style="text-align:center; font-size:0.8rem; color:rgba(255,255,255,0.4); padding:1rem;">Your arsenal is empty.</p>`;
-    return;
-  }
-
-  container.innerHTML = cart.slice(-3).reverse().map(i => `
-    <div class="mini-cart-item">
-      <img src="${i.image || 'https://via.placeholder.com/40'}" onerror="this.src='https://via.placeholder.com/40'" alt="${i.name}">
-      <div class="mci-info">
-        <p class="mci-name">${i.name}</p>
-        <p class="mci-price">${i.qty} × $${i.price.toFixed(2)}</p>
-      </div>
-    </div>
-  `).join('');
-}
-
-
-function addToCart(product, qty = 1, event = null) {
-  const cart     = getCart();
-  const existing = cart.find(i => i.id === product.id);
-  if (existing) {
-    existing.qty      = Math.min(20, existing.qty + qty);
-    existing.lineTotal = existing.qty * existing.price;
-  } else {
-    cart.push({ ...product, qty, lineTotal: qty * product.price });
-  }
-  saveCart(cart);
-
-  // Trigger web shooting animation if event is provided
-  if (event && window.webShooter) {
-    window.webShooter.shoot(event.clientX, event.clientY);
-  }
-}
-
-
-// ── LOAD PRODUCTS FROM FIRESTORE ────────────────────────────────
-let allProducts = [];
-
+// ── LOAD DATA ──
 async function loadProducts() {
   const loading = document.getElementById("productsLoading");
-  const empty   = document.getElementById("productsEmpty");
-
   try {
-    // Try Firestore first
-    const q    = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
     const snap = await getDocs(q);
     const firestoreProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    // Combine with samples
+    
+    // Merge Firestore with Samples (Samples act as fallback/base)
     allProducts = firestoreProducts.length > 0 ? [...firestoreProducts, ...sampleProducts] : sampleProducts;
+    
+    // Ensure ratings exist for samples
+    allProducts = allProducts.map(p => ({
+        ...p,
+        rating: p.rating || (Math.random() * 1.5 + 3.5).toFixed(1) // Random 3.5 - 5.0
+    }));
 
     if (loading) loading.style.display = "none";
-
-    renderProducts(allProducts);
-    renderRelatedGear(allProducts);
-
+    applyFilters(); // Initial render
   } catch (err) {
-    console.warn("Load products failed, using samples:", err);
-    allProducts = sampleProducts;
+    console.warn("Firestore fail, using samples:", err);
+    allProducts = sampleProducts.map(p => ({ ...p, rating: (Math.random() * 1.5 + 3.5).toFixed(1) }));
     if (loading) loading.style.display = "none";
-    renderProducts(allProducts);
+    applyFilters();
   }
 }
 
-// ── FILTERING LOGIC ─────────────────────────────────────────────
-let currentCategory = "All";
-
+// ── FILTERING & SORTING ──
 window.filterCategory = (cat) => {
   currentCategory = cat;
-  document.querySelectorAll(".cat-nav-btn").forEach(b => {
-    b.classList.toggle("active", b.textContent.includes(cat) || (cat === "All" && b.textContent === "All"));
-  });
   applyFilters();
 };
 
@@ -146,240 +73,238 @@ window.updatePriceLabel = (val) => {
   applyFilters();
 };
 
+window.resetFilters = () => {
+    currentCategory = "All";
+    const radio = document.querySelector('input[name="category"][value="All"]');
+    if(radio) radio.checked = true;
+    
+    const range = document.getElementById("priceRange");
+    if(range) { range.value = 1000; updatePriceLabel(1000); }
+    
+    const sort = document.getElementById("sortSelect");
+    if(sort) sort.value = "newest";
+    
+    applyFilters();
+};
+
 window.applyFilters = () => {
   const sortSelect = document.getElementById("sortSelect");
   const priceRange = document.getElementById("priceRange");
-  if (!sortSelect || !priceRange) return;
+  const shopContainer = document.getElementById("shopContainer");
+  const emptyState = document.getElementById("emptyState");
+  if (!shopContainer) return;
 
-  const sort = sortSelect.value;
-  const maxPrice = parseFloat(priceRange.value);
+  const sort = sortSelect?.value || "newest";
+  const maxPrice = parseFloat(priceRange?.value || 1000);
   
   let filtered = [...allProducts];
+  
+  // 1. Category
   if (currentCategory !== "All") {
     filtered = filtered.filter(p => p.category === currentCategory);
   }
+  
+  // 2. Price
   filtered = filtered.filter(p => p.price <= maxPrice);
 
+  // 3. Sort
   if (sort === "price-low") filtered.sort((a,b) => a.price - b.price);
   else if (sort === "price-high") filtered.sort((a,b) => b.price - a.price);
-  else if (sort === "rating") filtered.sort((a,b) => (b.rating || 0) - (a.rating || 0));
-  
-  renderProducts(filtered);
+  else if (sort === "rating") filtered.sort((a,b) => b.rating - a.rating);
+  else if (sort === "newest") filtered.reverse();
+
+  // Handle Empty State
+  if (filtered.length === 0) {
+    shopContainer.style.display = "none";
+    if(emptyState) emptyState.style.display = "block";
+    return;
+  } else {
+    shopContainer.style.display = "flex";
+    if(emptyState) emptyState.style.display = "none";
+  }
+
+  renderGrid(filtered);
 };
 
-// ── CATEGORY RENDERER ───────────────────────────────────────────
-function renderProducts(products) {
+// ── CUSTOM GRID RENDERER ──
+function renderGrid(products) {
   const container = document.getElementById("shopContainer");
-  if (!container) return;
   container.innerHTML = "";
 
   const sections = ["Limited Edition", "Special"];
-  const cats = currentCategory === "All" ? ["Masks", "Hoodies", "Toys"] : [currentCategory];
-
+  
   sections.forEach(secName => {
-    const secProducts = products.filter(p => p.section === secName);
-    if (!secProducts.length) return;
+    const secItems = products.filter(p => p.section === secName);
+    if (!secItems.length) return;
 
     const sectionDiv = document.createElement("div");
-    sectionDiv.className = `shop-section-container ${secName.toLowerCase().replace(' ', '-')}`;
-    sectionDiv.innerHTML = `<h2 class="shop-section-title">${secName}</h2>`;
+    sectionDiv.className = `grid-section ${secName.toLowerCase().replace(" ", "-")}`;
     
-    cats.forEach(cat => {
-      const catProducts = secProducts.filter(p => p.category === cat);
-      if (!catProducts.length) return;
-
-      const catLabel = document.createElement("div");
-      catLabel.className = "category-label";
-      catLabel.innerHTML = `${cat} <span>${catProducts.length} Items</span>`;
-      sectionDiv.appendChild(catLabel);
-
-      const grid = document.createElement("div");
-      grid.className = "products-grid";
+    sectionDiv.innerHTML = `
+      <h2 class="grid-section-title">${secName === 'Limited Edition' ? '🔥 ' : '✨ '}${secName}</h2>
+      <div class="products-grid"></div>
+    `;
+    
+    const grid = sectionDiv.querySelector(".products-grid");
+    
+    secItems.forEach((p, index) => {
+      const card = document.createElement("div");
+      card.className = "product-card reveal-item";
+      card.style.transitionDelay = `${index % 4 * 0.1}s`;
       
-      catProducts.forEach((p, idx) => {
-        const card = document.createElement("div");
-        card.className = `product-card ${secName === 'Limited Edition' ? 'premium-card' : 'special-card'} reveal-item`;
-        card.style.animationDelay = `${idx * 0.1}s`;
-        
-        card.innerHTML = `
-          <div class="pc-image-wrap" onclick="openDetail('${p.id}')">
-            <div class="pc-image">
-               ${p.modelUrl 
-                  ? `<model-viewer src="${p.modelUrl}" auto-rotate camera-controls shadow-intensity="1" class="card-mv"></model-viewer>`
-                  : `<img src="${p.image}" alt="${p.name}" onerror="this.src='./images/bg.png'">`}
-            </div>
-            <div class="pc-badge-limited">${secName}</div>
-            ${p.modelUrl ? `<div class="pc-badge-3d">3D</div>` : ""}
+      const stars = "★".repeat(Math.floor(p.rating)) + "☆".repeat(5 - Math.floor(p.rating));
+      
+      card.innerHTML = `
+        ${secName === "Limited Edition" ? '<span class="badge-premium">LIMITED</span>' : ''}
+        <div class="pc-image-area">
+          <img src="${p.image}" alt="${p.name}" onerror="this.src='./images/bg.png'">
+          <div class="quick-view-overlay">
+             <button class="btn-quick-view" onclick="openQuickView('${p.id}')">QUICK VIEW</button>
           </div>
-          <div class="pc-body">
-            <div class="pc-cat-row">
-              <span class="pc-cat">${p.category}</span>
-            </div>
-            <h3 class="pc-name">${p.name}</h3>
-            <p class="pc-desc">${p.description || "Premium Spider-Man gear."}</p>
-            <div class="pc-footer">
-              <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
-            </div>
-            <button class="pc-add-btn" onclick="quickAdd('${p.id}', event)">
-              🛒 Add to Cart
-            </button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-      sectionDiv.appendChild(grid);
+        </div>
+        <div class="pc-body">
+          <span class="pc-cat">${p.category}</span>
+          <h3 class="pc-name">${p.name}</h3>
+          <div class="pc-rating">${stars} <span style="font-size:0.6rem; color:rgba(255,255,255,0.3)">(${p.rating})</span></div>
+          <p class="pc-price">$${parseFloat(p.price).toFixed(2)}</p>
+          <button class="pc-add-btn" onclick="handleAddToCart('${p.id}', event)">EQUIP GADGET</button>
+        </div>
+      `;
+      grid.appendChild(card);
     });
+    
     container.appendChild(sectionDiv);
+  });
+
+  // Reveal Animation with GSAP
+  gsap.from(".reveal-item", {
+    y: 30,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.05,
+    ease: "power2.out",
+    scrollTrigger: {
+        trigger: ".shop-content",
+        start: "top 80%"
+    }
   });
 }
 
+// ── CART LOGIC ──
+function getCart() { return JSON.parse(localStorage.getItem("spideyCart")) || []; }
+function saveCart(cart) {
+  localStorage.setItem("spideyCart", JSON.stringify(cart));
+  updateCartBadge();
+  updateCartPanel();
+}
 
-// ── QUICK ADD (from card) ────────────────────────────────────────
-window.quickAdd = function (id, event) {
-  const p = allProducts.find(x => x.id === id);
-  if (!p) return;
-  addToCart(p, 1, event);
-  showToast(`🕸️ ${p.name} added to cart!`);
+function updateCartBadge() {
+  const badge = document.getElementById("cartCount");
+  const count = getCart().reduce((s, i) => s + i.qty, 0);
+  if (badge) badge.textContent = count;
+}
+
+window.handleAddToCart = (id, event) => {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    
+    const cart = getCart();
+    const existing = cart.find(i => i.id === id);
+    if (existing) {
+        existing.qty++;
+    } else {
+        cart.push({ ...p, qty: 1 });
+    }
+    saveCart(cart);
+    
+    // Shoot web
+    if (window.webShooter) window.webShooter.shoot(event.clientX, event.clientY);
+    
+    // Open panel
+    toggleCartPanel(true);
 };
 
+// ── PANEL & MODAL UI ──
+const cartPanel = document.getElementById("cartPanel");
+const cartOverlay = document.getElementById("cartOverlay");
+const cartTrigger = document.getElementById("cartTrigger");
+const closeCart = document.getElementById("closeCart");
 
-// ── DETAIL MODAL ─────────────────────────────────────────────────
-let modalProduct = null;
-let modalQty     = 1;
+function toggleCartPanel(show) {
+    cartPanel?.classList.toggle("active", show);
+    cartOverlay?.classList.toggle("active", show);
+}
 
-window.openDetail = function (id) {
-  const p = allProducts.find(x => x.id === id);
-  if (!p) return;
-  modalProduct = p;
-  modalQty     = 1;
+cartTrigger?.addEventListener("click", () => {
+    updateCartPanel();
+    toggleCartPanel(true);
+});
+closeCart?.addEventListener("click", () => toggleCartPanel(false));
+cartOverlay?.addEventListener("click", () => toggleCartPanel(false));
 
-  document.getElementById("qtyVal").textContent = 1;
-  document.getElementById("pdetailCat").textContent   = p.category || "Marvel Collectibles";
-  document.getElementById("pdetailName").textContent  = p.name;
-  document.getElementById("pdetailPrice").textContent = `$${parseFloat(p.price).toFixed(2)}`;
-  document.getElementById("pdetailDesc").textContent  = p.description || "";
+function updateCartPanel() {
+    const container = document.getElementById("panelItems");
+    const totalEl = document.getElementById("panelTotal");
+    const cart = getCart();
+    
+    if(!container) return;
+    
+    if(cart.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:3rem; opacity:0.4;">Arsenal is empty</div>`;
+        if(totalEl) totalEl.textContent = "$0.00";
+        return;
+    }
+    
+    let total = 0;
+    container.innerHTML = cart.map(item => {
+        total += item.price * item.qty;
+        return `
+            <div class="cart-panel-item" style="display:flex; gap:1rem; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:1rem;">
+                <img src="${item.image}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+                <div style="flex:1">
+                    <h4 style="font-size:0.9rem; margin-bottom:0.2rem;">${item.name}</h4>
+                    <p style="font-size:0.8rem; color:rgba(255,255,255,0.5)">$${item.price} × ${item.qty}</p>
+                </div>
+                <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button>
+            </div>
+        `;
+    }).join("");
+    
+    if(totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+}
 
-  const oldEl = document.getElementById("pdetailOldPrice");
-  if (p.oldPrice) { oldEl.textContent = `$${p.oldPrice}`; oldEl.style.display = ""; }
-  else             { oldEl.style.display = "none"; }
-
-  const imgWrap   = document.getElementById("pdetailImgWrap");
-  const modelWrap = document.getElementById("pdetailModelWrap");
-  const img       = document.getElementById("pdetailImg");
-
-  if (p.modelUrl) {
-    imgWrap.style.display   = "none";
-    modelWrap.style.display = "";
-    const mv = document.getElementById("pdetailModel");
-    mv.setAttribute("src", p.modelUrl);
-    mv.setAttribute("alt", p.name);
-  } else {
-    imgWrap.style.display   = "";
-    modelWrap.style.display = "none";
-    img.src = p.image || "";
-    img.alt = p.name;
-  }
-
-  const btn = document.getElementById("addToCartBtn");
-  btn.innerHTML = "🛒 Add to Cart";
-
-  document.getElementById("pdetailOverlay").classList.add("open");
-  document.body.style.overflow = "hidden";
+window.removeFromCart = (id) => {
+    let cart = getCart();
+    cart = cart.filter(i => i.id !== id);
+    saveCart(cart);
 };
 
-window.closeDetail = function () {
-  document.getElementById("pdetailOverlay").classList.remove("open");
-  document.body.style.overflow = "";
-  modalProduct = null;
-  modalQty     = 1;
+// ── QUICK VIEW ──
+window.openQuickView = (id) => {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    
+    document.getElementById("qvImage").src = p.image;
+    document.getElementById("qvName").textContent = p.name;
+    document.getElementById("qvPrice").textContent = `$${p.price}`;
+    document.getElementById("qvDesc").textContent = p.description || "The ultimate Spider-Man gadget. Built with Stark Industries technology and multiversal durability.";
+    document.getElementById("qvBadge").textContent = p.section;
+    
+    const stars = "★".repeat(Math.floor(p.rating)) + "☆".repeat(5 - Math.floor(p.rating));
+    document.getElementById("qvRating").innerHTML = `${stars} (${p.rating})`;
+    
+    const addBtn = document.getElementById("qvAddBtn");
+    addBtn.onclick = (e) => handleAddToCart(p.id, e);
+    
+    document.getElementById("quickView").classList.add("active");
 };
 
-// Close on overlay click
-document.getElementById("pdetailOverlay").addEventListener("click", (e) => {
-  if (e.target === e.currentTarget) closeDetail();
+document.getElementById("closeQuickView")?.addEventListener("click", () => {
+    document.getElementById("quickView").classList.remove("active");
 });
 
-window.changeQty = function (delta) {
-  modalQty = Math.max(1, Math.min(20, modalQty + delta));
-  document.getElementById("qtyVal").textContent = modalQty;
-};
-
-window.addToCartFromModal = function () {
-  if (!modalProduct) return;
-  addToCart(modalProduct, modalQty);
-  showToast(`🕸️ ${modalQty}× ${modalProduct.name} added to cart!`);
-  const btn = document.getElementById("addToCartBtn");
-  btn.innerHTML = "✅ Added!";
-  setTimeout(() => { btn.innerHTML = "🛒 Add to Cart"; }, 1800);
-};
-
-window.buyNowFromModal = function () {
-  if (!modalProduct) return;
-  addToCart(modalProduct, modalQty);
-  window.location.href = "cart.html";
-};
-
-// ── NAVBAR SCROLL ────────────────────────────────────────────────
-window.addEventListener("scroll", () => {
-  document.getElementById("navbar").style.background =
-    window.scrollY > 60 ? "rgba(6,8,16,.95)" : "rgba(6,8,16,.8)";
-}, { passive: true });
-
-// ── HERO PARTICLES ───────────────────────────────────────────────
-function spawnParticles() {
-  const c = document.getElementById("heroParticles");
-  if (!c) return;
-  const colors = ["#dc1e30","#ff3347","#4169e1","#00aaff"];
-  for (let i = 0; i < 35; i++) {
-    const p = document.createElement("div");
-    const sz = Math.random() * 4 + 2;
-    p.style.cssText = `
-      position:absolute;border-radius:50%;
-      width:${sz}px;height:${sz}px;
-      background:${colors[i%4]};left:${Math.random()*100}%;
-      box-shadow:0 0 ${sz*3}px ${colors[i%4]};
-      animation:floatP ${Math.random()*10+8}s ${Math.random()*10}s linear infinite;opacity:0;
-    `;
-    c.appendChild(p);
-  }
-  const ks = document.createElement("style");
-  ks.textContent = `@keyframes floatP{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:.6}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}`;
-  document.head.appendChild(ks);
+// Toast Helper
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    if(t) { t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3000); }
 }
-spawnParticles();
-
-// ── TOAST ────────────────────────────────────────────────────────
-function showToast(msg, dur = 3000) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), dur);
-}
-
-// ── RENDER RELATED GEAR ─────────────────────────────────────────
-function renderRelatedGear(products) {
-  const grid = document.getElementById("relatedGearGrid");
-  if (!grid) return;
-
-  // Filter to show a few items
-  const related = products.slice(0, 4);
-  grid.innerHTML = related.map(p => `
-    <div class="product-card" onclick="openDetail('${p.id}')">
-      <div class="pc-image-wrap">
-        <div class="pc-image">
-          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span class="pc-emoji">🕷️</span>`}
-        </div>
-      </div>
-      <div class="pc-body">
-        <h3 class="pc-name">${p.name}</h3>
-        <p class="pc-price">$${parseFloat(p.price).toFixed(2)}</p>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ── INIT ─────────────────────────────────────────────────────────
-updateCartBadge();
-updateMiniCart();
-// Note: loadProducts calls renderRelatedGear after fetching
-
