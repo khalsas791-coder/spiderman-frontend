@@ -1,4 +1,4 @@
-// sample-products.js — Premium Catalog
+// sample-products.js — Premium Catalog [Local Images Updated]
 export const sampleProducts = [
   // 🔥 EXCLUSIVE LIMITED EDITION NEW ARRIVALS
   {
@@ -7,7 +7,7 @@ export const sampleProducts = [
     price: 299.00,
     category: "Toys",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/suit.png",
     description: "Ultra rare Spider-Man collectible action figure with high-detail design and dynamic pose. Premium finish for collectors.",
     rating: 5.0
   },
@@ -17,7 +17,7 @@ export const sampleProducts = [
     price: 199.00,
     category: "Hoodies",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1618354691321-e851c56960d1?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/new_hoodie.png",
     description: "High-quality Spider-Man themed hoodie with premium fabric, modern streetwear design, and iconic logo print.",
     rating: 4.9
   },
@@ -27,7 +27,7 @@ export const sampleProducts = [
     price: 149.00,
     category: "Masks",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1608889175155-0e3f3b5d8a7a?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/new_mask.png",
     description: "Premium Spider-Man mask with glossy finish, realistic texture, and collectible-grade design.",
     rating: 5.0
   },
@@ -38,7 +38,7 @@ export const sampleProducts = [
     price: 499.99,
     category: "Masks",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1635805737707-57588b49318b?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/mask_related.png",
     description: "Equipped with advanced neural link and AR optics. Carbon-fiber reinforced plating.",
     rating: 5.0
   },
@@ -48,7 +48,7 @@ export const sampleProducts = [
     price: 549.99,
     category: "Masks",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/new_mask.png",
     description: "Self-healing liquid metal alloy with adaptive night vision capabilities.",
     rating: 4.9
   },
@@ -58,7 +58,7 @@ export const sampleProducts = [
     price: 599.99,
     category: "Masks",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/mask_related.png",
     description: "Rare multiversal artifact with shifting dimensional fragments and glowing lenses.",
     rating: 4.8
   },
@@ -70,7 +70,7 @@ export const sampleProducts = [
     price: 199.99,
     category: "Hoodies",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/le_hoodie_1.png",
     description: "Gore-Tex reinforced techwear with integrated glowing red spider logo and hood optics.",
     rating: 4.9
   },
@@ -80,7 +80,7 @@ export const sampleProducts = [
     price: 219.99,
     category: "Hoodies",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/new_hoodie.png",
     description: "Heavy-duty urban armor disguised as premium streetwear. Impact-resistant padding.",
     rating: 4.7
   },
@@ -92,7 +92,7 @@ export const sampleProducts = [
     price: 349.99,
     category: "Toys",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1534809027769-6242581692ce?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/suit.png",
     description: "1/6 scale collectible with 32 points of articulation and authentic metallic finish.",
     rating: 5.0
   },
@@ -102,7 +102,7 @@ export const sampleProducts = [
     price: 399.99,
     category: "Toys",
     section: "Limited Edition",
-    image: "https://images.unsplash.com/photo-1620336655055-08197170669d?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/web_shooter.png",
     description: "Hand-painted cinematic statue featuring Spider-Man atop a detailed Empire State gargoyle.",
     rating: 4.9
   },
@@ -114,7 +114,7 @@ export const sampleProducts = [
     price: 89.99,
     category: "Masks",
     section: "Special",
-    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/mask_related.png",
     description: "The original red and blue design. Perfect for every friendly neighborhood hero.",
     rating: 4.5
   },
@@ -124,7 +124,7 @@ export const sampleProducts = [
     price: 99.99,
     category: "Masks",
     section: "Special",
-    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/new_mask.png",
     description: "Leather-style stitching and aviator lenses. A retro detective look for the shadows.",
     rating: 4.6
   },
@@ -136,40 +136,40 @@ export const sampleProducts = [
     price: 79.99,
     category: "Hoodies",
     section: "Special",
-    image: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=1000&auto=format&fit=crop",
+    image: "./images/le_hoodie_1.png",
     description: "Bold black and red spray-paint style logo on comfortable premium cotton.",
-    rating: 4.8
+    rating: 4.7
   },
   {
     id: "sp-hoodie-2",
-    name: "Queens Hero Zip-Up",
-    price: 74.99,
+    name: "Daily Bugle Vintage Hoodie",
+    price: 64.99,
     category: "Hoodies",
     section: "Special",
-    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=1000&auto=format&fit=crop",
-    description: "Durable daily-wear hoodie for those who keep the city safe every day.",
+    image: "./images/new_hoodie.png",
+    description: "Vintage faded print featuring classic Daily Bugle headlines from 1962.",
     rating: 4.4
   },
 
   // ✨ SPECIAL - TOYS
   {
     id: "sp-toy-1",
-    name: "Web-Slinger Action Fig",
-    price: 39.99,
+    name: "Web-Shooter Replica",
+    price: 129.99,
     category: "Toys",
     section: "Special",
-    image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=1000&auto=format&fit=crop",
-    description: "High-quality posable figure for young heroes and longtime fans alike.",
-    rating: 4.3
+    image: "./images/web_shooter.png",
+    description: "Wearable mechanical replica with LED indicators. Perfect for cosplay.",
+    rating: 4.8
   },
   {
     id: "sp-toy-2",
-    name: "Daily Bugle Play Set",
-    price: 59.99,
+    name: "Mini-Bot Spider Drone",
+    price: 149.99,
     category: "Toys",
     section: "Special",
-    image: "https://images.unsplash.com/photo-1608889175123-8ee362201f81?q=80&w=1000&auto=format&fit=crop",
-    description: "Detailed LEGO-style skyscraper featuring the iconic newspaper headquarters.",
-    rating: 4.5
+    image: "./images/suit.png",
+    description: "Bluetooth-controlled surveillance drone with a built-in camera and arachnid walking mode.",
+    rating: 4.6
   }
 ];

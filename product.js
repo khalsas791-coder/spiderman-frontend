@@ -180,13 +180,9 @@ function renderGrid(products) {
   gsap.from(".reveal-item", {
     y: 30,
     opacity: 0,
-    duration: 0.8,
+    duration: 0.5,
     stagger: 0.05,
-    ease: "power2.out",
-    scrollTrigger: {
-        trigger: ".shop-content",
-        start: "top 80%"
-    }
+    ease: "power2.out"
   });
 }
 
