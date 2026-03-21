@@ -10,8 +10,10 @@ class CinematicBackground {
         this.container = document.body;
         this.bgContainer = document.querySelector('.cinematic-bg-container');
         this.layers = {
-            bg: document.querySelector('.layer-bg'),
-            mid: document.querySelector('.layer-mid'),
+            sky: document.querySelector('.layer-sky'),
+            far: document.querySelector('.layer-city-far'),
+            mid: document.querySelector('.layer-city-mid'),
+            near: document.querySelector('.layer-city-near'),
             fg: document.querySelector('.layer-fg')
         };
         
@@ -43,15 +45,21 @@ class CinematicBackground {
         this.currentX += (this.mouseX - this.currentX) * this.lerpAmount;
         this.currentY += (this.mouseY - this.currentY) * this.lerpAmount;
 
-        // Apply parallax to layers
-        if (this.layers.bg) {
-            this.layers.bg.style.transform = `translate3d(${this.currentX * 10}px, ${this.currentY * 10}px, 0)`;
+        // Apply parallax to layers with varying intensities
+        if (this.layers.sky) {
+            this.layers.sky.style.transform = `translate3d(${this.currentX * 5}px, ${this.currentY * 5}px, 0)`;
+        }
+        if (this.layers.far) {
+            this.layers.far.style.transform = `translate3d(${this.currentX * 15}px, ${this.currentY * 15}px, 0)`;
         }
         if (this.layers.mid) {
-            this.layers.mid.style.transform = `translate3d(${this.currentX * 30}px, ${this.currentY * 30}px, 0) scale(1.05)`;
+            this.layers.mid.style.transform = `translate3d(${this.currentX * 25}px, ${this.currentY * 25}px, 0)`;
+        }
+        if (this.layers.near) {
+            this.layers.near.style.transform = `translate3d(${this.currentX * 40}px, ${this.currentY * 40}px, 0)`;
         }
         if (this.layers.fg) {
-            this.layers.fg.style.transform = `translate3d(${this.currentX * 50}px, ${this.currentY * 50}px, 0)`;
+            this.layers.fg.style.transform = `translate3d(${this.currentX * 60}px, ${this.currentY * 60}px, 0)`;
         }
 
         requestAnimationFrame(() => this.animate());
