@@ -33,38 +33,53 @@
   will-change: transform;
 }
 
-/* Background Layers: Matching auth.css for consistency */
+/* Ultra-Cinematic Background: Minimal, Blurred, Low Contrast */
 .layer-sky {
-  background: radial-gradient(circle at 70% 30%, #1a3fcc15 0%, #020205 100%);
+  background: linear-gradient(180deg, #020205 0%, #0a0a1a 100%);
   z-index: 1;
 }
+
 .layer-city-far {
-  background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop');
-  filter: blur(4px) brightness(0.4);
+  background-image: url('./images/city-blur.png');
+  filter: blur(2px) brightness(0.35) contrast(0.85); /* Strong depth of field + minimal */
   z-index: 2;
-  opacity: 0.6;
-}
-.layer-city-mid {
-  background-image: url('https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=2000&auto=format&fit=crop');
-  filter: blur(2px) brightness(0.5);
-  z-index: 3;
-  opacity: 0.7;
-}
-.layer-city-near {
-  background-image: url('https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=2000&auto=format&fit=crop');
-  filter: brightness(0.6) blur(2px);
-  z-index: 4;
+  opacity: 0.9;
 }
 
-/* Foreground Layer: Particles & Effects */
-.layer-fg {
-  z-index: 5;
+/* Add Soft Light Bloom / Gradient Overlay */
+.cinematic-bg-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(2, 2, 5, 0.95) 100%),
+              linear-gradient(180deg, rgba(10, 10, 26, 0.4) 0%, rgba(2, 2, 5, 0.9) 100%);
+  z-index: 10;
   pointer-events: none;
 }
 
-/* Motion Effects */
-.cinematic-zoom {
-  animation: slowZoom 40s infinite alternate ease-in-out;
+.vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.95) 100%);
+  z-index: 11;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* Subtle Bloom Effect */
+.bloom-layer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 170, 255, 0.05) 0%, transparent 60%);
+  filter: blur(80px);
+  z-index: 3;
+  pointer-events: none;
+  animation: bloom-pulse 10s infinite alternate ease-in-out;
+}
+
+@keyframes bloom-pulse {
+  from { opacity: 0.3; }
+  to { opacity: 0.6; }
 }
 
 @keyframes slowZoom {

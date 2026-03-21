@@ -83,20 +83,27 @@ class CinematicBackground {
         const spark = document.createElement('div');
         spark.className = 'spark-particle';
         
+        const colors = ['#ff3347', '#00aaff']; // Subtle red and blue dots
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
         const startX = Math.random() * 100;
         const startY = Math.random() * 100;
-        const dx = (Math.random() - 0.5) * 200;
-        const dy = (Math.random() - 0.5) * 200;
+        const dx = (Math.random() - 0.5) * 100; // Slower, subtle movement
+        const dy = (Math.random() - 0.5) * 100;
         
         spark.style.left = `${startX}%`;
         spark.style.top = `${startY}%`;
+        spark.style.background = color;
+        spark.style.boxShadow = `0 0 10px ${color}`;
+        spark.style.width = '3px';
+        spark.style.height = '3px';
         spark.style.setProperty('--dx', `${dx}px`);
         spark.style.setProperty('--dy', `${dy}px`);
         
-        spark.style.animation = `flySpark ${1 + Math.random()}s forwards ease-out`;
+        spark.style.animation = `flySpark ${4 + Math.random() * 2}s forwards ease-in-out`;
         
         parent.appendChild(spark);
-        setTimeout(() => spark.remove(), 2000);
+        setTimeout(() => spark.remove(), 6000);
     }
 
     createLightStreak(parent) {
