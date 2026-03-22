@@ -1,136 +1,72 @@
-/* cinematic-bg.css — Spider-Man Cinematic Background Animation */
+/* cinematic-bg.css — Cinematic spider-man city background matching auth */
 
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;700&display=swap');
-
-:root {
-  --cinematic-red: #ff0000;
-  --cinematic-red-glow: #ff4500;
-  --cinematic-blue: #0000ff;
-  --cinematic-blue-glow: #1e90ff;
-  --cinematic-spark: #ffa500;
-  --cinematic-shadow: rgba(0, 0, 0, 0.8);
-}
-
-.cinematic-bg-container {
+.cinematic-bg {
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100vh;
   z-index: -1;
   overflow: hidden;
-  background-color: #060810;
-  background-image: radial-gradient(circle at center, rgba(13, 17, 32, 1) 0%, rgba(6, 8, 16, 1) 100%);
+  background: #020205;
   pointer-events: none;
 }
 
-/* Layering System */
-.parallax-layers {
+.layer {
   position: absolute;
   inset: -10%;
   width: 120%;
   height: 120%;
-  transform-style: preserve-3d;
+  background-size: cover;
+  background-position: center;
   will-change: transform;
 }
 
-/* Ultra-Cinematic Background: Minimal, Blurred, Low Contrast */
 .layer-sky {
-  background: linear-gradient(180deg, #020205 0%, #0a0a1a 100%);
+  background: radial-gradient(circle at 70% 30%, rgba(26, 63, 204, 0.08) 0%, #020205 100%);
   z-index: 1;
 }
-
 .layer-city-far {
-  background-image: url('./images/city-blur.png');
-  filter: blur(2px) brightness(0.7) contrast(1.1); /* Increased brightness for visibility */
+  background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop');
+  filter: blur(4px) brightness(0.4);
   z-index: 2;
-  opacity: 1;
+  opacity: 0.6;
 }
-
-/* Add Soft Light Bloom / Gradient Overlay */
-.cinematic-bg-container::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 50%, rgba(2, 2, 5, 0.6) 100%),
-              linear-gradient(180deg, rgba(10, 10, 26, 0.2) 0%, rgba(2, 2, 5, 0.5) 100%);
-  z-index: 10;
-  pointer-events: none;
-}
-
-.vignette-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6) 100%);
-  z-index: 11;
-  pointer-events: none;
-}
-
-/* Subtle Bloom Effect */
-.bloom-layer {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(0, 170, 255, 0.05) 0%, transparent 60%);
-  filter: blur(80px);
+.layer-city-mid {
+  background-image: url('https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=2000&auto=format&fit=crop');
+  filter: blur(2px) brightness(0.5);
   z-index: 3;
-  pointer-events: none;
-  animation: bloom-pulse 10s infinite alternate ease-in-out;
+  opacity: 0.7;
+}
+.layer-city-near {
+  background-image: url('https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=2000&auto=format&fit=crop');
+  filter: brightness(0.6) blur(2px);
+  z-index: 4;
 }
 
-@keyframes bloom-pulse {
-  from { opacity: 0.3; }
-  to { opacity: 0.6; }
-}
-
-@keyframes slowZoom {
-  0% { transform: scale(1.0); }
-  100% { transform: scale(1.15); }
-}
-
-/* Sparks/Particles Animation */
-.spark-particle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: var(--cinematic-spark);
-  border-radius: 50%;
-  box-shadow: 0 0 6px var(--cinematic-spark);
-  pointer-events: none;
-  opacity: 0;
-}
-
-@keyframes flySpark {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-}
-
-/* Screen Shake Effect */
-.screen-shake {
-  animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-@keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
-}
-
-/* Light Streaks */
-.light-streak {
-  position: absolute;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, white, transparent);
-  opacity: 0.1;
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.85) 100%),
+              linear-gradient(180deg, rgba(6,8,16,0.3) 0%, rgba(6,8,16,0.95) 100%);
   pointer-events: none;
 }
 
-/* LENS FLARE / BLOOM */
-.bloom-layer {
+.particles {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 30%, rgba(0, 170, 255, 0.1) 0%, transparent 50%);
-  filter: blur(40px);
-  z-index: 3;
+  z-index: 6;
   pointer-events: none;
-  animation: bloom-pulse 10s infinite alternate ease-in-out;
+}
+
+.light-streaks {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  background: repeating-linear-gradient(45deg, transparent 0%, transparent 45%, rgba(0, 170, 255, 0.05) 48%, rgba(220, 30, 48, 0.05) 52%, transparent 55%, transparent 100%);
+  background-size: 200% 200%;
+  animation: streaks-move 10s linear infinite;
+  pointer-events: none;
+}
+@keyframes streaks-move {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

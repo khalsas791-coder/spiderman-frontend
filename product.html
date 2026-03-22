@@ -53,14 +53,16 @@
   </nav>
 
   <!-- ═══ CINEMATIC BACKGROUND (FIXED) ═══ -->
-  <div class="cinematic-bg-container fixed-bg">
-    <div class="bloom-layer"></div>
-    <div class="parallax-layers cinematic-zoom">
-      <div class="layer-sky"></div>
-      <div class="layer-city-far"></div>
-      <div class="layer-fg"></div>
-    </div>
-    <div class="vignette-overlay"></div>
+  <div class="cinematic-bg" id="cinematicBg">
+    <div class="layer layer-sky"></div>
+    <div class="layer layer-city-far"></div>
+    <div class="layer layer-city-mid"></div>
+    <div class="layer layer-city-near"></div>
+    
+    <!-- Dynamic Elements -->
+    <div class="particles" id="particlesBg"></div>
+    <div class="light-streaks"></div>
+    <div class="vignette"></div>
   </div>
 
   <!-- ═══ MAIN SHOP LAYOUT ═══ -->

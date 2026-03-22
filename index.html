@@ -40,14 +40,16 @@
       Your browser does not support the video tag.
     </video>
     <!-- Cinematic Background (shown only after login) -->
-    <div class="cinematic-bg-container" id="cinematicBg" style="display: none;">
-      <div class="bloom-layer"></div>
-      <div class="parallax-layers cinematic-zoom">
-        <div class="layer-sky"></div>
-        <div class="layer-city-far"></div>
-        <div class="layer-fg"></div>
-      </div>
-      <div class="vignette-overlay"></div>
+    <div class="cinematic-bg" id="cinematicBg" style="display: none;">
+      <div class="layer layer-sky"></div>
+      <div class="layer layer-city-far"></div>
+      <div class="layer layer-city-mid"></div>
+      <div class="layer layer-city-near"></div>
+      
+      <!-- Dynamic Elements -->
+      <div class="particles" id="particlesBg"></div>
+      <div class="light-streaks"></div>
+      <div class="vignette"></div>
     </div>
     <div class="hero-overlay">
     </div>
