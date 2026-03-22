@@ -39,7 +39,8 @@ function spawnRandomParticles() {
             position: absolute;
             width: ${size}px;
             height: ${size}px;
-            background: ${Math.random() > 0.5 ? '#00aaff' : '#ff3347'};
+            background: ${Math.random() > 0.5 ? '#00f3ff' : '#bc13fe'};
+            box-shadow: 0 0 8px ${Math.random() > 0.5 ? '#00f3ff' : '#bc13fe'};
             border-radius: 50%;
             left: ${Math.random() * 100}%;
             top: ${Math.random() * 100}%;

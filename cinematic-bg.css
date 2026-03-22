@@ -1,11 +1,17 @@
-/* cinematic-bg.css — Cinematic spider-man city background matching auth */
+/* cinematic-bg.css — Cyberpunk Cinematic Background */
+
+:root {
+  --neon-blue: #00f3ff;
+  --neon-purple: #bc13fe;
+  --cyber-dark: #0a0a0f;
+}
 
 .cinematic-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
-  background: #020205;
+  background: var(--cyber-dark);
   pointer-events: none;
 }
 
@@ -20,33 +26,56 @@
 }
 
 .layer-sky {
-  background: radial-gradient(circle at 70% 30%, rgba(26, 63, 204, 0.08) 0%, #020205 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.15) 0%, var(--cyber-dark) 100%);
   z-index: 1;
 }
+
+/* Main Cyberpunk Background */
 .layer-city-far {
-  background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop');
-  filter: blur(4px) brightness(0.4);
+  background-image: url('./images/cyberpunk-bg.png');
+  /* slight dim to let particles POP, but keep it high res */
+  filter: brightness(0.7) contrast(1.1);
   z-index: 2;
-  opacity: 0.6;
-}
-.layer-city-mid {
-  background-image: url('https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=2000&auto=format&fit=crop');
-  filter: blur(2px) brightness(0.5);
-  z-index: 3;
-  opacity: 0.7;
-}
-.layer-city-near {
-  background-image: url('https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=2000&auto=format&fit=crop');
-  filter: brightness(0.6) blur(2px);
-  z-index: 4;
+  opacity: 1;
 }
 
+/* Fog Layer (Repurposing mid layer) */
+.layer-city-mid {
+  background: transparent;
+  background-image: radial-gradient(circle, rgba(0, 243, 255, 0.05) 0%, transparent 60%),
+                    radial-gradient(circle, rgba(188, 19, 254, 0.08) 0%, transparent 50%);
+  background-size: 200vw 200vh;
+  z-index: 3;
+  opacity: 0.6;
+  filter: blur(40px);
+  animation: driftFog 20s infinite alternate ease-in-out;
+}
+@keyframes driftFog {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(2%, 2%); }
+}
+
+/* Light Flickering Overlay (Repurposing near layer) */
+.layer-city-near {
+  background: transparent;
+  box-shadow: inset 0 0 150px rgba(0, 243, 255, 0.1);
+  z-index: 4;
+  animation: neonFlicker 6s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes neonFlicker {
+  0%, 100% { opacity: 0.8; box-shadow: inset 0 0 150px rgba(0, 243, 255, 0.1); }
+  25% { opacity: 0.9; box-shadow: inset 0 0 180px rgba(188, 19, 254, 0.15); }
+  50% { opacity: 0.7; box-shadow: inset 0 0 120px rgba(0, 243, 255, 0.05); }
+  75% { opacity: 1; box-shadow: inset 0 0 200px rgba(188, 19, 254, 0.2); }
+}
+
+/* Volumetric Rays Overlay */
 .vignette {
   position: fixed;
   inset: 0;
   z-index: 5;
-  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.85) 100%),
-              linear-gradient(180deg, rgba(6,8,16,0.3) 0%, rgba(6,8,16,0.95) 100%);
+  background: radial-gradient(circle, transparent 20%, rgba(5,5,10,0.85) 100%),
+              linear-gradient(180deg, rgba(0,243,255,0.05) 0%, rgba(188,19,254,0.05) 100%);
   pointer-events: none;
 }
 
@@ -57,13 +86,14 @@
   pointer-events: none;
 }
 
+/* Ambient Slow Light Streaks */
 .light-streaks {
   position: absolute;
   inset: 0;
   z-index: 7;
-  background: repeating-linear-gradient(45deg, transparent 0%, transparent 45%, rgba(0, 170, 255, 0.05) 48%, rgba(220, 30, 48, 0.05) 52%, transparent 55%, transparent 100%);
+  background: repeating-linear-gradient(45deg, transparent 0%, transparent 45%, rgba(0, 243, 255, 0.03) 48%, rgba(188, 19, 254, 0.03) 52%, transparent 55%, transparent 100%);
   background-size: 200% 200%;
-  animation: streaks-move 10s linear infinite;
+  animation: streaks-move 15s linear infinite;
   pointer-events: none;
 }
 @keyframes streaks-move {
