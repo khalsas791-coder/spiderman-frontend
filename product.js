@@ -162,7 +162,7 @@ function renderGrid(products) {
       card.innerHTML = `
         ${p.section ? `<span class="badge-premium">${p.section}</span>` : ''}
         <div class="pc-image-area">
-          <img src="${p.image}" alt="${p.name}" onerror="this.src='./images/bg.png'">
+          <img src="${p.image}" alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x600/020205/dc1e30?text=${encodeURIComponent(p.name.replace(/\'/g, ''))}'">
           <div class="quick-view-overlay">
              <button class="btn-quick-view" onclick="openQuickView('${p.id}')">QUICK VIEW</button>
           </div>
@@ -313,7 +313,12 @@ window.openQuickView = (id) => {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
     
-    document.getElementById("qvImage").src = p.image;
+    const qvImg = document.getElementById("qvImage");
+    qvImg.src = p.image;
+    qvImg.onerror = function() {
+        this.onerror = null;
+        this.src = `https://placehold.co/600x600/020205/dc1e30?text=${encodeURIComponent(p.name.replace(/'/g, ''))}`;
+    };
     document.getElementById("qvName").textContent = p.name;
     document.getElementById("qvPrice").textContent = `$${p.price}`;
     document.getElementById("qvDesc").textContent = p.description || "The ultimate Spider-Man gadget. Built with Stark Industries technology and multiversal durability.";
