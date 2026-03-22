@@ -131,17 +131,22 @@ function renderGrid(products) {
   const container = document.getElementById("shopContainer");
   container.innerHTML = "";
 
-  const sections = ["Limited Edition", "Special"];
+  const sections = ["Toys", "Hoodies", "Masks"];
   
   sections.forEach(secName => {
-    const secItems = products.filter(p => p.section === secName);
+    const secItems = products.filter(p => p.category === secName);
     if (!secItems.length) return;
 
     const sectionDiv = document.createElement("div");
     sectionDiv.className = `grid-section ${secName.toLowerCase().replace(" ", "-")}`;
     
+    let emoji = "✨";
+    if (secName === "Toys") emoji = "🕷️";
+    if (secName === "Hoodies") emoji = "🔥";
+    if (secName === "Masks") emoji = "🎭";
+    
     sectionDiv.innerHTML = `
-      <h2 class="grid-section-title">${secName === 'Limited Edition' ? '🔥 ' : '✨ '}${secName}</h2>
+      <h2 class="grid-section-title">${emoji} Premium ${secName}</h2>
       <div class="products-grid"></div>
     `;
     
@@ -155,7 +160,7 @@ function renderGrid(products) {
       const stars = "★".repeat(Math.floor(p.rating)) + "☆".repeat(5 - Math.floor(p.rating));
       
       card.innerHTML = `
-        ${secName === "Limited Edition" ? '<span class="badge-premium">🔥 LIMITED</span>' : ''}
+        ${p.section ? `<span class="badge-premium">${p.section}</span>` : ''}
         <div class="pc-image-area">
           <img src="${p.image}" alt="${p.name}" onerror="this.src='./images/bg.png'">
           <div class="quick-view-overlay">
