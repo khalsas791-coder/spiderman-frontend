@@ -113,8 +113,16 @@
                 <textarea id="pDesc" rows="3" placeholder="Describe the product…" required></textarea>
               </div>
               <div class="field-group full-width">
-                <label for="pImage">Image URL *</label>
-                <input type="url" id="pImage" placeholder="https://example.com/mask.jpg" required/>
+                <label for="pImageFile">Product Image (JPG/PNG, max 5MB) *</label>
+                <input type="file" id="pImageFile" accept=".jpg, .jpeg, .png" required/>
+                <input type="hidden" id="pImage" />
+                <div id="imagePreviewContainer" style="margin-top: 10px; display: none; text-align: center;">
+                  <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);" />
+                </div>
+                <div id="uploadSpinner" style="display: none; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; color: #ff3347;">
+                  <div class="spinner-ring" style="width: 20px; height: 20px; border-width: 2px;"></div>
+                  <span>Uploading image...</span>
+                </div>
               </div>
               <div class="field-group">
                 <label for="pSection">Shop Section *</label>

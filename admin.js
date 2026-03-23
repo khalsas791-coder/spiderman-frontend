@@ -1,10 +1,11 @@
 // admin.js — Admin Panel: auth guard, product CRUD, orders, dashboard stats
-import { auth, db } from "./firebase-config.js";
+import { auth, db, storage } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   collection, addDoc, getDocs, doc,
   updateDoc, deleteDoc, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { sampleProducts } from "./sample-products.js";
 
 // ── ADMIN CONFIG ────────────────────────────────────────────────
@@ -162,6 +163,14 @@ window.openProductModal = function () {
   document.getElementById("formBtnText").textContent = "💾 Save Product";
   document.getElementById("productForm").reset();
   document.getElementById("editingId").value = "";
+  
+  // reset image preview and input required
+  document.getElementById("pImage").value = "";
+  document.getElementById("pImageFile").required = true;
+  document.getElementById("imagePreviewContainer").style.display = "none";
+  document.getElementById("imagePreview").src = "";
+  document.getElementById("uploadSpinner").style.display = "none";
+
   document.getElementById("productFormCard").scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
@@ -175,23 +184,44 @@ window.submitProduct = async function (e) {
   e.preventDefault();
   const btn  = document.getElementById("formSubmitBtn");
   const text = document.getElementById("formBtnText");
+  const fileInput = document.getElementById("pImageFile");
+  const spinner = document.getElementById("uploadSpinner");
+  
   btn.disabled = true;
   text.textContent = "Saving…";
 
   const editId = document.getElementById("editingId").value;
-  const data = {
-    name:        document.getElementById("pName").value.trim(),
-    price:       parseFloat(document.getElementById("pPrice").value),
-    description: document.getElementById("pDesc").value.trim(),
-    image:       document.getElementById("pImage").value.trim(),
-    category:    document.getElementById("pCategory").value.trim() || "Masks",
-    section:     document.getElementById("pSection").value || "Special",
-    stock:       parseInt(document.getElementById("pStock").value) || 0,
-    modelUrl:    document.getElementById("pModelUrl").value.trim() || null,
-    updatedAt:   serverTimestamp()
-  };
+  let imageUrl = document.getElementById("pImage").value;
+
+  const file = fileInput.files[0];
 
   try {
+    if (file) {
+      spinner.style.display = "flex";
+      const uniqueName = Date.now() + "_" + file.name;
+      const storageRef = ref(storage, 'products/' + uniqueName);
+      
+      const uploadTask = await uploadBytesResumable(storageRef, file);
+      imageUrl = await getDownloadURL(uploadTask.ref);
+      document.getElementById("pImage").value = imageUrl;
+      spinner.style.display = "none";
+    }
+
+    if (!imageUrl) {
+      throw new Error("Product image is required.");
+    }
+
+    const data = {
+      name:        document.getElementById("pName").value.trim(),
+      price:       parseFloat(document.getElementById("pPrice").value),
+      description: document.getElementById("pDesc").value.trim(),
+      image:       imageUrl,
+      category:    document.getElementById("pCategory").value.trim() || "Masks",
+      section:     document.getElementById("pSection").value || "Special",
+      stock:       parseInt(document.getElementById("pStock").value) || 0,
+      modelUrl:    document.getElementById("pModelUrl").value.trim() || null,
+      updatedAt:   serverTimestamp()
+    };
     if (editId) {
       await updateDoc(doc(db, "products", editId), data);
       showToast("✅ Product updated successfully!");
@@ -224,6 +254,17 @@ window.editProduct = function (id) {
   document.getElementById("pPrice").value    = p.price || "";
   document.getElementById("pDesc").value     = p.description || "";
   document.getElementById("pImage").value    = p.image || "";
+  
+  // Set up edit image preview and remove required constraint
+  document.getElementById("pImageFile").required = false;
+  document.getElementById("uploadSpinner").style.display = "none";
+  if (p.image) {
+    document.getElementById("imagePreview").src = p.image;
+    document.getElementById("imagePreviewContainer").style.display = "block";
+  } else {
+    document.getElementById("imagePreview").src = "";
+    document.getElementById("imagePreviewContainer").style.display = "none";
+  }
   
   // Set category dropdown gracefully
   const catSelect = document.getElementById("pCategory");
@@ -363,3 +404,35 @@ function showToast(msg, dur = 3500) {
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), dur);
 }
+
+// ── FILE UPLOAD PREVIEW ──────────────────────────────────────────
+document.getElementById("pImageFile")?.addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  const previewContainer = document.getElementById("imagePreviewContainer");
+  const previewImage = document.getElementById("imagePreview");
+  
+  if (file) {
+    const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!validTypes.includes(file.type)) {
+      showToast("❌ Invalid file type. Please upload JPG or PNG.");
+      this.value = "";
+      previewContainer.style.display = "none";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast("❌ File size must be under 5MB.");
+      this.value = "";
+      previewContainer.style.display = "none";
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImage.src = e.target.result;
+      previewContainer.style.display = "block";
+    }
+    reader.readAsDataURL(file);
+  } else {
+    previewContainer.style.display = "none";
+  }
+});

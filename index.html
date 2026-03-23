@@ -133,35 +133,36 @@
     </div>
   </section>
 
-  <!-- ===== SHOP SECTION ===== -->
-  <section class="shop" id="shop" style="padding: 100px 5%; background: var(--dark-2); position: relative; display: none;">
+  <!-- ===== PREMIUM SHOP SECTION ===== -->
+  <section class="shop premium-shop" id="shop" style="padding: 100px 5%; background: var(--dark-BG); position: relative; display: none;">
     <div class="section-header" style="text-align: center; margin-bottom: 50px;">
-      <span class="section-tag" style="color: #ff3347; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">The Shop</span>
-      <h2 class="section-title" style="color: white; font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; letter-spacing: 2px;">Featured <span style="color:#dc1e30;">Products</span></h2>
-      <p style="color: rgba(240,240,240,0.6); max-width: 600px; margin: 10px auto;">Browse our top collectibles and suits. Click below to view the full shop.</p>
+      <span class="section-tag" style="color: #ff3347; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Exclusive Collection</span>
+      <h2 class="section-title" style="color: white; font-family: 'Bebas Neue', sans-serif; font-size: 4rem; letter-spacing: 2px;">Premium <span style="color:#dc1e30;">Merch</span></h2>
     </div>
     
-    <div id="homeProductsLoading" style="text-align:center; color:white; padding: 2rem;">Loading products...</div>
-    <div id="homeProductsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;"></div>
-    
-    <div style="text-align: center; margin-top: 50px;">
-      <a href="product.html" class="btn btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;padding:12px 30px;">
-        <span class="btn-text">View All Products</span>
-      </a>
+    <div id="homeProductsLoading" style="text-align:center; color:white; padding: 2rem;">Loading collection...</div>
+    <div id="premiumShopContainer" style="max-width: 1200px; margin: 0 auto;">
+      <!-- Dynamic categories injected here -->
     </div>
   </section>
-  
   <style>
-    /* basic product card styling for home page */
-    .hp-product-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; color: white; transition: 0.3s; cursor: pointer; display:flex; flex-direction:column;}
-    .hp-product-card:hover { transform: translateY(-5px); border-color: rgba(220,30,48,0.5); box-shadow: 0 10px 30px rgba(220,30,48,0.2); }
-    .hp-image { height: 200px; background: rgba(220,30,48,0.05); display: flex; align-items: center; justify-content: center; overflow:hidden;}
-    .hp-image img { width: 100%; height: 100%; object-fit: cover; }
-    .hp-body { padding: 20px; display:flex; flex-direction:column; flex:1; }
-    .hp-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; }
-    .hp-price { font-size: 1.5rem; color: #ff3347; font-weight: bold; margin-bottom: 15px; }
-    .hp-btn { margin-top: auto; padding: 10px; background: linear-gradient(135deg, #dc1e30, #8b0000); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-align:center; transition: 0.3s;}
-    .hp-btn:hover { box-shadow: 0 5px 15px rgba(220,30,48,0.4); transform: scale(1.02); }
+    :root { --dark-BG: #050505; }
+    .premium-category-title { color: #fff; font-size: 2.5rem; font-family: 'Bebas Neue', sans-serif; text-align: left; margin: 60px 0 30px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; text-transform: uppercase;}
+    .premium-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+    .premium-card { background: rgba(20,20,25,0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; color: white; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .premium-card:hover { transform: translateY(-10px) scale(1.02); border-color: rgba(220,30,48,0.5); box-shadow: 0 20px 40px rgba(220,30,48,0.3); }
+    .premium-img-wrapper { height: 320px; overflow: hidden; position: relative; background: #000; display:flex; align-items:center; justify-content:center; }
+    .premium-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .premium-card:hover .premium-img-wrapper img { transform: scale(1.1); }
+    .premium-card-body { padding: 25px; display: flex; flex-direction: column; flex: 1; z-index: 2; position: relative; background: linear-gradient(to top, rgba(15,15,20,1) 70%, transparent); margin-top: -60px; border-radius: 20px 20px 0 0; }
+    .premium-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .premium-price { font-size: 1.8rem; color: #ff3347; font-weight: 900; margin-bottom: 12px; }
+    .premium-desc { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 25px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .premium-actions { margin-top: auto; display: flex; gap: 15px; }
+    .premium-btn-cart { flex: 1; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; text-align: center; }
+    .premium-btn-cart:hover { background: rgba(255,255,255,0.15); color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+    .premium-btn-buy { flex: 1; padding: 14px; background: linear-gradient(135deg, #dc1e30, #8b0000); color: white; border: none; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; text-align: center; text-decoration: none; display:flex; justify-content:center; align-items:center;}
+    .premium-btn-buy:hover { box-shadow: 0 5px 20px rgba(220,30,48,0.5); transform: translateY(-2px); }
   </style>
 
   <!-- Auth moved to auth.html -->
@@ -270,67 +271,63 @@
       }
     });
 
-    async function loadHomeProducts() {
-      const grid = document.getElementById("homeProductsGrid");
+    async function loadPremiumCategories() {
+      const container = document.getElementById("premiumShopContainer");
       const loading = document.getElementById("homeProductsLoading");
-      if(!grid) return;
+      if(!container) return;
       
-      let products = [];
       try {
-        const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(4));
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
-        products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        if(products.length === 0) {
-          const resp = await fetch(`${API_URL}/api/products`);
-          if(resp.ok) {
-            const data = await resp.json();
-            if(data.success && data.products) products = data.products.slice(0, 4);
+        const allProds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        const categories = ["Toys", "Hoodies", "Masks"];
+        let html = "";
+        
+        categories.forEach(cat => {
+          const catProds = allProds.filter(p => p.category && p.category.toLowerCase() === cat.toLowerCase()).slice(0, 3);
+          
+          if(catProds.length > 0) {
+            html += `<h3 class="premium-category-title">${cat}</h3>`;
+            html += `<div class="premium-grid">`;
+            
+            catProds.forEach(p => {
+              // Convert to ₹ format
+              const formattedPrice = `₹${parseFloat(p.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+              const imgUrl = p.image || 'https://via.placeholder.com/400x400?text=No+Image';
+              html += `
+                <div class="premium-card">
+                  <div class="premium-img-wrapper">
+                    <img src="${imgUrl}" alt="${p.name}" loading="lazy" />
+                  </div>
+                  <div class="premium-card-body">
+                    <div class="premium-title">${p.name}</div>
+                    <div class="premium-price">${formattedPrice}</div>
+                    <div class="premium-desc">${p.description || "Premium Spider-Man merchandise. High quality and realistic finish."}</div>
+                    <div class="premium-actions">
+                      <button class="premium-btn-cart" onclick="window.location.href='cart.html';">Add to Cart</button>
+                      <a href="checkout.html" class="premium-btn-buy">Buy Now</a>
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+            html += `</div>`;
           }
+        });
+
+        if (html === "") {
+          html = "<p style='color:white;text-align:center;margin-top:20px;'>No premium products found. Upload products via the Admin panel.</p>";
         }
+        
+        container.innerHTML = html;
       } catch (e) {
         console.warn(e);
+        container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
       }
-
       if(loading) loading.style.display = "none";
-      const staticMaskCard = `
-        <div class="hp-product-card">
-          <div class="hp-image" style="background: transparent; height: 250px; position:relative;">
-            <model-viewer 
-              id="spiderman3DModel"
-              src="./models/mask.glb"
-              alt="Spider-Man Mask"
-              auto-rotate
-              camera-controls
-              style="width: 100%; height: 100%; display:block; outline: none; --poster-color: transparent;">
-            </model-viewer>
-          </div>
-          <div class="hp-body">
-            <div class="hp-title">Spider-Man Black Mask</div>
-            <div class="hp-price">$199.99</div>
-            <button class="hp-btn" onclick="window.location.href='cart.html'; event.stopPropagation();">Add to Cart</button>
-          </div>
-        </div>
-      `;
-
-      if(products.length === 0) {
-        grid.innerHTML = staticMaskCard + "<p style='color:white; text-align:center; grid-column:1/-1; margin-top:20px;'>No other products yet.</p>";
-        return;
-      }
-      
-      grid.innerHTML = staticMaskCard + products.map((p) => `
-        <div class="hp-product-card" onclick="window.location.href='product.html'">
-          <div class="hp-image">
-            ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span style="font-size:4rem;">🕷️</span>`}
-          </div>
-          <div class="hp-body">
-            <div class="hp-title">${p.name}</div>
-            <div class="hp-price">$${parseFloat(p.price).toFixed(2)}</div>
-            <button class="hp-btn">View Details</button>
-          </div>
-        </div>
-      `).join("");
     }
-    loadHomeProducts();
+    loadPremiumCategories();
 
     // Scroll effect for 3D model
     window.addEventListener("scroll", () => {
