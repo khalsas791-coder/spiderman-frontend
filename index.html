@@ -294,11 +294,12 @@
             catProds.forEach(p => {
               // Convert to ₹ format
               const formattedPrice = `₹${parseFloat(p.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-              const imgUrl = p.image || 'https://via.placeholder.com/400x400?text=No+Image';
+              const imgUrl = (p.image && p.image.trim() !== "") ? p.image : 'https://placehold.co/400x400/050505/ff3347?text=No+Image';
+              const safeName = encodeURIComponent(p.name ? p.name.replace(/\'/g, '') : 'Spider+Merch');
               html += `
                 <div class="premium-card">
                   <div class="premium-img-wrapper">
-                    <img src="${imgUrl}" alt="${p.name}" loading="lazy" />
+                    <img src="${imgUrl}" alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x600/020205/dc1e30?text=${safeName}'" />
                   </div>
                   <div class="premium-card-body">
                     <div class="premium-title">${p.name}</div>
