@@ -379,13 +379,105 @@ body {
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .main-container {
-        flex-direction: column;
-    }
-    .right-panel {
-        padding: 3rem;
-    }
-    .product-title {
-        font-size: 3.5rem;
-    }
+    .main-container { flex-direction: column; }
+    .right-panel { padding: 3rem; }
+    .product-title { font-size: 3.5rem; }
 }
+
+/* ── PRODUCT IMAGE PANEL ──────────────────────── */
+#mask-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2.5rem;
+}
+
+.badge-3d {
+    align-self: flex-start;
+    background: rgba(220, 30, 48, 0.15);
+    border: 1px solid rgba(220, 30, 48, 0.5);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ff3347;
+    text-shadow: 0 0 10px rgba(220,30,48,0.6);
+    z-index: 10;
+}
+
+/* Main image wrapper */
+.product-image-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.main-product-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 24px;
+    display: block;
+    border: 1px solid rgba(220, 30, 48, 0.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(220,30,48,0.15);
+    transition: transform 0.5s ease;
+    animation: img-float 5s ease-in-out infinite;
+}
+.main-product-img:hover {
+    transform: scale(1.03);
+}
+@keyframes img-float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-10px); }
+}
+
+/* Pulsing glow ring behind image */
+.img-glow-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 28px;
+    border: 2px solid rgba(220, 30, 48, 0.35);
+    box-shadow:
+        0 0 30px rgba(220,30,48,0.2),
+        inset 0 0 30px rgba(220,30,48,0.05);
+    animation: ring-pulse 3s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+@keyframes ring-pulse {
+    0%   { box-shadow: 0 0 20px rgba(220,30,48,0.15), inset 0 0 20px rgba(220,30,48,0.04); }
+    100% { box-shadow: 0 0 50px rgba(220,30,48,0.35), inset 0 0 40px rgba(220,30,48,0.10); }
+}
+
+/* Thumbnail row */
+.thumb-row {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+.thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.1);
+    opacity: 0.55;
+    transition: all 0.3s ease;
+}
+.thumb:hover {
+    opacity: 0.85;
+    border-color: rgba(220,30,48,0.5);
+    transform: scale(1.05);
+}
+.thumb.active {
+    opacity: 1;
+    border-color: #ff3347;
+    box-shadow: 0 0 14px rgba(220,30,48,0.5);
+}
+

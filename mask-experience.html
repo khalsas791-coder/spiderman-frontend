@@ -40,11 +40,24 @@
     <main class="main-container">
         <section class="left-panel">
             <div id="mask-container">
-                <div class="badge-3d">3D INTERACTIVE</div>
-                <button class="try-premium-btn">TRY PREMIUM 3D <i class="fa-solid fa-sparkles"></i></button>
-                <canvas id="mask-canvas"></canvas>
+                <div class="badge-3d">🎭 PREMIUM MASK</div>
+                <!-- Main product image -->
+                <div class="product-image-wrap" id="productImageWrap">
+                    <img
+                        id="mainProductImage"
+                        src="https://images.unsplash.com/photo-1635805737707-575885ab0820?w=700&q=85"
+                        alt="Advanced Suit Black Mask"
+                        class="main-product-img"
+                    />
+                    <div class="img-glow-ring"></div>
+                </div>
+                <!-- Thumbnail selector -->
+                <div class="thumb-row">
+                    <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?w=150&q=80" alt="View 1" class="thumb active" onclick="swapImg(this,'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=700&q=85')">
+                    <img src="https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=150&q=80" alt="View 2" class="thumb" onclick="swapImg(this,'https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=700&q=85')">
+                    <img src="https://images.unsplash.com/photo-1626278664285-f796b9ee7806?w=150&q=80" alt="View 3" class="thumb" onclick="swapImg(this,'https://images.unsplash.com/photo-1626278664285-f796b9ee7806?w=700&q=85')">
+                </div>
             </div>
-
         </section>
 
         <section class="right-panel">
@@ -85,42 +98,64 @@
         <h2 class="section-title">RELATED GEAR</h2>
         <div class="related-grid">
             <div class="related-card">
-                <img src="images/web_shooter.png" alt="Web Shooter" class="related-img">
+                <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80" alt="Miles Morales Hoodie" class="related-img">
                 <div class="related-info">
-                    <h3>Mk. IV Web Shooter</h3>
-                    <p class="price">$89.99</p>
+                    <h3>Miles Morales Hoodie</h3>
+                    <p class="price">₹2,999</p>
                 </div>
             </div>
             <div class="related-card">
-                <img src="images/suit.png" alt="Suit Fabric" class="related-img">
+                <img src="https://images.unsplash.com/photo-1608889175123-8ee362201f81?w=400&q=80" alt="Iron Spider Figure" class="related-img">
                 <div class="related-info">
-                    <h3>Integrated Suit Fabric</h3>
-                    <p class="price">$149.99</p>
+                    <h3>Iron Spider Figure</h3>
+                    <p class="price">₹5,999</p>
                 </div>
             </div>
             <div class="related-card">
-                <img src="images/mask_related.png" alt="Related Mask" class="related-img">
+                <img src="https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&q=80" alt="Iron Spider Mask" class="related-img">
                 <div class="related-info">
-                    <h3>Stealth Suite Mask</h3>
-                    <p class="price">$179.99</p>
+                    <h3>Iron Spider Mask</h3>
+                    <p class="price">₹7,999</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Three.js Library -->
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-          }
-        }
-    </script>
     <!-- SCRIPTS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="cinematic-bg.js"></script>
     <script src="web-shooter.js"></script>
-    <script type="module" src="mask-experience.js"></script>
+    <script>
+      // Hide loading overlay immediately (no 3D model to wait for)
+      window.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) { overlay.style.opacity='0'; setTimeout(()=>overlay.style.display='none',400); }
+
+        // Cart sync
+        const countBadge = document.getElementById('cart-count');
+        const updateCount = () => {
+          const cart = JSON.parse(localStorage.getItem('spideyCart') || '[]');
+          if (countBadge) countBadge.textContent = cart.reduce((s,i)=>s+i.qty,0);
+        };
+        updateCount();
+
+        document.getElementById('add-to-cart')?.addEventListener('click', () => {
+          let cart = JSON.parse(localStorage.getItem('spideyCart') || '[]');
+          const img = document.getElementById('mainProductImage')?.src || '';
+          const product = { id:'mask-featured', name:'Advanced Suit Black Mask', price:4999, image: img, category:'Masks' };
+          const ex = cart.find(i=>i.id===product.id);
+          if (ex) ex.qty++; else cart.push({...product, qty:1});
+          localStorage.setItem('spideyCart', JSON.stringify(cart));
+          updateCount();
+        });
+      });
+
+      // Thumbnail swap
+      function swapImg(thumb, url) {
+        document.getElementById('mainProductImage').src = url;
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      }
+    </script>
 </body>
 </html>
