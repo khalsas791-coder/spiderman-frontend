@@ -1,106 +1,166 @@
-/* cinematic-bg.css — Spider-Man Unique Background v3 */
+/* ═══════════════════════════════════════════════════════════════
+   cinematic-bg.css — Ultra-Premium Spider-Man Background v4
+   Marvel-grade: dark base + web patterns + glows + noise + vignette
+   z-index: -2 parent → NEVER blocks content
+═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --neon-red:    #dc1e30;
-  --neon-blue:   #00aaff;
-  --spider-dark: #04040a;
+  --bg-black:  #03030a;
+  --bg-red:    #1a0205;
+  --glow-r:    rgba(220, 30, 48, 0.6);
+  --glow-b:    rgba(0, 120, 255, 0.4);
+  --glow-p:    rgba(140, 20, 200, 0.3);
 }
 
-/* ── FIXED BASE BACKGROUND ─────────────────────── */
+/* ── FIXED ROOT CONTAINER ───────────────────────────────────── */
 .cinematic-bg {
   position: fixed;
   inset: 0;
-  z-index: -2;          /* sits BEHIND everything */
+  z-index: -2;
   overflow: hidden;
-  background: var(--spider-dark);
   pointer-events: none;
+  background: var(--bg-black);
+  /* Isolation keeps all child z-index scoped inside */
+  isolation: isolate;
 }
 
-/* ── DEEP SPACE BASE ───────────────────────────── */
+/* ── LAYER 1 — Radial gradient base ─────────────────────────── */
 .layer-sky {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 0%,   rgba(220,30,48,0.18)  0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 100%,  rgba(0,170,255,0.12)  0%, transparent 60%),
-    radial-gradient(ellipse 100% 80% at 50% 50%,  rgba(10,10,25,1)       0%, #04040a 100%);
-  z-index: 1;
+    radial-gradient(ellipse 90% 70% at 5%  5%,  rgba(160, 10, 20, 0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 95% 90%, rgba(0, 80, 200, 0.20)  0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(80, 5, 110, 0.15)  0%, transparent 60%),
+    linear-gradient(160deg, #07010d 0%, #03030a 40%, #060010 100%);
+  animation: sky-pulse 12s ease-in-out infinite alternate;
+}
+@keyframes sky-pulse {
+  0%   { opacity: 0.85; }
+  100% { opacity: 1; }
 }
 
-/* ── SPIDER-WEB SVG PATTERN ────────────────────── */
+/* ── LAYER 2 — Animated spider-web SVG pattern ──────────────── */
 .layer-city-far {
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='rgba(220,30,48,0.07)' stroke-width='0.8'%3E%3C!-- radial web lines from centre --%3E%3Cline x1='200' y1='200' x2='200' y2='0'/%3E%3Cline x1='200' y1='200' x2='380' y2='55'/%3E%3Cline x1='200' y1='200' x2='380' y2='200'/%3E%3Cline x1='200' y1='200' x2='380' y2='345'/%3E%3Cline x1='200' y1='200' x2='200' y2='400'/%3E%3Cline x1='200' y1='200' x2='20' y2='345'/%3E%3Cline x1='200' y1='200' x2='20' y2='200'/%3E%3Cline x1='200' y1='200' x2='20' y2='55'/%3E%3C!-- concentric arcs --%3E%3Cellipse cx='200' cy='200' rx='40'  ry='40'/%3E%3Cellipse cx='200' cy='200' rx='80'  ry='80'/%3E%3Cellipse cx='200' cy='200' rx='120' ry='120'/%3E%3Cellipse cx='200' cy='200' rx='165' ry='165'/%3E%3Cellipse cx='200' cy='200' rx='200' ry='200'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 400px 400px;
-  opacity: 0.6;
-  z-index: 2;
-  animation: web-drift 60s linear infinite;
+  /* Inline SVG web: 8 radial spokes + 5 ring arcs from center */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' width='600' height='600'%3E%3Cg fill='none' stroke='rgba(200,20,40,0.09)' stroke-width='1'%3E%3C!-- spokes --%3E%3Cline x1='300' y1='300' x2='300' y2='0'/%3E%3Cline x1='300' y1='300' x2='600' y2='0'/%3E%3Cline x1='300' y1='300' x2='600' y2='300'/%3E%3Cline x1='300' y1='300' x2='600' y2='600'/%3E%3Cline x1='300' y1='300' x2='300' y2='600'/%3E%3Cline x1='300' y1='300' x2='0' y2='600'/%3E%3Cline x1='300' y1='300' x2='0' y2='300'/%3E%3Cline x1='300' y1='300' x2='0' y2='0'/%3E%3C!-- rings --%3E%3Ccircle cx='300' cy='300' r='60'/%3E%3Ccircle cx='300' cy='300' r='120'/%3E%3Ccircle cx='300' cy='300' r='185'/%3E%3Ccircle cx='300' cy='300' r='255'/%3E%3Ccircle cx='300' cy='300' r='310'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 600px 600px;
+  opacity: 0.7;
+  animation: web-rotate 90s linear infinite;
 }
-@keyframes web-drift {
-  0%   { background-position: 0 0; }
-  100% { background-position: 400px 400px; }
+@keyframes web-rotate {
+  from { background-position: 0px 0px; }
+  to   { background-position: 600px 300px; }
 }
 
-/* ── RED GLOW PULSE ─────────────────────────────── */
+/* ── LAYER 3 — Moving colour glow orbs ─────────────────────── */
 .layer-city-mid {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle 600px at 15% 25%,  rgba(220,30,48,0.08)  0%, transparent 70%),
-    radial-gradient(circle 500px at 85% 70%,  rgba(0,170,255,0.07)  0%, transparent 70%),
-    radial-gradient(circle 400px at 50% 50%,  rgba(220,30,48,0.05)  0%, transparent 70%);
-  z-index: 3;
-  animation: pulse-glow 8s ease-in-out infinite alternate;
+    radial-gradient(circle 500px at 10% 20%, rgba(220, 30, 48, 0.10) 0%, transparent 70%),
+    radial-gradient(circle 400px at 90% 75%, rgba(0, 100, 255, 0.08)  0%, transparent 70%),
+    radial-gradient(circle 350px at 50% 50%, rgba(120, 0, 180, 0.06)  0%, transparent 70%);
+  animation: orbs-drift 18s ease-in-out infinite alternate;
 }
-@keyframes pulse-glow {
-  0%   { opacity: 0.5; transform: scale(1); }
-  100% { opacity: 1;   transform: scale(1.05); }
+@keyframes orbs-drift {
+  0%   { transform: translate(0,    0)    scale(1);    opacity: 0.6; }
+  33%  { transform: translate(30px, -20px) scale(1.04); opacity: 0.9; }
+  66%  { transform: translate(-20px, 15px) scale(0.97); opacity: 0.7; }
+  100% { transform: translate(10px,  30px) scale(1.02); opacity: 1;   }
 }
 
-/* ── DIAGONAL LIGHT STREAKS ─────────────────────── */
+/* ── LAYER 4 — Diagonal light streaks ──────────────────────── */
 .layer-city-near {
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(
-    -45deg,
-    transparent 0%,
-    transparent 48%,
-    rgba(220,30,48,0.025) 49%,
-    rgba(220,30,48,0.025) 51%,
-    transparent 52%,
-    transparent 100%
+    -55deg,
+    transparent            0%,
+    transparent            46%,
+    rgba(220,30,48, 0.022) 47%,
+    rgba(220,30,48, 0.022) 53%,
+    transparent            54%,
+    transparent            100%
   );
-  background-size: 200px 200px;
-  z-index: 4;
-  animation: streaks-slide 20s linear infinite;
+  background-size: 260px 260px;
+  animation: streaks-slide 25s linear infinite;
 }
 @keyframes streaks-slide {
-  0%   { background-position: 0 0; }
-  100% { background-position: 400px 400px; }
+  from { background-position: 0 0; }
+  to   { background-position: 520px 520px; }
 }
 
-/* ── VIGNETTE OVERLAY ───────────────────────────── */
-.vignette {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  background: radial-gradient(ellipse at center, transparent 30%, rgba(4,4,10,0.75) 100%);
-  pointer-events: none;
-}
-
-/* ── PARTICLES CONTAINER ────────────────────────── */
-.particles {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-}
-
-/* ── LIGHT STREAKS (keep for compat) ────────────── */
+/* ── LAYER 5 — SVG noise texture (depth) ───────────────────── */
 .light-streaks {
   position: absolute;
   inset: 0;
-  z-index: 7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── LAYER 6 — Floating dust particles (pure CSS) ──────────── */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* We generate 12 particles via pseudo-element trick */
+.particles::before,
+.particles::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  animation: dust-float 8s ease-in-out infinite;
+}
+.particles::before {
+  width: 3px; height: 3px;
+  background: rgba(220,30,48,0.5);
+  box-shadow:
+    80px  120px 0 rgba(220,30,48,0.4),
+    200px 350px 0 rgba(0,120,255,0.3),
+    450px 80px  0 rgba(220,30,48,0.3),
+    700px 400px 0 rgba(140,20,200,0.4),
+    300px 600px 0 rgba(220,30,48,0.25),
+    900px 200px 0 rgba(0,120,255,0.3),
+    1100px 500px 0 rgba(220,30,48,0.2),
+    600px  100px 0 rgba(140,20,200,0.3);
+  top: 5%; left: 5%;
+  animation-delay: 0s;
+}
+.particles::after {
+  width: 2px; height: 2px;
+  background: rgba(0,120,255,0.5);
+  box-shadow:
+    150px 200px 0 rgba(220,30,48,0.3),
+    400px 150px 0 rgba(0,120,255,0.35),
+    750px 350px 0 rgba(220,30,48,0.25),
+    250px 480px 0 rgba(140,20,200,0.3),
+    1050px 120px 0 rgba(220,30,48,0.2),
+    550px 550px 0 rgba(0,120,255,0.25);
+  top: 10%; left: 10%;
+  animation-delay: -4s;
+}
+@keyframes dust-float {
+  0%,100% { transform: translateY(0px) translateX(0px); opacity: 0.4; }
+  25%      { transform: translateY(-18px) translateX(8px);  opacity: 0.7; }
+  50%      { transform: translateY(-10px) translateX(-6px); opacity: 0.5; }
+  75%      { transform: translateY(-22px) translateX(12px); opacity: 0.8; }
+}
+
+/* ── LAYER 7 — Vignette edge darkening ─────────────────────── */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(3, 3, 10, 0.65) 75%,
+    rgba(3, 3, 10, 0.90) 100%
+  );
   pointer-events: none;
 }

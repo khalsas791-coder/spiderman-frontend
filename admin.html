@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="admin.css"/>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -145,8 +146,34 @@
                 <input type="number" id="pStock" placeholder="100" min="0"/>
               </div>
               <div class="field-group full-width">
-                <label for="pModelUrl">3D Model URL (.glb) — optional</label>
-                <input type="url" id="pModelUrl" placeholder="https://example.com/model.glb"/>
+                <label>3D Model (.glb) — optional</label>
+                <!-- Drop Zone -->
+                <div class="glb-drop-zone" id="glbDropZone" onclick="document.getElementById('pGlbFile').click()">
+                  <div class="glb-drop-icon">🗂️</div>
+                  <p class="glb-drop-text">Drag &amp; drop <strong>.glb</strong> file here<br><span>or click to browse</span></p>
+                  <input type="file" id="pGlbFile" accept=".glb,model/gltf-binary" style="display:none">
+                </div>
+                <!-- File info row -->
+                <div class="glb-file-info" id="glbFileInfo" style="display:none">
+                  <span class="glb-filename" id="glbFileName">model.glb</span>
+                  <button type="button" class="glb-remove-btn" onclick="removeGlbFile()">✕ Remove</button>
+                </div>
+                <!-- Error -->
+                <p class="glb-error" id="glbError" style="display:none;color:#ff4455;font-size:.8rem;margin-top:.4rem">⚠️ Only .glb files are allowed.</p>
+                <!-- 3D Preview -->
+                <div class="glb-preview-wrap" id="glbPreviewWrap" style="display:none">
+                  <div class="glb-loading" id="glbLoading">
+                    <div class="glb-spinner"></div>
+                    <span>Loading 3D model…</span>
+                  </div>
+                  <model-viewer id="glbModelViewer"
+                    auto-rotate camera-controls
+                    style="width:100%;height:320px;border-radius:16px;background:#08080f;border:1px solid rgba(220,30,48,.25)"
+                    shadow-intensity="1">
+                  </model-viewer>
+                </div>
+                <!-- Hidden field to store model blob URL for submission reference -->
+                <input type="hidden" id="pModelUrl">
               </div>
             </div>
             <input type="hidden" id="editingId"/>

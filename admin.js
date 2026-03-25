@@ -425,14 +425,106 @@ document.getElementById("pImageFile")?.addEventListener("change", function(e) {
       previewContainer.style.display = "none";
       return;
     }
-    
     const reader = new FileReader();
     reader.onload = function(e) {
       previewImage.src = e.target.result;
       previewContainer.style.display = "block";
-    }
+    };
     reader.readAsDataURL(file);
   } else {
     previewContainer.style.display = "none";
   }
 });
+
+// ── GLB FILE UPLOAD (drag-and-drop + click) ──────────────────────
+let glbObjectUrl = null;
+
+const glbDropZone = document.getElementById("glbDropZone");
+const glbFileInput = document.getElementById("pGlbFile");
+
+// Drag events
+glbDropZone?.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  glbDropZone.classList.add("drag-over");
+});
+glbDropZone?.addEventListener("dragleave", () => glbDropZone.classList.remove("drag-over"));
+glbDropZone?.addEventListener("drop", (e) => {
+  e.preventDefault();
+  glbDropZone.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (file) handleGlbFile(file);
+});
+
+// Click-to-browse
+glbFileInput?.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) handleGlbFile(file);
+});
+
+function handleGlbFile(file) {
+  const errEl      = document.getElementById("glbError");
+  const infoEl     = document.getElementById("glbFileInfo");
+  const fileNameEl = document.getElementById("glbFileName");
+  const previewWrap = document.getElementById("glbPreviewWrap");
+  const loadingEl  = document.getElementById("glbLoading");
+  const viewer     = document.getElementById("glbModelViewer");
+
+  // Validate — accept .glb extension or matching MIME
+  const isGlb = file.name.toLowerCase().endsWith(".glb") || file.type === "model/gltf-binary";
+  if (!isGlb) {
+    if (errEl) errEl.style.display = "block";
+    if (infoEl) infoEl.style.display = "none";
+    if (previewWrap) previewWrap.style.display = "none";
+    return;
+  }
+
+  // Valid — hide error
+  if (errEl) errEl.style.display = "none";
+
+  // Show filename
+  if (fileNameEl) fileNameEl.textContent = file.name;
+  if (infoEl) infoEl.style.display = "flex";
+
+  // Revoke previous
+  if (glbObjectUrl) URL.revokeObjectURL(glbObjectUrl);
+  glbObjectUrl = URL.createObjectURL(file);
+
+  // Show preview area + spinner
+  if (previewWrap) previewWrap.style.display = "block";
+  if (loadingEl)   loadingEl.style.display   = "flex";
+  if (viewer)      viewer.style.display      = "none";
+
+  // Load in model-viewer
+  if (viewer) {
+    viewer.src = glbObjectUrl;
+    viewer.addEventListener("load", () => {
+      if (loadingEl) loadingEl.style.display = "none";
+      viewer.style.display = "block";
+    }, { once: true });
+    viewer.addEventListener("error", () => {
+      if (loadingEl) loadingEl.style.display = "none";
+      showToast("❌ Failed to render .glb — file may be corrupted.");
+    }, { once: true });
+  }
+
+  // Store in hidden input for reference
+  const modelUrlInput = document.getElementById("pModelUrl");
+  if (modelUrlInput) modelUrlInput.value = file.name; // store name as reference
+}
+
+window.removeGlbFile = function () {
+  const infoEl      = document.getElementById("glbFileInfo");
+  const previewWrap = document.getElementById("glbPreviewWrap");
+  const viewer      = document.getElementById("glbModelViewer");
+  const errEl       = document.getElementById("glbError");
+  const modelUrlInput = document.getElementById("pModelUrl");
+
+  if (glbObjectUrl) { URL.revokeObjectURL(glbObjectUrl); glbObjectUrl = null; }
+  if (glbFileInput) glbFileInput.value = "";
+  if (infoEl) infoEl.style.display = "none";
+  if (previewWrap) previewWrap.style.display = "none";
+  if (errEl) errEl.style.display = "none";
+  if (viewer) viewer.src = "";
+  if (modelUrlInput) modelUrlInput.value = "";
+};
+

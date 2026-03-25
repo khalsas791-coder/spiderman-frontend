@@ -158,3 +158,95 @@ textarea{resize:vertical;font-family:var(--font-body)}
 /* TOAST */
 .toast{position:fixed;bottom:2rem;right:2rem;transform:translateY(100px);opacity:0;background:linear-gradient(135deg,var(--dark-3),var(--dark-2));border:1px solid rgba(220,30,48,.5);color:var(--white);padding:1rem 1.75rem;border-radius:16px;font-size:.9rem;font-weight:500;z-index:9999;box-shadow:var(--glow-red);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s;pointer-events:none;max-width:320px}
 .toast.show{transform:translateY(0);opacity:1}
+
+/* ── GLB DRAG-DROP UPLOAD ──────────────────────── */
+.glb-drop-zone {
+  border: 2px dashed rgba(220, 30, 48, 0.4);
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  background: rgba(220, 30, 48, 0.04);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.glb-drop-zone:hover {
+  border-color: rgba(220, 30, 48, 0.8);
+  background: rgba(220, 30, 48, 0.08);
+  box-shadow: 0 0 20px rgba(220, 30, 48, 0.15);
+}
+.glb-drop-zone.drag-over {
+  border-color: #ff3347;
+  background: rgba(220, 30, 48, 0.14);
+  transform: scale(1.01);
+  box-shadow: 0 0 30px rgba(220, 30, 48, 0.3);
+}
+.glb-drop-icon { font-size: 2.5rem; }
+.glb-drop-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+}
+.glb-drop-text strong { color: #ff3347; }
+.glb-drop-text span { font-size: 0.78rem; opacity: 0.6; }
+
+/* File info row */
+.glb-file-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: rgba(0, 230, 118, 0.06);
+  border: 1px solid rgba(0, 230, 118, 0.25);
+  border-radius: 10px;
+}
+.glb-filename {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #00e676;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.glb-remove-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 70, 70, 0.7);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-left: 1rem;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.glb-remove-btn:hover { color: #ff3347; }
+
+/* Preview wrap + loading */
+.glb-preview-wrap {
+  margin-top: 1rem;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.glb-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.88rem;
+}
+.glb-spinner {
+  width: 24px; height: 24px;
+  border: 2px solid rgba(220, 30, 48, 0.25);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
