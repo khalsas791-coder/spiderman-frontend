@@ -53,7 +53,6 @@ class WebShooter {
             ease: "power2.out",
             onComplete: () => {
                 this.createImpact(targetX, targetY);
-                this.performScreenShake();
                 
                 // Fade out and remove
                 gsap.to(path, {
@@ -69,8 +68,7 @@ class WebShooter {
             }
         });
 
-        // Add recoil feeling
-        gsap.fromTo(document.body, { y: 0 }, { y: 2, duration: 0.05, yoyo: true, repeat: 1 });
+        // No recoil / body movement
     }
 
     createImpact(x, y) {
@@ -139,11 +137,7 @@ class WebShooter {
     }
 
     performScreenShake() {
-        const tl = gsap.timeline();
-        tl.to(document.body, { x: -2, duration: 0.05 })
-          .to(document.body, { x: 2, duration: 0.05 })
-          .to(document.body, { x: -1, duration: 0.05 })
-          .to(document.body, { x: 0, duration: 0.05 });
+        // Disabled — screen shake removed
     }
 }
 
