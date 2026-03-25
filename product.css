@@ -39,7 +39,7 @@ body { font-family: 'Outfit', sans-serif; background: var(--dark); color: var(--
 .logout-btn:hover { border-color: var(--red); color: var(--red-l); }
 
 /* ── MAIN LAYOUT ──────────────── */
-.shop-wrapper { display: flex; max-width: 1550px; margin: 0 auto; padding: 7rem 2rem 3rem; gap: 2.5rem; }
+.shop-wrapper { display: flex; max-width: 1550px; margin: 0 auto; padding: 7rem 2rem 3rem; gap: 2.5rem; position: relative; z-index: 1; }
 
 /* Glass Sidebar Filters */
 .shop-sidebar { width: 300px; flex-shrink: 0; position: sticky; top: 6rem; height: calc(100vh - 8rem); background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--glass-b); border-radius: 28px; padding: 2.2rem; overflow-y: auto; }
@@ -63,14 +63,14 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 .sidebar-select { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-b); border-radius: 12px; padding: 0.7rem; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none; cursor: pointer; }
 
 /* ── MAIN CONTENT ────────────── */
-.shop-content { flex: 1; min-height: 100vh; }
+.shop-content { flex: 1; min-height: 100vh; position: relative; z-index: 1; }
 .shop-header { margin-bottom: 3.5rem; text-align: left; }
 .shop-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 4.5rem); letter-spacing: 4px; line-height: 1; margin-bottom: 0.5rem; }
 .accent { background: linear-gradient(135deg, var(--red), var(--blue-n)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .shop-header p { font-size: 1rem; color: rgba(255, 255, 255, 0.4); max-width: 600px; line-height: 1.6; }
 
 /* ── PRODUCT GRID ────────────── */
-.product-grid-container { display: flex; flex-direction: column; gap: 5rem; }
+.product-grid-container { display: flex; flex-direction: column; gap: 5rem; position: relative; z-index: 1; }
 .grid-section-title { 
   font-family: 'Bebas Neue', sans-serif; 
   font-size: 2.2rem; 
@@ -98,16 +98,16 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
   0% { background-position: 0% 0%; }
   100% { background-position: 200% 0%; }
 }
-.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; position: relative; z-index: 1; }
 
 /* PRODUCT CARD BASE */
-.product-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: 28px; position: relative; overflow: hidden; cursor: pointer; transition: all 0.4s var(--ease); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.product-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--blue-n); box-shadow: 0 15px 50px rgba(0, 170, 255, 0.4), inset 0 0 20px rgba(0, 170, 255, 0.1); }
+.product-card { background: rgba(8,8,18,0.92); border: 1px solid rgba(220,30,48,0.2); border-radius: 24px; position: relative; overflow: hidden; cursor: pointer; transition: all 0.4s var(--ease); box-shadow: 0 10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 1; }
+.product-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(220,30,48,0.6); box-shadow: 0 20px 60px rgba(220,30,48,0.3), inset 0 0 30px rgba(220,30,48,0.05); }
 
 /* Card Image Area */
-.pc-image-area { padding: 1.5rem; background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%); height: 260px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.pc-image-area img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.6s var(--ease), filter 0.6s; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); pointer-events: none; -webkit-box-reflect: below -10px linear-gradient(transparent, rgba(0,0,0,0.2)); }
-.product-card:hover .pc-image-area img { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 20px 30px rgba(220, 30, 48, 0.5)); }
+.pc-image-area { padding: 0; background: rgba(0,0,0,0.4); height: 260px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-bottom: 1px solid rgba(220,30,48,0.15); }
+.pc-image-area img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease), filter 0.6s; pointer-events: none; }
+.product-card:hover .pc-image-area img { transform: scale(1.08); filter: brightness(1.1) drop-shadow(0 0 20px rgba(220,30,48,0.4)); }
 
 /* Quick View Overlay (Modern) */
 .quick-view-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; gap: 0.8rem; }
@@ -117,13 +117,13 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 .btn-quick-view:hover { background: var(--red); color: #fff; }
 
 /* Card Body */
-.pc-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; }
-.pc-cat { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); letter-spacing: 2px; }
-.pc-name { font-size: 1rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pc-rating { color: #fbbf24; font-size: 0.75rem; letter-spacing: 2px; }
-.pc-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: #fff; letter-spacing: 1px; margin-top: 0.4rem; }
-.pc-add-btn { background: var(--red); color: #fff; border: none; border-radius: 12px; padding: 0.7rem; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; margin-top: 1rem; }
-.pc-add-btn:hover { background: var(--red-l); box-shadow: 0 0 20px rgba(220, 30, 48, 0.6); transform: scale(1.05); }
+.pc-body { padding: 1.4rem; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(8,8,18,0.95); }
+.pc-cat { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: rgba(220,30,48,0.7); letter-spacing: 2px; }
+.pc-name { font-size: 1.05rem; font-weight: 700; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pc-rating { color: #fbbf24; font-size: 0.75rem; letter-spacing: 1px; }
+.pc-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; color: #ff3347; letter-spacing: 1px; margin-top: 0.2rem; }
+.pc-add-btn { background: linear-gradient(135deg, #dc1e30, #8b0000); color: #fff; border: none; border-radius: 12px; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; margin-top: 0.6rem; letter-spacing: 1px; }
+.pc-add-btn:hover { background: linear-gradient(135deg, #ff3347, #dc1e30); box-shadow: 0 0 25px rgba(220,30,48,0.7); transform: translateY(-2px); }
 
 /* Premium Card */
 .badge-premium { position: absolute; top: 1rem; left: 1rem; background: linear-gradient(135deg, var(--red), var(--blue-n)); color: #fff; padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.7rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; z-index: 10; box-shadow: 0 4px 15px rgba(220, 30, 48, 0.5); }
