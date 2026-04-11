@@ -3,7 +3,7 @@ import ThreeViewer from './ThreeViewer';
 import { Upload, Box, DollarSign, Type, FileText, Send, AlertCircle, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5001/api' });
+const API = axios.create({ baseURL: '/api' });
 
 export default function ProductForm() {
     const [formData, setFormData] = useState({

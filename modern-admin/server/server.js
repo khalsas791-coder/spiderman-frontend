@@ -45,13 +45,23 @@ sequelize.sync().then(() => console.log('✅ SQLite Backup Engine: Ready.'));
 
 // --- MULTER ---
 const upload = multer({ 
-  storage: multer.memoryStorage(), // Use memory for easy upload to Firebase
+  storage: multer.memoryStorage(),
   limits: { fileSize: 15 * 1024 * 1024 }
 });
 
 // --- MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
+
+// --- PRODUCTION: SERVE FRONTEND ---
+// Static files from the built React app
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Static folder for any local uploads
+const uploadDirs = ['uploads/images', 'uploads/models'];
+uploadDirs.forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- HELPERS ---
@@ -81,7 +91,7 @@ const auth = (req, res, next) => {
 
 // --- ROUTES ---
 
-// Seed Admin (SQL Only)
+// Seed Admin
 app.post('/api/auth/seed', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'spidey_admin_2024', 10);
@@ -100,7 +110,7 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) { res.status(500).json({ msg: 'Login failure' }); }
 });
 
-// GET PRODUCTS (From Firestore primarily, SQL secondary)
+// GET PRODUCTS
 app.get('/api/products', auth, async (req, res) => {
     try {
         const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
@@ -108,47 +118,28 @@ app.get('/api/products', auth, async (req, res) => {
         const products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         res.json(products);
     } catch (err) {
-        console.error('Firebase Fetch Failed, falling back to SQL:', err);
         const sqlProducts = await Product.findAll({ order: [['createdAt', 'DESC']] });
         res.json(sqlProducts);
     }
 });
 
-// ADD PRODUCT (Dual Save: Firebase + SQL Backup)
+// ADD PRODUCT
 app.post('/api/products', auth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'glb', maxCount: 1 }]), async (req, res) => {
     try {
-        console.log('🚀 INITIALIZING FIREBASE DEPLOYMENT...');
         const { name, description, price, category, status } = req.body;
-        
-        // 1. Upload to Firebase Storage
         const imageUrl = await uploadToFirebase(req.files['image']?.[0], 'products/images');
         const modelUrl = await uploadToFirebase(req.files['glb']?.[0], 'products/models');
-
         if (!imageUrl) return res.status(400).json({ msg: 'Image upload failed.' });
 
         const productData = {
-            name,
-            description,
-            price: parseFloat(price),
-            category: mapCategory(category), // Sync with storefront keys
-            imageUrl,
-            modelUrl,
-            status,
-            rating: 4.5, // Default rating for site
-            createdAt: Timestamp.now()
+            name, description, price: parseFloat(price), category: mapCategory(category), imageUrl, modelUrl, status,
+            rating: 4.5, createdAt: Timestamp.now()
         };
-
-        // 2. Save to Firestore (The Website's Brain)
         const docRef = await addDoc(collection(db, "products"), productData);
-        console.log('✅ FIRESTORE SYNC COMPLETE:', docRef.id);
-
-        // 3. Save to SQL (The Local Log)
         await Product.create({ ...productData, id: docRef.id, createdAt: new Date() });
-
         res.status(201).json({ id: docRef.id, ...productData });
     } catch (err) {
-        console.error('❌ DEPLOYMENT FAILURE:', err);
-        res.status(500).json({ msg: 'Critical transmission failure.', error: err.message });
+        res.status(500).json({ msg: 'Deployment failure.', error: err.message });
     }
 });
 
@@ -170,4 +161,10 @@ app.get('/api/stats', auth, async (req, res) => {
     } catch (err) { res.status(500).json({ msg: 'Sync error' }); }
 });
 
-app.listen(PORT, () => console.log(`🕷️ Multi-Engine Dashboard Live on port ${PORT}`));
+// --- FRONTEND SPA CATCH-ALL ---
+// Serve the React frontend for any unmatched route
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
+app.listen(PORT, () => console.log(`🚀 Production Monolith active on port ${PORT}`));

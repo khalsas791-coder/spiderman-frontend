@@ -1,13 +1,17 @@
 {
   "name": "spiderman",
   "version": "1.0.0",
-  "description": "",
-  "main": "auth.js",
+  "description": "Production Monolith for Spider-Man Admin Panel",
+  "main": "modern-admin/server/server.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev:server": "cd modern-admin/server && npm start",
     "dev:client": "cd modern-admin/client && npm run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd modern-admin/client && npm install && npm run build",
+    "build:server": "cd modern-admin/server && npm install",
+    "start": "node modern-admin/server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +21,6 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^8.2.2"
   }
 }

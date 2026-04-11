@@ -3,7 +3,7 @@ import { Trash2, Edit, Cube, Search, Filter, MoreVertical, X } from 'lucide-reac
 import ThreeViewer from './ThreeViewer';
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5001/api' });
+const API = axios.create({ baseURL: '/api' });
 
 export default function ProductList() {
     const [products, setProducts] = useState([]);

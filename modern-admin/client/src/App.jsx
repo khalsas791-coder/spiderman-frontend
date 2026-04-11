@@ -15,7 +15,7 @@ import ProductForm from './components/ProductForm';
 import ProductList from './components/ProductList';
 
 // API BASE
-const API = axios.create({ baseURL: 'http://localhost:5001/api' });
+const API = axios.create({ baseURL: '/api' });
 
 // --- HELPERS ---
 const getToken = () => localStorage.getItem('token');
