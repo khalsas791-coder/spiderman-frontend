@@ -133,6 +133,18 @@
                   <img id="imagePreview" src="" alt="Preview" style="width:100%; border-radius:12px; border:1px solid var(--glass-border);"/>
                 </div>
               </div>
+              <div class="field-group full-width">
+                <label>3D Prototype (GLB Model)</label>
+                <div class="glb-drop-zone" id="glbDropZone" onclick="document.getElementById('pGlbFile').click()">
+                  <i class="fas fa-cube" style="font-size: 2rem; color: var(--p-blue)"></i>
+                  <p class="glb-drop-text">Upload <strong>3D Asset</strong><br><span>Drag & drop .glb file or click</span></p>
+                  <input type="file" id="pGlbFile" accept=".glb" style="display:none"/>
+                </div>
+                <input type="hidden" id="pModelUrl"/>
+                <div id="glbPreviewWrap" style="margin-top: 1rem; display: none;">
+                  <model-viewer id="glbModelViewer" auto-rotate camera-controls style="width:100%; height:300px; background:var(--bg-darker); border-radius:12px; border:1px solid var(--glass-border);"></model-viewer>
+                </div>
+              </div>
               <div class="field-group">
                 <label>Section</label>
                 <select id="pSection">
@@ -149,12 +161,11 @@
                 </select>
               </div>
               <div class="field-group">
-                <label>Inventory</label>
-                <input type="number" id="pStock" value="100"/>
+                <label>Active Stock</label>
+                <input type="number" id="pStock" value="100" placeholder="Available units"/>
               </div>
             </div>
             <input type="hidden" id="editingId"/>
-            <input type="hidden" id="pModelUrl"/>
             <div class="form-actions">
               <button type="button" class="btn-cancel-form" onclick="closeProductModal()">Discard</button>
               <button type="submit" class="btn-submit" id="formSubmitBtn">Register Gear</button>

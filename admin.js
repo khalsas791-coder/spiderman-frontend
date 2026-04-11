@@ -75,26 +75,33 @@ async function loadProducts() {
     document.getElementById("productCount").textContent = allProducts.length;
     loading.style.display = "none";
 
-    grid.innerHTML = allProducts.map((p, i) => `
-      <div class="product-card" style="animation-delay:${i * 0.05}s">
-        <div class="pc-img">
-          ${p.image ? `<img src="${p.image}" alt="${p.name}" onerror="this.src='placeholder.png'"/>` : '<i class="fas fa-spider"></i>'}
-          <span class="pc-category">${p.category || 'Gear'}</span>
-        </div>
-        <div class="pc-body">
-          <h3 class="pc-name">${p.name}</h3>
-          <p class="pc-desc">${p.description || "Experimental Spidey technology."}</p>
-          <div class="pc-footer">
-            <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
-            <span class="pc-stock">Stock: ${p.stock || 0}</span>
+    grid.innerHTML = allProducts.map((p, i) => {
+      const stock = parseInt(p.stock || 0);
+      const stockStatus = stock === 0 ? 'out-of-stock' : (stock < 10 ? 'low-stock' : 'in-stock');
+      const stockLabel = stock === 0 ? '⚠️ Out of Stock' : (stock < 10 ? `⚠️ Low: ${stock}` : `✓ ${stock} Units`);
+      
+      return `
+        <div class="product-card" style="animation-delay:${i * 0.05}s">
+          <div class="pc-img">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}" onerror="this.src='placeholder.png'"/>` : '<i class="fas fa-spider"></i>'}
+            <span class="pc-category">${p.category || 'Gear'}</span>
+            ${p.modelUrl ? '<span class="3d-badge"><i class="fas fa-cube"></i> 3D</span>' : ''}
+          </div>
+          <div class="pc-body">
+            <h3 class="pc-name">${p.name}</h3>
+            <p class="pc-desc">${p.description || "Experimental Spidey technology."}</p>
+            <div class="pc-footer">
+              <span class="pc-price">$${parseFloat(p.price).toFixed(2)}</span>
+              <span class="pc-stock status-${stockStatus}">${stockLabel}</span>
+            </div>
+          </div>
+          <div class="pc-actions">
+            <button class="btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i> Modify</button>
+            <button class="btn-del" onclick="askDeleteProduct('${p.id}')"><i class="fas fa-trash"></i> Scrap</button>
           </div>
         </div>
-        <div class="pc-actions">
-          <button class="btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i> Modify</button>
-          <button class="btn-del" onclick="askDeleteProduct('${p.id}')"><i class="fas fa-trash"></i> Scrap</button>
-        </div>
-      </div>
-    `).join("");
+      `;
+    }).join("");
 
   } catch (err) {
     loading.style.display = "none";
@@ -149,44 +156,61 @@ window.submitProduct = async (e) => {
   e.preventDefault();
   const btn = document.getElementById("formSubmitBtn");
   btn.disabled = true;
-  btn.textContent = "Processing...";
+  btn.textContent = "Processing Assets...";
 
   const editId = document.getElementById("editingId").value;
-  const fileInput = document.getElementById("pImageFile");
+  const imgFile = document.getElementById("pImageFile").files[0];
+  const glbFile = document.getElementById("pGlbFile").files[0];
+  
   let imageUrl = document.getElementById("pImage").value;
+  let modelUrl = document.getElementById("pModelUrl").value;
 
   try {
-    if (fileInput.files[0]) {
-      const file = fileInput.files[0];
-      const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-      const uploadTask = await uploadBytesResumable(storageRef, file);
-      imageUrl = await getDownloadURL(uploadTask.ref);
+    const uploadTasks = [];
+
+    // Parallel Upload Strategy
+    if (imgFile) {
+      const imgRef = ref(storage, `products/${Date.now()}_img_${imgFile.name}`);
+      uploadTasks.push(uploadBytesResumable(imgRef, imgFile).then(snapshot => getDownloadURL(snapshot.ref)));
+    } else {
+      uploadTasks.push(Promise.resolve(imageUrl));
     }
+
+    if (glbFile) {
+      const glbRef = ref(storage, `models/${Date.now()}_glb_${glbFile.name}`);
+      uploadTasks.push(uploadBytesResumable(glbRef, glbFile).then(snapshot => getDownloadURL(snapshot.ref)));
+    } else {
+      uploadTasks.push(Promise.resolve(modelUrl));
+    }
+
+    const [finalImgUrl, finalModelUrl] = await Promise.all(uploadTasks);
 
     const data = {
       name: document.getElementById("pName").value.trim(),
       price: parseFloat(document.getElementById("pPrice").value),
       description: document.getElementById("pDesc").value.trim(),
-      image: imageUrl,
+      image: finalImgUrl,
+      modelUrl: finalModelUrl,
       category: document.getElementById("pCategory").value,
       section: document.getElementById("pSection").value,
-      stock: parseInt(document.getElementById("pStock").value),
+      stock: parseInt(document.getElementById("pStock").value) || 0,
       updatedAt: serverTimestamp()
     };
 
     if (editId) {
       await updateDoc(doc(db, "products", editId), data);
-      showToast("✅ Arsenal updated.");
+      showToast("✅ Gear upgraded in arsenal.");
     } else {
       data.createdAt = serverTimestamp();
       await addDoc(collection(db, "products"), data);
-      showToast("🕷️ New gear deployed.");
+      showToast("🕷️ New gear deployed successfully.");
     }
 
     closeProductModal();
     await loadProducts();
   } catch (err) {
-    showToast("❌ Command failed.");
+    console.error(err);
+    showToast("❌ Command failed: " + err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = editId ? "Update Gear" : "Register Gear";
@@ -203,16 +227,51 @@ window.editProduct = (id) => {
   document.getElementById("pPrice").value = p.price;
   document.getElementById("pDesc").value = p.description;
   document.getElementById("pImage").value = p.image || "";
+  document.getElementById("pModelUrl").value = p.modelUrl || "";
   document.getElementById("pCategory").value = p.category;
   document.getElementById("pSection").value = p.section;
   document.getElementById("pStock").value = p.stock || 0;
+
   if (p.image) {
     document.getElementById("imagePreview").src = p.image;
     document.getElementById("imagePreviewContainer").style.display = "block";
   }
+
+  if (p.modelUrl) {
+    const viewer = document.getElementById("glbModelViewer");
+    viewer.src = p.modelUrl;
+    document.getElementById("glbPreviewWrap").style.display = "block";
+  }
 };
 
-// ── DELETE FLOW ────────────────────────────────────────────────
+// ── GLB PREVIEW LOGIC ──
+document.getElementById("pGlbFile")?.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file && file.name.endsWith('.glb')) {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const viewer = document.getElementById("glbModelViewer");
+      viewer.src = ev.target.result;
+      document.getElementById("glbPreviewWrap").style.display = "block";
+      showToast("✓ 3D Model loaded for preview.");
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// ── MODAL RESET ──
+const originalOpenModal = window.openProductModal;
+window.openProductModal = () => {
+  originalOpenModal();
+  document.getElementById("imagePreviewContainer").style.display = "none";
+  document.getElementById("glbPreviewWrap").style.display = "none";
+  document.getElementById("pModelUrl").value = "";
+  document.getElementById("pImage").value = "";
+  document.getElementById("pGlbFile").value = "";
+  document.getElementById("pImageFile").value = "";
+};
+
+// ... existing code ...
 let pendingDeleteId = null;
 window.askDeleteProduct = (id) => {
   pendingDeleteId = id;

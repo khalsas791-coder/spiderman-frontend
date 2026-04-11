@@ -298,6 +298,29 @@ body {
 }
 .toast.show { transform: translateY(0); }
 
+/* Stock Status */
+.status-in-stock { color: var(--p-green); }
+.status-low-stock { color: var(--p-orange); font-weight: 700; }
+.status-out-of-stock { color: var(--p-red); font-weight: 800; }
+
+/* 3D Badge */
+.3d-badge {
+  position: absolute; top: 1rem; right: 1rem;
+  background: rgba(0, 136, 255, 0.6); backdrop-filter: blur(8px);
+  padding: 0.3rem 0.8rem; border-radius: 50px;
+  font-size: 0.7rem; font-weight: 700; color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* GLB Drop Zone hover */
+.glb-drop-zone {
+  border: 2px dashed var(--glass-border);
+  border-radius: 20px; padding: 2rem;
+  text-align: center; cursor: pointer;
+  transition: var(--transition);
+}
+.glb-drop-zone:hover { border-color: var(--p-blue); background: rgba(0, 136, 255, 0.05); }
+
 @media (max-width: 1024px) {
   --sidebar-w: 80px;
   .nav-item span:not(i) { display: none; }
