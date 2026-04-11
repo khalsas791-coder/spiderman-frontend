@@ -50,7 +50,10 @@ const upload = multer({
 });
 
 // --- MIDDLEWARE ---
-app.use(cors());
+app.use(cors({
+    origin: ['https://spiderman-frontend-git-main-jaspreet-singhs-projects-c751b1f2.vercel.app', 'http://localhost:5173'],
+    credentials: true
+}));
 app.use(express.json());
 
 // --- PRODUCTION: SERVE FRONTEND ---

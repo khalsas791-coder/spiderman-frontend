@@ -15,7 +15,9 @@ import ProductForm from './components/ProductForm';
 import ProductList from './components/ProductList';
 
 // API BASE
-const API = axios.create({ baseURL: '/api' });
+const API = axios.create({ 
+    baseURL: import.meta.env.VITE_API_URL || 'https://spiderman-backend-1.onrender.com/api' 
+});
 
 // --- HELPERS ---
 const getToken = () => localStorage.getItem('token');
