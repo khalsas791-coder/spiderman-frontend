@@ -4,6 +4,9 @@
   "description": "",
   "main": "auth.js",
   "scripts": {
+    "dev:server": "cd modern-admin/server && npm start",
+    "dev:client": "cd modern-admin/client && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,5 +15,8 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
