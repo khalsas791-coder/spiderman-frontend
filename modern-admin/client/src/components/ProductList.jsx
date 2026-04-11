@@ -70,8 +70,8 @@ export default function ProductList() {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProducts.map((p, i) => (
-                    <div key={p._id} className="glass-card rounded-[32px] overflow-hidden group border border-white/5 hover:border-white/10 transition-all">
+                {filteredProducts.map((p) => (
+                    <div key={p.id} className="glass-card rounded-[32px] overflow-hidden group border border-white/5 hover:border-white/10 transition-all">
                         <div className="aspect-square bg-spider-light relative overflow-hidden">
                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                             <div className="absolute top-4 right-4 flex gap-2">
@@ -107,7 +107,7 @@ export default function ProductList() {
                                         <Edit size={16} />
                                     </button>
                                     <button 
-                                        onClick={() => handleDelete(p._id)}
+                                        onClick={() => handleDelete(p.id)}
                                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all"
                                     >
                                         <Trash2 size={16} />

@@ -72,7 +72,7 @@ const Dashboard = () => {
                 </h2>
                 <div className="space-y-4">
                     {stats.recentUploads.map((p, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                        <div key={p.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-spider-light rounded-xl overflow-hidden">
                                   <img src={p.imageUrl} className="w-full h-full object-cover" alt="" />

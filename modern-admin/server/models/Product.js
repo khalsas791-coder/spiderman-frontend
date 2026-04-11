@@ -1,48 +1,44 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
 
-const ProductSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  category: {
-    type: String,
-    enum: ['Hoodie', 'Mask', 'Toy'],
-    required: true
-  },
-  imageUrl: {
-    type: String,
-    required: true
-  },
-  modelUrl: {
-    type: String // GLB file URL from Cloudinary
-  },
-  status: {
-    type: String,
-    enum: ['standard', 'featured', 'trending'],
-    default: 'standard'
-  },
-  analytics: {
-    views: { type: Number, default: 0 },
-    clicks: { type: Number, default: 0 }
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
-});
-
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = (sequelize) => {
+  return sequelize.define('Product', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    price: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    modelUrl: DataTypes.STRING,
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: 'standard'
+    },
+    views: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    clicks: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    }
+  });
+};
