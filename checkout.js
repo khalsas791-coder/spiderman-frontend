@@ -169,7 +169,10 @@ function validate() {
 window.placeOrder = async function () {
   if (!validate()) return;
 
-  const btn      = document.getElementById("placeOrderBtn");
+  // Ensure idToken is ready
+  if (!idToken && currentUser) {
+    idToken = await currentUser.getIdToken();
+  }
   const content  = btn.querySelector(".btn-content");
   const spinner  = document.getElementById("orderSpinner");
   content.classList.add("hidden");
@@ -215,6 +218,7 @@ window.placeOrder = async function () {
       content.classList.remove("hidden");
       spinner.classList.add("hidden");
       btn.disabled = false;
+      // Note: processUpiPayment now handles showFailure internally for specific cases
       return;
     }
   } else if (payMethod === "card") {
@@ -224,12 +228,14 @@ window.placeOrder = async function () {
       content.classList.remove("hidden");
       spinner.classList.add("hidden");
       btn.disabled = false;
+      // showFailure is called inside processCardPayment
       return;
     }
   } else {
     // COD: Just a small delay for "confirming"
     await new Promise(r => setTimeout(r, 1200));
   }
+
 
 
 
@@ -306,8 +312,10 @@ async function processUpiPayment(amount, name) {
     
     if (!data.success) {
       showToast(`❌ Failed to initiate UPI: ${data.error || "Unknown error"}`, 5000);
+      showFailure(data.error || "Could not initiate UPI transfer. Please check your connection or use another method.");
       return false;
     }
+
 
     // Display the overlay
     document.getElementById("upiQrImg").src = data.qrBase64;
@@ -359,8 +367,14 @@ async function processUpiPayment(amount, name) {
         if (attempts > 120) { // Timeout after 120 checks (6 minutes)
           clearInterval(interval);
           statusText.textContent = "❌ Payment Timeout.";
-          setTimeout(() => resolve(false), 2000);
+          statusText.style.color = "#ff3347";
+          setTimeout(() => {
+            overlay.classList.remove("show");
+            showFailure("Payment timed out. If money was debited, it will be refunded within 3-5 days.");
+            resolve(false);
+          }, 2000);
         }
+
       }, 3000);
     });
 
