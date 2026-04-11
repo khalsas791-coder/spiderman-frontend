@@ -207,7 +207,16 @@ window.placeOrder = async function () {
     createdAt:     new Date().toISOString()
   };
 
-    // If paid, continue to place the order
+  // ── PAYMENT VERIFICATION ──
+  if (payMethod === "upi") {
+    // Call the dedicated UPI processor
+    const isPaid = await processUpiPayment(total, orderData.shipping.firstName);
+    if (!isPaid) {
+      content.classList.remove("hidden");
+      spinner.classList.add("hidden");
+      btn.disabled = false;
+      return;
+    }
   } else if (payMethod === "card") {
     // Check card payment simulation
     const isPaid = await processCardPayment(total);
@@ -221,6 +230,7 @@ window.placeOrder = async function () {
     // COD: Just a small delay for "confirming"
     await new Promise(r => setTimeout(r, 1200));
   }
+
 
 
   let orderId = "SPD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
