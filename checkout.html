@@ -15,10 +15,23 @@
 </head>
 <body>
 
-  <!-- AUTH GUARD -->
-  <div class="auth-guard" id="authGuard">
-    <div class="guard-spinner">🕷️</div>
-    <p>Checking credentials…</p>
+  <!-- PAYMENT PROCESSING OVERLAY -->
+  <div class="success-overlay payment-loader" id="paymentLoaderOverlay">
+    <div class="success-modal" style="max-width: 400px; border-color: rgba(0, 170, 255, 0.4);">
+      <div id="paymentStatusIcon" class="payment-icon-wrap">
+        <div class="spinner-spidey"></div>
+      </div>
+      <h2 id="paymentStatusTitle">Processing Payment</h2>
+      <p id="paymentStatusText">Hang tight, hero! Verifying with your bank...</p>
+      
+      <!-- Checkmark SVG (Initially Hidden) -->
+      <div id="paymentSuccessTick" class="success-tick-wrap hidden">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+    </div>
   </div>
 
   <!-- ORDER SUCCESS MODAL -->

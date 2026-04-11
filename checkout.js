@@ -166,26 +166,63 @@ function validate() {
 }
 
 // ── PLACE ORDER ──────────────────────────────────────────────────
+// ── PLACE ORDER ──────────────────────────────────────────────────
 window.placeOrder = async function () {
   if (!validate()) return;
 
-  // Ensure idToken is ready
-  if (!idToken && currentUser) {
-    idToken = await currentUser.getIdToken();
-  }
-  const content  = btn.querySelector(".btn-content");
-  const spinner  = document.getElementById("orderSpinner");
-  content.classList.add("hidden");
-  spinner.classList.remove("hidden");
-  btn.disabled = true;
+  const btn = document.getElementById("placeOrderBtn");
+  const payMethod = document.querySelector("input[name='payMethod']:checked")?.value || "card";
 
+  // 1. OPEN PAYMENT GATEWAY MODAL
+  const loaderOverlay = document.getElementById("paymentLoaderOverlay");
+  const statusIcon = document.getElementById("paymentStatusIcon");
+  const successTick = document.getElementById("paymentSuccessTick");
+  const statusTitle = document.getElementById("paymentStatusTitle");
+  const statusText  = document.getElementById("paymentStatusText");
+
+  // Reset Modal State
+  loaderOverlay.classList.add("show");
+  statusIcon.classList.remove("hidden");
+  successTick.classList.add("hidden");
+  statusTitle.textContent = "Processing Payment";
+  statusText.textContent = payMethod === 'card' ? "Verifying with bank..." : (payMethod === 'upi' ? "Linking UPI Gateway..." : "Confirming Order...");
+
+  // Delay for 'Processing' feel
+  await new Promise(r => setTimeout(r, 2000));
+
+  // ── PAYMENT VERIFICATION ──
+  let isPaid = false;
   const cart = getCart();
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const tax      = subtotal * 0.08;
   const discount = (subtotal * promoDiscount) / 100;
   const total    = subtotal + tax - discount;
 
-  const payMethod = document.querySelector("input[name='payMethod']:checked")?.value || "card";
+  if (payMethod === "upi") {
+    // UPI uses its own scanning modal
+    loaderOverlay.classList.remove("show");
+    isPaid = await processUpiPayment(total, document.getElementById("firstName").value);
+    if (!isPaid) return;
+    loaderOverlay.classList.add("show"); // Bring back for 'Success' phase
+  } else if (payMethod === "card") {
+    isPaid = await processCardPayment(total);
+    if (!isPaid) { loaderOverlay.classList.remove("show"); return; }
+  } else {
+    isPaid = true; // COD
+  }
+
+  // 2. SHOW SUCCESS TICK (The 'Full Payment Done' feeling)
+  statusIcon.classList.add("hidden");
+  successTick.classList.remove("hidden");
+  statusTitle.textContent = "Payment Successful!";
+  statusTitle.style.background = "linear-gradient(135deg, #00e676, #fff)";
+  statusText.textContent = "🕸️ Transaction verified. Finalizing your gear...";
+  
+  await new Promise(r => setTimeout(r, 2200));
+
+  // 3. FINALIZE ORDER & SAVE TO DB
+  statusTitle.textContent = "Deploying Gear";
+  statusText.textContent = "Registering order with Spidey-HQ...";
 
   const orderData = {
     userId:        currentUser?.uid || "guest",
@@ -200,75 +237,36 @@ window.placeOrder = async function () {
       pincode:   document.getElementById("pincode").value.trim()
     },
     products:      cart,
-    subtotal,
-    tax,
-    discount,
-    total,
+    subtotal, tax, discount, total,
     paymentMethod: payMethod,
-    upiApp:        payMethod === "upi" ? selectedUpiApp : null,
     status:        "confirmed",
     createdAt:     new Date().toISOString()
   };
 
-  // ── PAYMENT VERIFICATION ──
-  if (payMethod === "upi") {
-    // Call the dedicated UPI processor
-    const isPaid = await processUpiPayment(total, orderData.shipping.firstName);
-    if (!isPaid) {
-      content.classList.remove("hidden");
-      spinner.classList.add("hidden");
-      btn.disabled = false;
-      // Note: processUpiPayment now handles showFailure internally for specific cases
-      return;
-    }
-  } else if (payMethod === "card") {
-    // Check card payment simulation
-    const isPaid = await processCardPayment(total);
-    if (!isPaid) {
-      content.classList.remove("hidden");
-      spinner.classList.add("hidden");
-      btn.disabled = false;
-      // showFailure is called inside processCardPayment
-      return;
-    }
-  } else {
-    // COD: Just a small delay for "confirming"
-    await new Promise(r => setTimeout(r, 1200));
-  }
-
-
-
-
   let orderId = "SPD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
-  // Try backend first
   try {
+    if (!idToken && currentUser) idToken = await currentUser.getIdToken();
     const resp = await fetch(`${API_URL}/api/orders`, {
       method:  "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
       body:    JSON.stringify({ cart, total, ...orderData })
     });
     if (resp.ok) {
-      const data = await resp.json();
-      if (data.success) orderId = data.orderId;
+        const data = await resp.json();
+        if (data.success) orderId = data.orderId;
     }
   } catch {
     // Fallback: save direct to Firestore
-    try {
-      const ref = await addDoc(collection(db, "orders"), { ...orderData, orderId });
-      orderId = orderId;
-    } catch (e) { console.warn("Firestore order save failed:", e); }
+    try { await addDoc(collection(db, "orders"), { ...orderData, orderId }); } catch (e) {}
   }
 
-  // Clear cart
+  // Clear cart & Close Loader
   localStorage.removeItem("spideyCart");
+  loaderOverlay.classList.remove("show");
 
-  // Show success
+  // Show final order success modal
   showSuccess(orderId, orderData);
-
-  content.classList.remove("hidden");
-  spinner.classList.add("hidden");
-  btn.disabled = false;
 };
 
 function showSuccess(orderId, order) {
