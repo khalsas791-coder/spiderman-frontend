@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   cinematic-bg.css — Ultra-Premium Spider-Man Background v4
-   Marvel-grade: dark base + web patterns + glows + noise + vignette
+   cinematic-bg.css — Ultra-Premium Spider-Man Background v5
+   Marvel-grade: parallax layers + glows + scan lines + vignette
    z-index: -2 parent → NEVER blocks content
 ═══════════════════════════════════════════════════════════════ */
 
@@ -19,40 +19,40 @@
   z-index: -2;
   overflow: hidden;
   pointer-events: none;
-  background: var(--bg-black);
-  /* Isolation keeps all child z-index scoped inside */
+  background: #03030a;
   isolation: isolate;
 }
 
-/* ── LAYER 1 — Radial gradient base ─────────────────────────── */
+/* ── LAYER 1 — Deep radial gradient base ────────────────────── */
 .layer-sky {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 90% 70% at 5%  5%,  rgba(160, 10, 20, 0.30) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 95% 90%, rgba(0, 80, 200, 0.20)  0%, transparent 55%),
-    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(80, 5, 110, 0.15)  0%, transparent 60%),
-    linear-gradient(160deg, #07010d 0%, #03030a 40%, #060010 100%);
-  animation: sky-pulse 12s ease-in-out infinite alternate;
+    radial-gradient(ellipse 100% 80% at 0%   0%,  rgba(200,10,25,0.35)   0%, transparent 55%),
+    radial-gradient(ellipse 80%  60% at 100% 100%, rgba(0,70,220,0.28)    0%, transparent 55%),
+    radial-gradient(ellipse 70%  50% at 50%  50%,  rgba(90,5,120,0.18)    0%, transparent 60%),
+    radial-gradient(ellipse 50%  40% at 80%  10%,  rgba(220,30,48,0.12)   0%, transparent 50%),
+    linear-gradient(160deg, #09010f 0%, #03030a 45%, #070010 100%);
+  animation: sky-pulse 14s ease-in-out infinite alternate;
 }
 @keyframes sky-pulse {
-  0%   { opacity: 0.85; }
-  100% { opacity: 1; }
+  0%   { opacity: 0.8; filter: brightness(0.95); }
+  50%  { opacity: 1;   filter: brightness(1.05); }
+  100% { opacity: 0.88; filter: brightness(1); }
 }
 
 /* ── LAYER 2 — Animated spider-web SVG pattern ──────────────── */
 .layer-city-far {
   position: absolute;
   inset: 0;
-  /* Inline SVG web: 8 radial spokes + 5 ring arcs from center */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' width='600' height='600'%3E%3Cg fill='none' stroke='rgba(200,20,40,0.09)' stroke-width='1'%3E%3C!-- spokes --%3E%3Cline x1='300' y1='300' x2='300' y2='0'/%3E%3Cline x1='300' y1='300' x2='600' y2='0'/%3E%3Cline x1='300' y1='300' x2='600' y2='300'/%3E%3Cline x1='300' y1='300' x2='600' y2='600'/%3E%3Cline x1='300' y1='300' x2='300' y2='600'/%3E%3Cline x1='300' y1='300' x2='0' y2='600'/%3E%3Cline x1='300' y1='300' x2='0' y2='300'/%3E%3Cline x1='300' y1='300' x2='0' y2='0'/%3E%3C!-- rings --%3E%3Ccircle cx='300' cy='300' r='60'/%3E%3Ccircle cx='300' cy='300' r='120'/%3E%3Ccircle cx='300' cy='300' r='185'/%3E%3Ccircle cx='300' cy='300' r='255'/%3E%3Ccircle cx='300' cy='300' r='310'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 600px 600px;
-  opacity: 0.7;
-  animation: web-rotate 90s linear infinite;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800' width='800' height='800'%3E%3Cg fill='none' stroke='rgba(220,30,48,0.08)' stroke-width='1.2'%3E%3C!-- spokes --%3E%3Cline x1='400' y1='400' x2='400' y2='0'/%3E%3Cline x1='400' y1='400' x2='683' y2='200'/%3E%3Cline x1='400' y1='400' x2='800' y2='400'/%3E%3Cline x1='400' y1='400' x2='683' y2='600'/%3E%3Cline x1='400' y1='400' x2='400' y2='800'/%3E%3Cline x1='400' y1='400' x2='117' y2='600'/%3E%3Cline x1='400' y1='400' x2='0' y2='400'/%3E%3Cline x1='400' y1='400' x2='117' y2='200'/%3E%3Cline x1='400' y1='400' x2='565' y2='117'/%3E%3Cline x1='400' y1='400' x2='565' y2='683'/%3E%3Cline x1='400' y1='400' x2='235' y2='683'/%3E%3Cline x1='400' y1='400' x2='235' y2='117'/%3E%3C!-- rings --%3E%3Ccircle cx='400' cy='400' r='70'/%3E%3Ccircle cx='400' cy='400' r='130'/%3E%3Ccircle cx='400' cy='400' r='200'/%3E%3Ccircle cx='400' cy='400' r='270'/%3E%3Ccircle cx='400' cy='400' r='340'/%3E%3Ccircle cx='400' cy='400' r='400'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 700px 700px;
+  opacity: 0.65;
+  animation: web-drift 120s linear infinite;
 }
-@keyframes web-rotate {
+@keyframes web-drift {
   from { background-position: 0px 0px; }
-  to   { background-position: 600px 300px; }
+  to   { background-position: 700px 350px; }
 }
 
 /* ── LAYER 3 — Moving colour glow orbs ─────────────────────── */
@@ -60,19 +60,21 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle 500px at 10% 20%, rgba(220, 30, 48, 0.10) 0%, transparent 70%),
-    radial-gradient(circle 400px at 90% 75%, rgba(0, 100, 255, 0.08)  0%, transparent 70%),
-    radial-gradient(circle 350px at 50% 50%, rgba(120, 0, 180, 0.06)  0%, transparent 70%);
-  animation: orbs-drift 18s ease-in-out infinite alternate;
+    radial-gradient(circle 600px at 8%  18%, rgba(220,30,48,0.14)  0%, transparent 70%),
+    radial-gradient(circle 500px at 92% 80%, rgba(0,100,255,0.11)  0%, transparent 70%),
+    radial-gradient(circle 400px at 50% 45%, rgba(130,0,200,0.08)  0%, transparent 70%),
+    radial-gradient(circle 300px at 75% 15%, rgba(220,30,48,0.08)  0%, transparent 60%);
+  animation: orbs-drift 22s ease-in-out infinite alternate;
 }
 @keyframes orbs-drift {
-  0%   { transform: translate(0,    0)    scale(1);    opacity: 0.6; }
-  33%  { transform: translate(30px, -20px) scale(1.04); opacity: 0.9; }
-  66%  { transform: translate(-20px, 15px) scale(0.97); opacity: 0.7; }
-  100% { transform: translate(10px,  30px) scale(1.02); opacity: 1;   }
+  0%   { transform: translate(0,0)       scale(1);    opacity: 0.7; }
+  25%  { transform: translate(25px,-15px) scale(1.03); opacity: 0.95; }
+  50%  { transform: translate(-15px,20px) scale(0.98); opacity: 0.75; }
+  75%  { transform: translate(10px,-25px) scale(1.04); opacity: 0.9; }
+  100% { transform: translate(-20px,10px) scale(1.01); opacity: 0.85; }
 }
 
-/* ── LAYER 4 — Diagonal light streaks ──────────────────────── */
+/* ── LAYER 4 — Diagonal red scan lines ─────────────────────── */
 .layer-city-near {
   position: absolute;
   inset: 0;
@@ -80,76 +82,89 @@
     -55deg,
     transparent            0%,
     transparent            46%,
-    rgba(220,30,48, 0.022) 47%,
-    rgba(220,30,48, 0.022) 53%,
+    rgba(220,30,48, 0.018) 47%,
+    rgba(220,30,48, 0.018) 53%,
     transparent            54%,
     transparent            100%
   );
-  background-size: 260px 260px;
-  animation: streaks-slide 25s linear infinite;
+  background-size: 300px 300px;
+  animation: streaks-slide 30s linear infinite;
 }
 @keyframes streaks-slide {
   from { background-position: 0 0; }
-  to   { background-position: 520px 520px; }
+  to   { background-position: 600px 600px; }
 }
 
-/* ── LAYER 5 — SVG noise texture (depth) ───────────────────── */
+/* ── LAYER 5 — Horizontal scan lines (CRT effect) ───────────── */
 .light-streaks {
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: 300px 300px;
-  opacity: 0.5;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.06) 3px,
+    rgba(0,0,0,0.06) 4px
+  );
   pointer-events: none;
+  opacity: 0.5;
 }
 
-/* ── LAYER 6 — Floating dust particles (pure CSS) ──────────── */
+/* ── LAYER 6 — Floating particle field ─────────────────────── */
 .particles {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-/* We generate 12 particles via pseudo-element trick */
 .particles::before,
 .particles::after {
   content: '';
   position: absolute;
   border-radius: 50%;
-  animation: dust-float 8s ease-in-out infinite;
+  animation: dust-float 10s ease-in-out infinite;
 }
 .particles::before {
   width: 3px; height: 3px;
-  background: rgba(220,30,48,0.5);
+  background: rgba(220,30,48,0.6);
   box-shadow:
-    80px  120px 0 rgba(220,30,48,0.4),
-    200px 350px 0 rgba(0,120,255,0.3),
-    450px 80px  0 rgba(220,30,48,0.3),
-    700px 400px 0 rgba(140,20,200,0.4),
-    300px 600px 0 rgba(220,30,48,0.25),
-    900px 200px 0 rgba(0,120,255,0.3),
-    1100px 500px 0 rgba(220,30,48,0.2),
-    600px  100px 0 rgba(140,20,200,0.3);
+    90px  130px 0 1px rgba(220,30,48,0.45),
+    220px 380px 0 1px rgba(0,120,255,0.35),
+    480px 90px  0 1px rgba(220,30,48,0.35),
+    740px 420px 0 1px rgba(140,20,200,0.5),
+    320px 620px 0 1px rgba(220,30,48,0.3),
+    940px 210px 0 1px rgba(0,120,255,0.35),
+    1150px 520px 0 1px rgba(220,30,48,0.25),
+    640px  110px 0 1px rgba(140,20,200,0.35),
+    1300px 340px 0 1px rgba(220,30,48,0.2),
+    850px  680px 0 1px rgba(0,120,255,0.28);
   top: 5%; left: 5%;
-  animation-delay: 0s;
 }
 .particles::after {
   width: 2px; height: 2px;
-  background: rgba(0,120,255,0.5);
+  background: rgba(0,120,255,0.6);
   box-shadow:
-    150px 200px 0 rgba(220,30,48,0.3),
-    400px 150px 0 rgba(0,120,255,0.35),
-    750px 350px 0 rgba(220,30,48,0.25),
-    250px 480px 0 rgba(140,20,200,0.3),
-    1050px 120px 0 rgba(220,30,48,0.2),
-    550px 550px 0 rgba(0,120,255,0.25);
-  top: 10%; left: 10%;
-  animation-delay: -4s;
+    160px 210px 0 1px rgba(220,30,48,0.35),
+    420px 160px 0 1px rgba(0,120,255,0.4),
+    780px 370px 0 1px rgba(220,30,48,0.3),
+    260px 500px 0 1px rgba(140,20,200,0.35),
+    1080px 130px 0 1px rgba(220,30,48,0.25),
+    570px  570px 0 1px rgba(0,120,255,0.3),
+    1200px 450px 0 1px rgba(220,30,48,0.2),
+    380px  750px 0 1px rgba(140,20,200,0.28);
+  top: 12%; left: 12%;
+  animation-delay: -5s;
 }
 @keyframes dust-float {
-  0%,100% { transform: translateY(0px) translateX(0px); opacity: 0.4; }
-  25%      { transform: translateY(-18px) translateX(8px);  opacity: 0.7; }
-  50%      { transform: translateY(-10px) translateX(-6px); opacity: 0.5; }
-  75%      { transform: translateY(-22px) translateX(12px); opacity: 0.8; }
+  0%,100% { transform: translateY(0px)   translateX(0px);  opacity: 0.45; }
+  20%      { transform: translateY(-20px) translateX(10px); opacity: 0.75; }
+  45%      { transform: translateY(-12px) translateX(-8px); opacity: 0.55; }
+  70%      { transform: translateY(-28px) translateX(15px); opacity: 0.85; }
+}
+
+/* ── PARALLAX SCROLL BACKGROUND (moves at 0.4x scroll speed) ── */
+.cinematic-bg.parallax-active .layer-sky,
+.cinematic-bg.parallax-active .layer-city-far {
+  will-change: transform;
 }
 
 /* ── LAYER 7 — Vignette edge darkening ─────────────────────── */
@@ -157,10 +172,29 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse at center,
-    transparent 35%,
-    rgba(3, 3, 10, 0.65) 75%,
-    rgba(3, 3, 10, 0.90) 100%
+    ellipse 120% 120% at center,
+    transparent 30%,
+    rgba(3,3,10,0.55) 68%,
+    rgba(3,3,10,0.92) 100%
   );
   pointer-events: none;
+}
+
+/* ── BONUS — Animated red spotlight pulse ───────────────────── */
+.cinematic-bg::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,30,48,0.07) 0%, transparent 70%);
+  top: -100px; left: -100px;
+  animation: spotlight-orbit 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes spotlight-orbit {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(calc(100vw - 400px), 100px); }
+  50%  { transform: translate(calc(100vw - 400px), calc(100vh - 400px)); }
+  75%  { transform: translate(100px, calc(100vh - 400px)); }
+  100% { transform: translate(0,0); }
 }

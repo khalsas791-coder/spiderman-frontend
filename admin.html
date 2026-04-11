@@ -9,8 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="admin.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
+
 <body>
 
   <!-- AUTH GUARD -->
@@ -73,7 +75,11 @@
         <button class="nav-item" id="sideStats" onclick="showSection('stats')">
           <span>📊</span> Dashboard
         </button>
+        <button class="nav-item" id="sideFinance" onclick="showSection('finance')">
+          <span>🕸️</span> Finance Hub
+        </button>
       </nav>
+
     </aside>
 
     <!-- CONTENT -->
@@ -257,6 +263,112 @@
           </div>
         </div>
       </section>
+
+      <!-- ═══ FINANCE SECTION ═══ -->
+      <section id="sectionFinance" style="display:none">
+        <div class="section-top">
+          <div>
+            <h1>Finance Hub <span class="spider-badge">🕸️</span></h1>
+            <p class="section-desc">Track Missions Earned & Gear Spending</p>
+          </div>
+          <div>
+            <button class="btn-add" onclick="openFinanceModal()">+ New Transaction</button>
+          </div>
+        </div>
+
+        <!-- FINANCE STATS -->
+        <div class="finance-grid">
+          <div class="f-stat-card balance">
+            <div class="f-icon">🕸️</div>
+            <div>
+              <p class="f-label">Total Balance</p>
+              <h2 id="totalBalance">$0.00</h2>
+            </div>
+          </div>
+          <div class="f-stat-card income">
+            <div class="f-icon">🕷️</div>
+            <div>
+              <p class="f-label">Missions Earned</p>
+              <h2 id="totalIncome">$0.00</h2>
+            </div>
+          </div>
+          <div class="f-stat-card expense">
+            <div class="f-icon">⚙️</div>
+            <div>
+              <p class="f-label">Gear Spending</p>
+              <h2 id="totalExpense">$0.00</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART & FORM ROW -->
+        <div class="finance-row">
+          <div class="chart-container">
+            <h3>Visual Breakdown</h3>
+            <canvas id="financeChart"></canvas>
+          </div>
+
+          <!-- TRANSACTION FORM -->
+          <div class="finance-form-wrap" id="financeFormCard" style="display:none">
+            <div class="f-form-header">
+              <h3>Record Transaction</h3>
+              <button onclick="closeFinanceModal()" class="f-close">✕</button>
+            </div>
+            <form id="financeForm" onsubmit="submitFinance(event)">
+              <div class="f-group">
+                <label>Title</label>
+                <input type="text" id="fTitle" placeholder="Suit Repair / Daily Bugle Check" required>
+              </div>
+              <div class="f-group">
+                <label>Amount (USD)</label>
+                <input type="number" id="fAmount" step="0.01" placeholder="0.00" required>
+              </div>
+              <div class="f-row">
+                <div class="f-group">
+                  <label>Type</label>
+                  <select id="fType" required>
+                    <option value="income">Mission Earned (Income)</option>
+                    <option value="expense">Gear Spending (Expense)</option>
+                  </select>
+                </div>
+                <div class="f-group">
+                  <label>Date</label>
+                  <input type="date" id="fDate" required>
+                </div>
+              </div>
+              <button type="submit" class="f-submit-btn" id="fSubmitBtn">Save Record</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- TRANSACTION LIST -->
+        <div class="history-card">
+          <div class="history-header">
+            <h3>Recent Activity</h3>
+            <div id="financeLoading" class="mini-spinner" style="display:none"></div>
+          </div>
+          <div class="table-wrap">
+            <table class="finance-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="financeList">
+                <!-- Data injected here -->
+              </tbody>
+            </table>
+            <div id="financeEmpty" class="empty-mini" style="display:none">
+              No transactions recorded yet.
+            </div>
+          </div>
+        </div>
+      </section>
+
 
     </main>
   </div>

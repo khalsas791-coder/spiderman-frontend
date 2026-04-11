@@ -38,6 +38,23 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--white);over
 .btn-home{display:inline-block;padding:.9rem 2.5rem;border-radius:50px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border:none;cursor:pointer;font-family:var(--font-body);font-size:1rem;font-weight:700;box-shadow:var(--glow-red);transition:var(--transition)}
 .btn-home:hover{transform:translateY(-3px);box-shadow:0 0 40px rgba(220,30,48,.7)}
 
+/* FAIL VARIANT */
+.success-overlay.fail .success-modal {
+  border-color: rgba(255, 51, 71, 0.4);
+  box-shadow: 0 0 40px rgba(255, 51, 71, 0.1);
+}
+.success-overlay.fail .success-spider {
+  color: #ff3347;
+  filter: drop-shadow(0 0 10px rgba(255, 51, 71, 0.5));
+}
+.success-overlay.fail .btn-home {
+  background: linear-gradient(135deg, #9a0f1e, #dc1e30);
+  box-shadow: 0 0 20px rgba(255, 51, 71, 0.3);
+}
+.success-overlay.fail .btn-home:hover {
+  box-shadow: 0 0 40px rgba(255, 51, 71, 0.6);
+}
+
 /* NAVBAR */
 .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;background:rgba(6,8,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
 .nav-logo{display:flex;align-items:center;gap:.6rem;font-family:var(--font-display);font-size:1.4rem;letter-spacing:3px;color:var(--white);text-decoration:none}

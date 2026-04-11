@@ -191,13 +191,7 @@ function renderGrid(products) {
     });
   });
 
-  // Fade-in cards via GSAP
-  if (typeof gsap !== "undefined") {
-    gsap.fromTo(".reveal-item",
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.55, stagger: 0.08, ease: "power2.out" }
-    );
-  }
+    // Scroll animations are handled by scroll-animations.js (MutationObserver fires automatically)
 }
 
 // ── CART ──

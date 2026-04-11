@@ -203,20 +203,21 @@ window.placeOrder = async function () {
     createdAt:     new Date().toISOString()
   };
 
-  if (payMethod === "upi") {
-    const isPaid = await processUpiPayment(total, orderData.shipping.firstName);
+    // If paid, continue to place the order
+  } else if (payMethod === "card") {
+    // Check card payment simulation
+    const isPaid = await processCardPayment(total);
     if (!isPaid) {
-      // User cancelled or it failed
       content.classList.remove("hidden");
       spinner.classList.add("hidden");
       btn.disabled = false;
-      return; 
+      return;
     }
-    // If paid, continue to place the order
   } else {
-    // Simulate non-upi payment delay (e.g., Credit Card/COD processing)
-    await new Promise(r => setTimeout(r, 1800));
+    // COD: Just a small delay for "confirming"
+    await new Promise(r => setTimeout(r, 1200));
   }
+
 
   let orderId = "SPD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
@@ -268,6 +269,16 @@ function payLabel(m) {
 window.goHome = function () {
   window.location.href = "product.html";
 };
+
+window.closeFailModal = function () {
+  document.getElementById("failOverlay").classList.remove("show");
+};
+
+function showFailure(reason) {
+  document.getElementById("failReason").textContent = reason || "Transaction Declined";
+  document.getElementById("failOverlay").classList.add("show");
+}
+
 
 // ── UPI PAYMENT PROCESSING ─────────────────────────────────────────
 async function processUpiPayment(amount, name) {
@@ -345,6 +356,39 @@ async function processUpiPayment(amount, name) {
     return false;
   }
 }
+
+// ── CARD PAYMENT SIMULATION ──────────────────────────────────────
+async function processCardPayment(amount) {
+  showToast("💳 Connecting to bank...");
+  
+  // Update order label for card check
+  const spinner = document.getElementById("orderSpinner");
+  const originalText = spinner.textContent;
+  spinner.textContent = "🛡️ Verifying Card...";
+
+  try {
+    // Simulate API delay
+    await new Promise(r => setTimeout(r, 3000));
+    
+    // Simulate random failure (1 in 5 chance)
+    const cardNum = document.getElementById("cardNumber")?.value.replace(/\s/g, "") || "";
+    
+    // Secret "fail" card number for testing: 0000000000000000
+    if (cardNum === "0000000000000000" || Math.random() < 0.2) {
+      showFailure("Card declined by issuer. Please use another card.");
+      return false;
+    }
+
+    showToast("✅ Card Authorized!");
+    return true;
+  } catch (err) {
+    showFailure("Payment system unavailable. Try again later.");
+    return false;
+  } finally {
+    spinner.textContent = originalText;
+  }
+}
+
 
 // ── TOAST ────────────────────────────────────────────────────────
 function showToast(msg, dur = 3200) {

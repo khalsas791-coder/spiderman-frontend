@@ -20,7 +20,14 @@ body { font-family: 'Outfit', sans-serif; background: var(--dark); color: var(--
 .auth-guard.hidden { opacity: 0; pointer-events: none; }
 
 /* ── PREMIUM NAVBAR ───────────── */
-.spidey-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(2, 2, 5, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-b); transition: background 0.3s; }
+.spidey-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(2,2,5,0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease;
+}
 .nav-container { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 2rem; }
 .nav-logo { display:flex; align-items:center; gap:.5rem; text-decoration:none; font-family:'Bebas Neue', sans-serif; font-size:1.6rem; letter-spacing:4px; color:#fff; }
 .nav-logo img { width: 35px; height: 35px; filter: drop-shadow(0 0 10px var(--red-l)); animation: float 3s ease-in-out infinite; }
@@ -100,14 +107,82 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 }
 .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; position: relative; z-index: 1; }
 
-/* PRODUCT CARD BASE */
-.product-card { background: rgba(8,8,18,0.92); border: 1px solid rgba(220,30,48,0.2); border-radius: 24px; position: relative; overflow: hidden; cursor: pointer; transition: all 0.4s var(--ease); box-shadow: 0 10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 1; }
-.product-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(220,30,48,0.6); box-shadow: 0 20px 60px rgba(220,30,48,0.3), inset 0 0 30px rgba(220,30,48,0.05); }
+/* PRODUCT CARD BASE — Glassmorphism */
+.product-card {
+  background: linear-gradient(145deg, rgba(10,8,24,0.88), rgba(4,4,14,0.96));
+  border: 1px solid rgba(220,30,48,0.18);
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.55s cubic-bezier(0.23,1,0.32,1),
+              box-shadow 0.55s cubic-bezier(0.23,1,0.32,1),
+              border-color 0.4s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* Shimmer border on hover */
+.product-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(220,30,48,0.5), rgba(0,170,255,0.4), rgba(220,30,48,0.5));
+  background-size: 300% 300%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+  animation: none;
+}
+.product-card:hover::before {
+  opacity: 1;
+  animation: border-shimmer 2s linear infinite;
+}
+@keyframes border-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.product-card:hover {
+  transform: translateY(-12px) scale(1.03);
+  border-color: rgba(220,30,48,0.55);
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.7),
+    0 0 40px rgba(220,30,48,0.25),
+    0 0 80px rgba(0,170,255,0.12),
+    inset 0 0 30px rgba(220,30,48,0.06);
+}
+/* SCROLL-ACTIVE: glowing card when it enters the viewport center */
+.product-card.scroll-active {
+  border-color: rgba(220,30,48,0.4);
+  box-shadow:
+    0 16px 50px rgba(0,0,0,0.7),
+    0 0 30px rgba(220,30,48,0.2),
+    0 0 60px rgba(0,170,255,0.1);
+  transform: translateY(-6px) scale(1.015);
+}
 
 /* Card Image Area */
 .pc-image-area { padding: 0; background: rgba(0,0,0,0.4); height: 260px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-bottom: 1px solid rgba(220,30,48,0.15); }
-.pc-image-area img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease), filter 0.6s; pointer-events: none; }
-.product-card:hover .pc-image-area img { transform: scale(1.08); filter: brightness(1.1) drop-shadow(0 0 20px rgba(220,30,48,0.4)); }
+.pc-image-area img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.23,1,0.32,1), filter 0.7s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+.product-card:hover .pc-image-area img {
+  transform: scale(1.12);
+  filter: brightness(1.15) saturate(1.2) drop-shadow(0 0 24px rgba(220,30,48,0.5));
+}
+/* Motion blur hint while scrolling */
+.product-card.scroll-active .pc-image-area img {
+  transform: scale(1.06);
+  filter: brightness(1.08) drop-shadow(0 0 16px rgba(0,170,255,0.35));
+}
 
 /* Quick View Overlay (Modern) */
 .quick-view-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; gap: 0.8rem; }
@@ -162,9 +237,51 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 .empty-state { text-align: center; padding: 8rem 2rem; animation: fadeInUp 1s both; }
 .empty-icon { font-size: 5rem; margin-bottom: 2rem; filter: grayscale(1) opacity(0.3); }
 
-/* Transitions */
-.reveal-item { opacity: 0; transform: translateY(50px); }
-.reveal-item.visible { opacity: 1; transform: translateY(0); transition: all 0.8s var(--ease); }
+/* Transitions & Reveal Animations */
+.reveal-item { opacity: 0; transform: translateY(60px) scale(0.96); }
+.reveal-item.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+
+/* Nav scrolled state */
+.spidey-nav.nav-scrolled {
+  background: rgba(2,2,5,0.97);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 0 1px rgba(220,30,48,0.15);
+  padding: 0;
+}
+.spidey-nav.nav-scrolled .nav-container { padding: 0.5rem 2rem; }
+
+/* Grid section */
+.grid-section { position: relative; }
+
+/* Scroll progress bar is added dynamically by scroll-animations.js */
+
+/* Category section — subtle entrance for the whole block */
+@keyframes sectionSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.grid-section-title {
+  animation: none; /* GSAP handles this */
+}
+
+/* Depth glow on card image while user is scrolling near it */
+.product-card.scroll-active .pc-image-area {
+  box-shadow: inset 0 0 40px rgba(220,30,48,0.12);
+}
+
+/* ADD TO CART button pulse on scroll-active card */
+.product-card.scroll-active .pc-add-btn {
+  box-shadow: 0 0 18px rgba(220,30,48,0.5);
+}
+
+/* Mobile card override */
+@media (max-width: 600px) {
+  .product-card { transform: none !important; }
+  .product-card.scroll-active { transform: none !important; }
+}
 
 /* ── RESPONSIVE ─────────────── */
 @media (max-width: 1280px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }

@@ -33,6 +33,20 @@
     </div>
   </div>
 
+  <!-- ORDER FAIL MODAL -->
+  <div class="success-overlay fail" id="failOverlay">
+    <div class="success-modal" style="border-color: rgba(255, 51, 71, 0.4);">
+      <div class="success-spider">🚫</div>
+      <h2 style="background: linear-gradient(135deg, #ff3347, #9a0f1e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Order Failed!</h2>
+      <p id="failMsg">We couldn't process your payment. Please check your details and try again.</p>
+      <div class="success-details" style="background: rgba(255, 51, 71, 0.05); border-color: rgba(255, 51, 71, 0.2); color: rgba(255, 255, 255, 0.6);">
+        <span>⚠️ <strong>Reason:</strong> <span id="failReason">Transaction Declined</span></span>
+      </div>
+      <button class="btn-home" onclick="closeFailModal()" style="background: linear-gradient(135deg, #9a0f1e, #dc1e30); box-shadow: 0 0 20px rgba(255, 51, 71, 0.3);">🕸️ Try Again</button>
+    </div>
+  </div>
+
+
   <!-- UPI PAYMENT MODAL -->
   <div class="success-overlay" id="upiOverlay">
     <div class="success-modal" style="max-width: 450px;">

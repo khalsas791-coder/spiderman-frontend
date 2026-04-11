@@ -8,6 +8,11 @@ import {
 import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 import { sampleProducts } from "./sample-products.js";
 
+// ── FINANCE CONFIG ──────────────────────────────────────────────
+let financeChartInstance = null;
+let allTransactions = [];
+
+
 // ── ADMIN CONFIG ────────────────────────────────────────────────
 const ADMIN_EMAILS = ["admin@spiderman.com", "admin@spidey.com"];
 
@@ -48,13 +53,15 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 
 // ── SECTION NAVIGATION ──────────────────────────────────────────
 window.showSection = function (section) {
-  ["products", "orders", "stats"].forEach(s => {
+  ["products", "orders", "stats", "finance"].forEach(s => {
     document.getElementById(`section${cap(s)}`).style.display = s === section ? "" : "none";
     document.getElementById(`side${cap(s)}`).classList.toggle("active", s === section);
   });
   if (section === "orders") loadOrders();
   if (section === "stats")  loadStats();
+  if (section === "finance") loadFinance();
 };
+
 
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
@@ -527,4 +534,155 @@ window.removeGlbFile = function () {
   if (viewer) viewer.src = "";
   if (modelUrlInput) modelUrlInput.value = "";
 };
+
+// ══════════════════════════════════════════════════
+//  FINANCE HUB LOGIC
+// ══════════════════════════════════════════════════
+
+window.openFinanceModal = () => {
+  document.getElementById("financeFormCard").style.display = "block";
+  document.getElementById("fDate").valueAsDate = new Date();
+  document.getElementById("financeFormCard").scrollIntoView({ behavior: "smooth" });
+};
+
+window.closeFinanceModal = () => {
+  document.getElementById("financeFormCard").style.display = "none";
+  document.getElementById("financeForm").reset();
+};
+
+async function loadFinance() {
+  const loading = document.getElementById("financeLoading");
+  const list    = document.getElementById("financeList");
+  const empty   = document.getElementById("financeEmpty");
+
+  loading.style.display = "block";
+  list.innerHTML = "";
+  empty.style.display = "none";
+
+  try {
+    const q = query(collection(db, "finance"), orderBy("date", "desc"));
+    const snap = await getDocs(q);
+    allTransactions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    loading.style.display = "none";
+
+    if (!allTransactions.length) {
+      empty.style.display = "block";
+      updateFinanceStats(0, 0, 0);
+      renderFinanceChart(0, 0);
+      return;
+    }
+
+    let income = 0;
+    let expense = 0;
+
+    list.innerHTML = allTransactions.map(t => {
+      const isInc = t.type === "income";
+      const amt = parseFloat(t.amount || 0);
+      if (isInc) income += amt; else expense += amt;
+
+      return `
+        <tr class="${isInc ? 'row-income' : 'row-expense'}">
+          <td>${t.title}</td>
+          <td>${isInc ? '🕷️ Mission' : '⚙️ Gear'}</td>
+          <td class="f-amount-val">${isInc ? '+' : '-'}$${amt.toFixed(2)}</td>
+          <td>${new Date(t.date).toLocaleDateString()}</td>
+          <td>
+            <button class="btn-f-del" onclick="deleteFinance('${t.id}')">🗑️</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    updateFinanceStats(income, expense, income - expense);
+    renderFinanceChart(income, expense);
+
+  } catch (err) {
+    loading.style.display = "none";
+    showToast("❌ Finance load failed: " + err.message);
+  }
+}
+
+function updateFinanceStats(inc, exp, bal) {
+  animateNum("totalIncome", inc, "$");
+  animateNum("totalExpense", exp, "$");
+  animateNum("totalBalance", bal, "$");
+  
+  // Custom color for balance
+  const balEl = document.getElementById("totalBalance");
+  if (balEl) balEl.style.color = bal >= 0 ? "var(--green)" : "var(--red-light)";
+}
+
+window.submitFinance = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("fSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "Recording...";
+
+  const data = {
+    title: document.getElementById("fTitle").value.trim(),
+    amount: parseFloat(document.getElementById("fAmount").value),
+    type: document.getElementById("fType").value,
+    date: document.getElementById("fDate").value
+  };
+
+  try {
+    await addDoc(collection(db, "finance"), data);
+    showToast("🕸️ Transaction recorded!");
+    closeFinanceModal();
+    await loadFinance();
+  } catch (err) {
+    showToast("❌ Save failed: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Save Record";
+  }
+};
+
+window.deleteFinance = async (id) => {
+  if (!confirm("Are you sure you want to delete this record?")) return;
+  try {
+    await deleteDoc(doc(db, "finance", id));
+    showToast("🗑️ Record deleted.");
+    await loadFinance();
+  } catch (err) {
+    showToast("❌ Delete failed: " + err.message);
+  }
+};
+
+function renderFinanceChart(income, expense) {
+  const ctx = document.getElementById('financeChart');
+  if (!ctx) return;
+
+  if (financeChartInstance) {
+    financeChartInstance.destroy();
+  }
+
+  financeChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Missions Earned', 'Gear Spending'],
+      datasets: [{
+        data: [income, expense],
+        backgroundColor: ['#00aaff', '#dc1e30'],
+        borderColor: ['#060810', '#060810'],
+        borderWidth: 2,
+        hoverOffset: 15
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#f0f0f0', font: { family: 'Outfit', size: 12 } }
+        }
+      },
+      cutout: '70%',
+      animation: { animateScale: true, animateRotate: true }
+    }
+  });
+}
+
 
