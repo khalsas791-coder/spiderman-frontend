@@ -300,3 +300,17 @@ function showToast(msg) {
   const t = document.getElementById("toast");
   if (t) { t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3000); }
 }
+
+// ── PREFETCHING ──
+window.prefetchPage = function(url) {
+  if (window.prefetchedUrls && window.prefetchedUrls.has(url)) return;
+  if (!window.prefetchedUrls) window.prefetchedUrls = new Set();
+  
+  const link = document.createElement('link');
+  link.rel = 'prefetch';
+  link.href = url;
+  document.head.appendChild(link);
+  window.prefetchedUrls.add(url);
+  console.log(`🚀 Prefetched: ${url}`);
+};
+

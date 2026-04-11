@@ -9,10 +9,15 @@ let currentUser = null;
 onAuthStateChanged(auth, (user) => {
   const guard = document.getElementById("authGuard");
   if (!user) { window.location.href = "auth.html"; return; }
+  
+  // Speed-up: Hide overlay immediately before secondary UI updates
+  if (guard) guard.classList.add("hidden");
+  
   currentUser = user;
-  guard.classList.add("hidden");
   const name = user.displayName || user.email.split("@")[0];
-  document.getElementById("userBadge").textContent = `👤 ${name}`;
+  const badge = document.getElementById("userBadge");
+  if (badge) badge.textContent = `👤 ${name}`;
+
   
   const adminBtn = document.getElementById("navAdminBtn");
   if (adminBtn && ["admin@spiderman.com", "admin@spidey.com"].includes(user.email)) {

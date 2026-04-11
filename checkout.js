@@ -11,9 +11,13 @@ let idToken     = null;
 onAuthStateChanged(auth, async (user) => {
   const guard = document.getElementById("authGuard");
   if (!user) { window.location.href = "auth.html"; return; }
+
+  // Speed-up: Hide overlay immediately before awaiting profile data or tokens
+  if (guard) guard.classList.add("hidden");
+
   currentUser = user;
-  idToken = await user.getIdToken();
-  guard.classList.add("hidden");
+  const tokenPromise = user.getIdToken().then(t => idToken = t);
+
   const name = user.displayName || user.email.split("@")[0];
   document.getElementById("userBadge").textContent = `👤 ${name}`;
   

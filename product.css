@@ -212,8 +212,21 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 .cart-panel-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 3px; }
 .btn-close-panel { background: transparent; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
 .cart-panel-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem; }
-.btn-checkout-panel { background: var(--red); color: #fff; border: none; width: 100%; border-radius: 50px; padding: 1.2rem; font-weight: 900; font-size: 1rem; letter-spacing: 2px; cursor: pointer; margin-top: 2rem; box-shadow: var(--glow-r); transition: transform 0.3s; }
-.btn-checkout-panel:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(220, 30, 48, 0.6); }
+.cart-actions-column { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+.btn-checkout-panel, .btn-fast-checkout { 
+  background: var(--red); color: #fff; border: none; width: 100%; border-radius: 50px; 
+  padding: 1rem; font-weight: 800; font-size: 0.95rem; letter-spacing: 2.5px; 
+  cursor: pointer; transition: all 0.3s var(--ease); text-transform: uppercase;
+}
+.btn-checkout-panel { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; }
+.btn-checkout-panel:hover { background: rgba(255,255,255,0.1); border-color: var(--blue-n); box-shadow: var(--glow-b); transform: translateY(-3px); }
+
+.btn-fast-checkout { 
+  background: linear-gradient(135deg, var(--red), #8b0000); 
+  box-shadow: var(--glow-r);
+}
+.btn-fast-checkout:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px rgba(220, 30, 48, 0.6); }
+
 
 /* ── QUICK VIEW MODAL ────────── */
 .quick-view-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s; padding: 2rem; }

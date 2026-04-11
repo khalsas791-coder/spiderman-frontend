@@ -226,13 +226,17 @@
     <div class="cart-panel-items" id="panelItems">
       <!-- Items dynamically added here -->
     </div>
-    <div class="cart-panel-footer">
-      <div class="total-row">
-        <span>Total Estimated</span>
-        <span id="panelTotal">₹0.00</span>
+      <div class="cart-panel-footer">
+        <div class="total-row">
+          <span>Total Estimated</span>
+          <span id="panelTotal">₹0.00</span>
+        </div>
+        <div class="cart-actions-column">
+          <button class="btn-checkout-panel" onclick="window.location.href='cart.html'" onmouseover="prefetchPage('cart.html')">Review Cart</button>
+          <button class="btn-fast-checkout" onclick="window.location.href='checkout.html'" onmouseover="prefetchPage('checkout.html')">⚡ Fast Checkout</button>
+        </div>
       </div>
-      <button class="btn-checkout-panel" onclick="window.location.href='cart.html'">Proceed to Checkout</button>
-    </div>
+
   </aside>
 
   <!-- ══ QUICK VIEW MODAL ══ -->
