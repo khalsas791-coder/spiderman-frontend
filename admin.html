@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spider-Man | Admin Panel 🕷️</title>
-  <meta name="description" content="Spider-Man store admin panel."/>
+  <title>Spider-Man | Admin Console 🕷️</title>
+  <meta name="description" content="Spider-Man store management console."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="admin.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -17,29 +18,29 @@
 
   <!-- AUTH GUARD -->
   <div class="auth-guard" id="authGuard">
-    <div class="guard-spinner">🕷️</div>
-    <p>Verifying admin access…</p>
+    <div class="guard-spinner"><i class="fas fa-spider"></i></div>
+    <p>Verifying Admin Identity…</p>
   </div>
 
-  <!-- ACCESS DENIED (shown if not admin) -->
+  <!-- ACCESS DENIED -->
   <div class="access-denied" id="accessDenied" style="display:none">
     <div class="denied-content">
-      <div class="denied-icon">🚫</div>
-      <h2>Access Denied</h2>
-      <p>Only admins can view this page.</p>
-      <a href="index.html" class="btn-back">← Return Home</a>
+      <div class="denied-icon"><i class="fas fa-user-shield"></i></div>
+      <h2>Restricted Access</h2>
+      <p>This console is reserved for authorized heroes only.</p>
+      <a href="index.html" class="btn-back">← Secure Portal</a>
     </div>
   </div>
 
   <!-- DELETE MODAL -->
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
-      <div class="modal-icon">🗑️</div>
-      <h3>Delete Product?</h3>
-      <p>This action is permanent and cannot be undone.</p>
+      <div class="modal-icon" style="color:var(--p-red)"><i class="fas fa-trash-alt"></i></div>
+      <h3>Decommission Gear?</h3>
+      <p>This action will permanently remove the item from the arsenal.</p>
       <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
-        <button class="btn-delete-confirm" id="confirmDeleteBtn">Delete</button>
+        <button class="btn-cancel" onclick="closeDeleteModal()">Abort</button>
+        <button class="btn-delete-confirm" id="confirmDeleteBtn">Decommission</button>
       </div>
     </div>
   </div>
@@ -47,16 +48,18 @@
   <!-- NAVBAR -->
   <nav class="admin-navbar" id="adminNavbar">
     <div class="nav-brand">
-      <span class="s-icon">🕷️</span>
-      <span class="brand-text">ADMIN</span>
-      <span class="brand-sub">Spider-Man Store</span>
+      <span class="s-icon"><i class="fas fa-spider"></i></span>
+      <div>
+        <span class="brand-text">CONSOLE</span>
+        <div class="brand-sub">Management Suite</div>
+      </div>
     </div>
     <div class="nav-right">
       <div class="admin-badge">
         <span class="badge-dot"></span>
-        <span id="adminEmail">admin</span>
+        <span id="adminEmail">admin@spidey.com</span>
       </div>
-      <button class="logout-btn" id="logoutBtn">Logout</button>
+      <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
   </nav>
 
@@ -67,19 +70,18 @@
     <aside class="sidebar">
       <nav class="sidebar-nav">
         <button class="nav-item active" id="sideProducts" onclick="showSection('products')">
-          <span>📦</span> Products
+          <i class="fas fa-box-open"></i> <span>Arsenal</span>
         </button>
         <button class="nav-item" id="sideOrders" onclick="showSection('orders')">
-          <span>🛒</span> Orders
+          <i class="fas fa-shopping-cart"></i> <span>Missions</span>
         </button>
         <button class="nav-item" id="sideStats" onclick="showSection('stats')">
-          <span>📊</span> Dashboard
+          <i class="fas fa-chart-line"></i> <span>Dashboard</span>
         </button>
         <button class="nav-item" id="sideFinance" onclick="showSection('finance')">
-          <span>🕸️</span> Finance Hub
+          <i class="fas fa-vault"></i> <span>Finance Hub</span>
         </button>
       </nav>
-
     </aside>
 
     <!-- CONTENT -->
@@ -90,123 +92,82 @@
 
         <div class="section-top">
           <div>
-            <h1>Products <span class="count-badge" id="productCount">0</span></h1>
-            <p class="section-desc">Manage your Spider-Man collectibles catalog</p>
+            <h1>The Arsenal <span class="count-badge" id="productCount">0</span></h1>
+            <p class="section-desc">Maintain and equip specialized Spidey gear</p>
           </div>
-          <div>
-            <button class="btn-add" id="btnSyncCatalog" style="background:#1a3fcc; margin-right: 10px;">↺ Sync Catalog to Firebase</button>
-            <button class="btn-add" onclick="openProductModal()">+ Add Product</button>
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn-add" id="btnSyncCatalog" style="background:var(--p-blue);"><i class="fas fa-sync"></i> Sync Catalog</button>
+            <button class="btn-add" onclick="openProductModal()"><i class="fas fa-plus"></i> New Gear</button>
           </div>
         </div>
 
-        <!-- PRODUCT FORM (add / edit) -->
+        <!-- PRODUCT FORM -->
         <div class="product-form-card" id="productFormCard" style="display:none">
           <div class="form-card-header">
-            <h2 id="formTitle">Add New Product</h2>
-            <button class="btn-close-form" onclick="closeProductModal()">✕</button>
+            <h2 id="formTitle">New Arsenal Registry</h2>
+            <button class="btn-close-form" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
           </div>
           <form id="productForm" onsubmit="submitProduct(event)">
             <div class="form-grid">
               <div class="field-group">
-                <label for="pName">Product Name *</label>
-                <input type="text" id="pName" placeholder="Spider-Man Premium Mask" required/>
+                <label>Gear Name</label>
+                <input type="text" id="pName" placeholder="e.g. Nano-Tech Mask" required/>
               </div>
               <div class="field-group">
-                <label for="pPrice">Price (USD) *</label>
-                <input type="number" id="pPrice" placeholder="50.00" step="0.01" min="0" required/>
+                <label>Price (USD)</label>
+                <input type="number" id="pPrice" placeholder="0.00" step="0.01" required/>
               </div>
               <div class="field-group full-width">
-                <label for="pDesc">Description *</label>
-                <textarea id="pDesc" rows="3" placeholder="Describe the product…" required></textarea>
+                <label>Specs & Data</label>
+                <textarea id="pDesc" rows="3" placeholder="Technical specifications…" required></textarea>
               </div>
               <div class="field-group full-width">
-                <label for="pImageFile">Product Image (JPG/PNG, max 5MB) *</label>
-                <input type="file" id="pImageFile" accept=".jpg, .jpeg, .png" required/>
+                <label>Visual Interface (Image)</label>
+                <div class="glb-drop-zone" onclick="document.getElementById('pImageFile').click()">
+                  <i class="fas fa-image" style="font-size: 2rem; color: var(--p-red)"></i>
+                  <p class="glb-drop-text">Upload <strong>Product Image</strong><br><span>Click or drag image here</span></p>
+                  <input type="file" id="pImageFile" accept="image/*" style="display:none"/>
+                </div>
                 <input type="hidden" id="pImage" />
-                <div id="imagePreviewContainer" style="margin-top: 10px; display: none; text-align: center;">
-                  <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);" />
-                </div>
-                <div id="uploadSpinner" style="display: none; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; color: #ff3347;">
-                  <div class="spinner-ring" style="width: 20px; height: 20px; border-width: 2px;"></div>
-                  <span>Uploading image...</span>
+                <div id="imagePreviewContainer" style="margin-top: 1rem; display: none;">
+                  <img id="imagePreview" src="" alt="Preview" style="width:100%; border-radius:12px; border:1px solid var(--glass-border);"/>
                 </div>
               </div>
               <div class="field-group">
-                <label for="pSection">Shop Section *</label>
-                <select id="pSection" required>
-                  <option value="Special" selected>Special (Normal)</option>
-                  <option value="Limited">Limited Edition (Premium)</option>
+                <label>Section</label>
+                <select id="pSection">
+                  <option value="Special">Standard Issue</option>
+                  <option value="Limited">Limited Edition</option>
                 </select>
               </div>
               <div class="field-group">
-                <label for="pCategory">Category *</label>
-                <select id="pCategory" required>
-                  <option value="" disabled>Select category...</option>
-                  <option value="Masks" selected>Masks</option>
-                  <option value="Toys">Toys</option>
-                  <option value="Hoodies">Hoodies</option>
+                <label>Category</label>
+                <select id="pCategory">
+                  <option value="Masks">Masks</option>
+                  <option value="Toys">Gadgets</option>
+                  <option value="Hoodies">Suits</option>
                 </select>
               </div>
               <div class="field-group">
-                <label for="pStock">Stock Qty</label>
-                <input type="number" id="pStock" placeholder="100" min="0"/>
-              </div>
-              <div class="field-group full-width">
-                <label>3D Model (.glb) — optional</label>
-                <!-- Drop Zone -->
-                <div class="glb-drop-zone" id="glbDropZone" onclick="document.getElementById('pGlbFile').click()">
-                  <div class="glb-drop-icon">🗂️</div>
-                  <p class="glb-drop-text">Drag &amp; drop <strong>.glb</strong> file here<br><span>or click to browse</span></p>
-                  <input type="file" id="pGlbFile" accept=".glb,model/gltf-binary" style="display:none">
-                </div>
-                <!-- File info row -->
-                <div class="glb-file-info" id="glbFileInfo" style="display:none">
-                  <span class="glb-filename" id="glbFileName">model.glb</span>
-                  <button type="button" class="glb-remove-btn" onclick="removeGlbFile()">✕ Remove</button>
-                </div>
-                <!-- Error -->
-                <p class="glb-error" id="glbError" style="display:none;color:#ff4455;font-size:.8rem;margin-top:.4rem">⚠️ Only .glb files are allowed.</p>
-                <!-- 3D Preview -->
-                <div class="glb-preview-wrap" id="glbPreviewWrap" style="display:none">
-                  <div class="glb-loading" id="glbLoading">
-                    <div class="glb-spinner"></div>
-                    <span>Loading 3D model…</span>
-                  </div>
-                  <model-viewer id="glbModelViewer"
-                    auto-rotate camera-controls
-                    style="width:100%;height:320px;border-radius:16px;background:#08080f;border:1px solid rgba(220,30,48,.25)"
-                    shadow-intensity="1">
-                  </model-viewer>
-                </div>
-                <!-- Hidden field to store model blob URL for submission reference -->
-                <input type="hidden" id="pModelUrl">
+                <label>Inventory</label>
+                <input type="number" id="pStock" value="100"/>
               </div>
             </div>
             <input type="hidden" id="editingId"/>
+            <input type="hidden" id="pModelUrl"/>
             <div class="form-actions">
-              <button type="button" class="btn-cancel-form" onclick="closeProductModal()">Cancel</button>
-              <button type="submit" class="btn-submit" id="formSubmitBtn">
-                <span id="formBtnText">💾 Save Product</span>
-              </button>
+              <button type="button" class="btn-cancel-form" onclick="closeProductModal()">Discard</button>
+              <button type="submit" class="btn-submit" id="formSubmitBtn">Register Gear</button>
             </div>
           </form>
         </div>
 
-        <!-- LOADING -->
         <div class="loading-spinner" id="productsLoading">
           <div class="spinner-ring"></div>
-          <p>Loading products…</p>
+          <p>Scanning Arsenal…</p>
         </div>
 
-        <!-- GRID -->
         <div class="products-grid" id="productsGrid"></div>
-
-        <!-- EMPTY -->
-        <div class="empty-state" id="productsEmpty" style="display:none">
-          <span>📦</span>
-          <h3>No products yet</h3>
-          <p>Add your first product to get started!</p>
-        </div>
 
       </section>
 
@@ -214,51 +175,48 @@
       <section id="sectionOrders" style="display:none">
         <div class="section-top">
           <div>
-            <h1>Orders <span class="count-badge" id="ordersCount">0</span></h1>
-            <p class="section-desc">View and manage customer orders</p>
+            <h1>Mission History <span class="count-badge" id="ordersCount">0</span></h1>
+            <p class="section-desc">Active and completed delivery missions</p>
           </div>
         </div>
         <div class="loading-spinner" id="ordersLoading">
-          <div class="spinner-ring"></div><p>Loading orders…</p>
+          <div class="spinner-ring"></div><p>Syncing Missions…</p>
         </div>
         <div class="orders-list" id="ordersList"></div>
-        <div class="empty-state" id="ordersEmpty" style="display:none">
-          <span>🛒</span><h3>No orders yet</h3><p>Orders will appear here after customers place them.</p>
-        </div>
       </section>
 
       <!-- ═══ DASHBOARD SECTION ═══ -->
       <section id="sectionStats" style="display:none">
         <div class="section-top">
-          <div><h1>Dashboard</h1><p class="section-desc">Store overview at a glance</p></div>
+          <div><h1>Console Dashboard</h1><p class="section-desc">Mission parameters at a glance</p></div>
         </div>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon">📦</div>
+            <div class="stat-icon"><i class="fas fa-boxes"></i></div>
             <div>
               <p class="stat-value" id="statProducts">0</p>
-              <p class="stat-label">Total Products</p>
+              <p class="stat-label">Total Gear</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">🛒</div>
+            <div class="stat-icon"><i class="fas fa-dharmachakra"></i></div>
             <div>
               <p class="stat-value" id="statOrders">0</p>
-              <p class="stat-label">Total Orders</p>
+              <p class="stat-label">Completed Missions</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">💰</div>
+            <div class="stat-icon" style="color:var(--p-blue)"><i class="fas fa-coins"></i></div>
             <div>
               <p class="stat-value" id="statRevenue">$0</p>
-              <p class="stat-label">Total Revenue</p>
+              <p class="stat-label">Total Credit</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon" style="color:var(--p-green)"><i class="fas fa-user-friends"></i></div>
             <div>
               <p class="stat-value" id="statCustomers">0</p>
-              <p class="stat-label">Customers</p>
+              <p class="stat-label">Active Allies</p>
             </div>
           </div>
         </div>
@@ -268,105 +226,67 @@
       <section id="sectionFinance" style="display:none">
         <div class="section-top">
           <div>
-            <h1>Finance Hub <span class="spider-badge">🕸️</span></h1>
-            <p class="section-desc">Track Missions Earned & Gear Spending</p>
+            <h1>Finance Hub <i class="fas fa-vault" style="color:var(--p-red); margin-left: 0.5rem;"></i></h1>
+            <p class="section-desc">Resource allocation and mission funding</p>
           </div>
-          <div>
-            <button class="btn-add" onclick="openFinanceModal()">+ New Transaction</button>
-          </div>
+          <button class="btn-add" onclick="openFinanceModal()"><i class="fas fa-plus"></i> Add Transaction</button>
         </div>
 
-        <!-- FINANCE STATS -->
         <div class="finance-grid">
           <div class="f-stat-card balance">
-            <div class="f-icon">🕸️</div>
+            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
             <div>
-              <p class="f-label">Total Balance</p>
+              <p class="f-label">Available Balance</p>
               <h2 id="totalBalance">$0.00</h2>
             </div>
           </div>
           <div class="f-stat-card income">
-            <div class="f-icon">🕷️</div>
+            <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
             <div>
-              <p class="f-label">Missions Earned</p>
+              <p class="f-label">Total Inflow</p>
               <h2 id="totalIncome">$0.00</h2>
             </div>
           </div>
           <div class="f-stat-card expense">
-            <div class="f-icon">⚙️</div>
+            <div class="stat-icon"><i class="fas fa-arrow-trend-down"></i></div>
             <div>
-              <p class="f-label">Gear Spending</p>
+              <p class="f-label">Gear Costs</p>
               <h2 id="totalExpense">$0.00</h2>
             </div>
           </div>
         </div>
 
-        <!-- CHART & FORM ROW -->
-        <div class="finance-row">
-          <div class="chart-container">
-            <h3>Visual Breakdown</h3>
-            <canvas id="financeChart"></canvas>
-          </div>
-
-          <!-- TRANSACTION FORM -->
-          <div class="finance-form-wrap" id="financeFormCard" style="display:none">
-            <div class="f-form-header">
-              <h3>Record Transaction</h3>
-              <button onclick="closeFinanceModal()" class="f-close">✕</button>
-            </div>
-            <form id="financeForm" onsubmit="submitFinance(event)">
-              <div class="f-group">
-                <label>Title</label>
-                <input type="text" id="fTitle" placeholder="Suit Repair / Daily Bugle Check" required>
-              </div>
-              <div class="f-group">
-                <label>Amount (USD)</label>
-                <input type="number" id="fAmount" step="0.01" placeholder="0.00" required>
-              </div>
-              <div class="f-row">
-                <div class="f-group">
-                  <label>Type</label>
-                  <select id="fType" required>
-                    <option value="income">Mission Earned (Income)</option>
-                    <option value="expense">Gear Spending (Expense)</option>
-                  </select>
-                </div>
-                <div class="f-group">
-                  <label>Date</label>
-                  <input type="date" id="fDate" required>
-                </div>
-              </div>
-              <button type="submit" class="f-submit-btn" id="fSubmitBtn">Save Record</button>
-            </form>
-          </div>
-        </div>
-
-        <!-- TRANSACTION LIST -->
         <div class="history-card">
           <div class="history-header">
-            <h3>Recent Activity</h3>
+            <h3>Recent Ledger Entries</h3>
             <div id="financeLoading" class="mini-spinner" style="display:none"></div>
           </div>
           <div class="table-wrap">
             <table class="finance-table">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Type</th>
+                  <th>Detail</th>
+                  <th>Classification</th>
                   <th>Amount</th>
-                  <th>Date</th>
-                  <th>Action</th>
+                  <th>Timestamp</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="financeList">
-                <!-- Data injected here -->
-              </tbody>
+              <tbody id="financeList"></tbody>
             </table>
-            <div id="financeEmpty" class="empty-mini" style="display:none">
-              No transactions recorded yet.
-            </div>
           </div>
         </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
+
       </section>
 
 
