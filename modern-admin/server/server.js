@@ -10,7 +10,7 @@ const fs = require('fs');
 
 // FIREBASE IMPORTS
 const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, Timestamp } = require('firebase/firestore');
+const { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, orderBy, Timestamp } = require('firebase/firestore');
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 const app = express();
@@ -56,15 +56,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// --- PRODUCTION: SERVE FRONTEND ---
-// Static files from the built React app
+// Serving Frontend static files
 app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// Static folder for any local uploads
-const uploadDirs = ['uploads/images', 'uploads/models'];
-uploadDirs.forEach(dir => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- HELPERS ---
@@ -94,7 +87,7 @@ const auth = (req, res, next) => {
 
 // --- ROUTES ---
 
-// Seed Admin
+// Auth
 app.post('/api/auth/seed', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'spidey_admin_2024', 10);
@@ -113,7 +106,7 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) { res.status(500).json({ msg: 'Login failure' }); }
 });
 
-// GET PRODUCTS
+// GET
 app.get('/api/products', auth, async (req, res) => {
     try {
         const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
@@ -126,16 +119,17 @@ app.get('/api/products', auth, async (req, res) => {
     }
 });
 
-// ADD PRODUCT
+// ADD
 app.post('/api/products', auth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'glb', maxCount: 1 }]), async (req, res) => {
     try {
         const { name, description, price, category, status } = req.body;
         const imageUrl = await uploadToFirebase(req.files['image']?.[0], 'products/images');
         const modelUrl = await uploadToFirebase(req.files['glb']?.[0], 'products/models');
-        if (!imageUrl) return res.status(400).json({ msg: 'Image upload failed.' });
+        if (!imageUrl) return res.status(400).json({ msg: 'Image required.' });
 
         const productData = {
-            name, description, price: parseFloat(price), category: mapCategory(category), imageUrl, modelUrl, status,
+            name, description, price: parseFloat(price), category: mapCategory(category),
+            image: imageUrl, imageUrl, modelUrl, status, // DUAL IMAGE FIELD SYNC
             rating: 4.5, createdAt: Timestamp.now()
         };
         const docRef = await addDoc(collection(db, "products"), productData);
@@ -143,6 +137,40 @@ app.post('/api/products', auth, upload.fields([{ name: 'image', maxCount: 1 }, {
         res.status(201).json({ id: docRef.id, ...productData });
     } catch (err) {
         res.status(500).json({ msg: 'Deployment failure.', error: err.message });
+    }
+});
+
+// UPDATE
+app.put('/api/products/:id', auth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'glb', maxCount: 1 }]), async (req, res) => {
+    try {
+        const { name, description, price, category, status } = req.body;
+        const productId = req.params.id;
+        
+        // Fetch existing gear to keep old images if none uploaded
+        const productRef = doc(db, "products", productId);
+        const productSnap = await getDoc(productRef);
+        if (!productSnap.exists()) return res.status(404).json({ msg: 'Gear not found.' });
+        const existingData = productSnap.data();
+
+        // Check for new files
+        const newImageUrl = await uploadToFirebase(req.files['image']?.[0], 'products/images');
+        const newModelUrl = await uploadToFirebase(req.files['glb']?.[0], 'products/models');
+
+        const updatedData = {
+            name, description, price: parseFloat(price), 
+            category: mapCategory(category), status,
+            image: newImageUrl || existingData.image || existingData.imageUrl,
+            imageUrl: newImageUrl || existingData.imageUrl || existingData.image,
+            modelUrl: newModelUrl || existingData.modelUrl,
+            updatedAt: Timestamp.now()
+        };
+
+        await updateDoc(productRef, updatedData);
+        await Product.update(updatedData, { where: { id: productId } });
+
+        res.json({ id: productId, ...updatedData });
+    } catch (err) {
+        res.status(500).json({ msg: 'Modification failure.', error: err.message });
     }
 });
 
@@ -164,10 +192,8 @@ app.get('/api/stats', auth, async (req, res) => {
     } catch (err) { res.status(500).json({ msg: 'Sync error' }); }
 });
 
-// --- FRONTEND SPA CATCH-ALL ---
-// Serve the React frontend for any unmatched route
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-app.listen(PORT, () => console.log(`🚀 Production Monolith active on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Arsenal Engine Active on port ${PORT}`));
