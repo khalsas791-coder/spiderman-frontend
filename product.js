@@ -48,12 +48,12 @@ document.getElementById("logoutBtn")?.addEventListener("click", async () => {
   window.location.href = "index.html";
 });
 
-// ── FIRESTORE MERGE (optional, non-blocking) ──
+// ── BACKEND MERGE (Prioritize API) ──
 async function loadFirestoreProducts() {
   try {
-    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-    const snap = await getDocs(q);
-    const firestoreProds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const resp = await fetch(`${API_URL}/api/products`);
+    if (!resp.ok) throw new Error("API failed");
+    const firestoreProds = await resp.json();
 
     if (firestoreProds.length > 0) {
       const fsIds = new Set(firestoreProds.map(p => p.id));
@@ -65,7 +65,19 @@ async function loadFirestoreProducts() {
       applyFilters();
     }
   } catch (err) {
-    console.warn("Firestore unavailable — using sample products:", err);
+    console.warn("Backend API unavailable — using direct Firebase or samples:", err);
+    // Fallback to direct Firebase
+    try {
+      const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      const fsProds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (fsProds.length > 0) {
+          allProducts = [...fsProds, ...sampleProducts].filter((v,i,a)=>a.findIndex(t=>(t.id===v.id))===i);
+          applyFilters();
+      }
+    } catch (e) {
+      console.error("All data sources failed:", e);
+    }
   }
 }
 
