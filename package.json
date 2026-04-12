@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd modern-admin/client && npm install && npm run build",
-    "server": "cd modern-admin/server && npm install && npm start",
-    "dev": "concurrently \"npm run server\" \"cd modern-admin/client && npm run dev\""
+    "start": "cd modern-admin/server && npm start",
+    "dev": "concurrently \"npm run start\" \"live-server .\""
   },
   "dependencies": {
     "concurrently": "^8.2.2"

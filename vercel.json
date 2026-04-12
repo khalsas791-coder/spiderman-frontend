@@ -1,11 +1,11 @@
 {
-  "builds": [
-    {
-      "src": "modern-admin/client/package.json",
-      "use": "@vercel/static-build"
-    }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "pages": {
+    "index": "index.html",
+    "auth": "auth.html",
+    "product": "product.html",
+    "cart": "cart.html",
+    "checkout": "checkout.html"
+  }
 }
