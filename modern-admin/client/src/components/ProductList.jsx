@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Edit, Cube, Search, Filter, MoreVertical, X, Settings2 } from 'lucide-react';
+import { Trash2, Edit, Box, Search, Filter, MoreVertical, X, Settings2 } from 'lucide-react';
 import ThreeViewer from './ThreeViewer';
 import ProductForm from './ProductForm';
 import axios from 'axios';
@@ -115,7 +115,7 @@ export default function ProductList() {
                                         onClick={() => setPreviewModel(p.modelUrl)}
                                         className="absolute bottom-4 right-4 w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center hover:bg-spider-red transition-colors"
                                     >
-                                        <Cube size={20} />
+                                        <Box size={20} />
                                     </button>
                                 )}
                             </div>

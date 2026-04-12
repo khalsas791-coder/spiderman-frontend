@@ -1,26 +1,13 @@
 {
-  "name": "spiderman",
+  "name": "spiderman-project",
   "version": "1.0.0",
-  "description": "Production Monolith for Spider-Man Admin Panel",
-  "main": "modern-admin/server/server.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:server": "cd modern-admin/server && npm start",
-    "dev:client": "cd modern-admin/client && npm run dev",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "build": "npm run build:client && npm run build:server",
-    "build:client": "cd modern-admin/client && npm install && npm run build",
-    "build:server": "cd modern-admin/server && npm install",
-    "start": "node modern-admin/server/server.js"
+    "build": "cd modern-admin/client && npm install && npm run build",
+    "server": "cd modern-admin/server && npm install && npm start",
+    "dev": "concurrently \"npm run server\" \"cd modern-admin/client && npm run dev\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1"
-  },
-  "devDependencies": {
     "concurrently": "^8.2.2"
   }
 }

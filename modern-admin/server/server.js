@@ -51,7 +51,7 @@ const upload = multer({
 
 // --- MIDDLEWARE ---
 app.use(cors({
-    origin: ['https://spiderman-frontend-git-main-jaspreet-singhs-projects-c751b1f2.vercel.app', 'http://localhost:5173'],
+    origin: [/https:\/\/.*\.vercel\.app$/, "http://localhost:5173", "http://localhost:5000", "http://localhost:5001"],
     credentials: true
 }));
 app.use(express.json());
@@ -189,7 +189,29 @@ app.get('/api/stats', auth, async (req, res) => {
         const snap = await getDocs(collection(db, "products"));
         const recent = await Product.findAll({ order: [['createdAt', 'DESC']], limit: 5 });
         res.json({ totalProducts: snap.size, totalCategories: 3, recentUploads: recent });
-    } catch (err) { res.status(500).json({ msg: 'Sync error' }); }
+// Check Order Status
+app.get('/api/order-status/:orderId', async (req, res) => {
+    try {
+        const orderRef = doc(db, "orders", req.params.orderId);
+        const orderSnap = await getDoc(orderRef);
+        if (!orderSnap.exists()) return res.status(404).json({ msg: 'Order not found' });
+        res.json({ status: orderSnap.data().status });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Verify Payment (Mock Implementation for now as per Option B)
+app.post('/api/verify-payment', async (req, res) => {
+    const { orderId, transactionId } = req.body;
+    try {
+        const orderRef = doc(db, "orders", orderId);
+        const orderSnap = await getDoc(orderRef);
+        if (!orderSnap.exists()) return res.status(404).json({ msg: 'Order not found' });
+        
+        // In a real scenario, we would verify with PhonePe API here
+        // For now, we simulate a successful verification
+        await updateDoc(orderRef, { status: 'SUCCESS', transactionId, updatedAt: Timestamp.now() });
+        res.json({ success: true, msg: 'Payment verified.' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('*', (req, res) => {
